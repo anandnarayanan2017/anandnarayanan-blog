@@ -1,0 +1,35 @@
+name: Deploy blog
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: deploy-blog
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write   # OIDC to AWS; no long-lived keys
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm audit --omit=dev --audit-level=high
+      - run: npm run build   # prebuild generates the posts from agent-sentinel/
+      # Third-party action: SHA-pinned (tag v5.1.1, resolved with
+      # `git ls-remote https://github.com/aws-actions/configure-aws-credentials refs/tags/v5.1.1`).
+      - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: arn:aws:iam::825822360935:role/github-blog-deploy
+          aws-region: eu-central-1
+      - run: aws s3 sync ./dist s3://anandnarayanan-net-site --delete
+      - run: aws cloudfront create-invalidation --distribution-id ESTVCZ8II465N --paths "/*"

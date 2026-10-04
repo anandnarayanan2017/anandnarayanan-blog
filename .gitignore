@@ -218,3 +218,15 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Website (Astro)
+node_modules/
+.astro/
+.DS_Store
+
+# Generated from agent-sentinel/ by scripts/sync-series.mjs (single source of truth)
+src/content/blog/
+public/images/agent-sentinel/
+
+# Agent Sentinel local databases
+*.duckdb

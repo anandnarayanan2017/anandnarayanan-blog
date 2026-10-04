@@ -1,0 +1,25 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Article body typography */
+.post-content { color: rgb(51 65 85); font-size: 17px; line-height: 1.85; }
+.dark .post-content { color: rgb(203 213 225); }
+.post-content h2 { font-size: 1.5rem; font-weight: 700; margin: 2.5rem 0 1rem; letter-spacing: -0.01em; color: rgb(15 23 42); }
+.dark .post-content h2 { color: #fff; }
+.post-content p { margin-bottom: 1.25rem; }
+.post-content a { color: rgb(79 70 229); text-decoration: underline; }
+.dark .post-content a { color: rgb(129 140 248); }
+.post-content blockquote { border-left: 4px solid rgb(99 102 241); padding-left: 1.25rem; font-style: italic; margin: 1.5rem 0; color: rgb(71 85 105); }
+.dark .post-content blockquote { color: rgb(203 213 225); }
+.post-content ul, .post-content ol { margin: 0 0 1.25rem 1.5rem; list-style: disc; }
+.post-content ol { list-style: decimal; }
+.post-content li { margin-bottom: 0.4rem; }
+.post-content pre { padding: 1rem 1.25rem; border-radius: 0.75rem; overflow-x: auto; margin: 1.5rem 0; font-size: 0.9rem; border: 1px solid rgb(51 65 85); }
+.post-content :not(pre) > code { background: rgba(99,102,241,0.12); padding: 0.15rem 0.4rem; border-radius: 0.35rem; font-size: 0.9em; }
+.post-content h3 { font-size: 1.2rem; font-weight: 700; margin: 2rem 0 0.75rem; }
+.post-content img { max-width: 100%; height: auto; margin: 1.5rem auto; border-radius: 0.75rem; border: 1px solid rgb(226 232 240); background: #fff; }
+.post-content table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.9rem; display: block; overflow-x: auto; }
+.post-content th, .post-content td { border: 1px solid rgb(203 213 225); padding: 0.5rem 0.75rem; text-align: left; vertical-align: top; }
+.dark .post-content th, .dark .post-content td { border-color: rgb(51 65 85); }
+.post-content th { background: rgba(99,102,241,0.08); font-weight: 600; }
+.post-content hr { margin: 2.5rem 0; border-color: rgb(226 232 240); }
