@@ -87,26 +87,63 @@ does not claim to observe uninstrumented actions or block them before they run.
 
 ```mermaid
 C4Context
-  title Agent Sentinel - AI-Agent Runtime Control Plane
+  title Agent Sentinel - AI-Agent Runtime Control Plane (System Context)
 
   Person(ciso, "CISO / Security Analyst", "Reviews findings, monitors agent risk, exports evidence to SOC and auditors")
   Person(auditor, "Auditor / Regulator", "Needs proof of logging, oversight, and incident handling")
-
-  System(agentSentinel, "Agent Sentinel", "Detects, explains, stores, and exports AI-agent behavior findings")
-
-  System_Ext(agents, "AI Agents / M2M Identities", "KYC agents, fraud agents, payment bots, reconciliation workflows")
+  System(agentSentinel, "Agent Sentinel", "Observes, detects, explains, stores, and exports AI-agent behavior findings")
+  System_Ext(siem, "SIEM / SOAR", "Microsoft Sentinel, Splunk, PagerDuty, Jira, ServiceNow")
+  System_Ext(identity, "Identity Provider", "Microsoft Entra ID, workload identities, service principals")
+  System_Ext(agents, "AI Agents / M2M Workloads", "KYC agents, fraud agents, payment bots, reconciliation workflows")
   System_Ext(llms, "Cloud Model Providers", "Azure OpenAI, Anthropic, OpenAI, Bedrock, Gemini")
   System_Ext(tools, "Enterprise Tools / MCP Servers", "Ledger APIs, payment APIs, report sinks, CRM, data platforms")
-  System_Ext(identity, "Identity Provider", "Microsoft Entra ID, workload identity, service principals")
-  System_Ext(siem, "SIEM / SOAR", "Microsoft Sentinel, Splunk, PagerDuty, Jira, ServiceNow")
 
-  Rel(agents, agentSentinel, "Send visible model/tool/network events", "SDK, proxy, optional network collector")
-  Rel(agentSentinel, llms, "Evaluates observed model calls", "Azure OpenAI / Anthropic wrappers")
-  Rel(agentSentinel, tools, "Evaluates observed tool telemetry and egress", "HTTP / MCP / internal APIs")
-  Rel(identity, agentSentinel, "Authenticates users and workloads", "OIDC / Entra ID")
-  Rel(ciso, agentSentinel, "Reviews live dashboard and evidence", "Web UI / API")
+  Boundary(legend, "Legend", "") {
+    Person(lgPerson, "Person", "Human user")
+    System(lgCore, "System in scope", "Agent Sentinel")
+    System_Ext(lgWork, "Observed workload", "Emits telemetry")
+    System_Ext(lgDown, "Downstream service", "Called by agents")
+    System_Ext(lgIdp, "Trust / identity", "AuthN and identity")
+    System_Ext(lgSoc, "SecOps destination", "Receives findings")
+  }
+
+  Rel(ciso, agentSentinel, "Reviews dashboard, triages findings", "Web UI / API")
+  Rel(auditor, agentSentinel, "Reviews read-only evidence packs", "Web UI / signed export")
+  Rel(ciso, auditor, "Provides audit evidence", "DORA / EU AI Act / CSSF")
   Rel(agentSentinel, siem, "Exports high-fidelity findings", "Log Analytics, webhook, CEF, JSON")
-  Rel(ciso, auditor, "Provides audit evidence", "DORA / EU AI Act / CSSF evidence")
+  Rel(agentSentinel, identity, "Authenticates users, resolves agent identities", "OIDC / Entra ID / Graph")
+  Rel(agents, agentSentinel, "Emit model, tool, network telemetry", "SDK, proxy, network collector")
+  Rel(agents, identity, "Authenticate as workloads", "OAuth2 / managed identity")
+  Rel(agents, llms, "Invoke models", "HTTPS / provider APIs")
+  Rel(agents, tools, "Call tools and egress", "HTTP / MCP / internal APIs")
+
+  UpdateElementStyle(ciso, $bgColor="#08427B", $fontColor="#FFFFFF", $borderColor="#052E56")
+  UpdateElementStyle(auditor, $bgColor="#08427B", $fontColor="#FFFFFF", $borderColor="#052E56")
+  UpdateElementStyle(agentSentinel, $bgColor="#0F766E", $fontColor="#FFFFFF", $borderColor="#0B4F4A")
+  UpdateElementStyle(agents, $bgColor="#B45309", $fontColor="#FFFFFF", $borderColor="#7C3A06")
+  UpdateElementStyle(llms, $bgColor="#6B7280", $fontColor="#FFFFFF", $borderColor="#4B5563")
+  UpdateElementStyle(tools, $bgColor="#6B7280", $fontColor="#FFFFFF", $borderColor="#4B5563")
+  UpdateElementStyle(identity, $bgColor="#6D28D9", $fontColor="#FFFFFF", $borderColor="#4C1D95")
+  UpdateElementStyle(siem, $bgColor="#B91C1C", $fontColor="#FFFFFF", $borderColor="#7F1D1D")
+
+  UpdateElementStyle(lgPerson, $bgColor="#08427B", $fontColor="#FFFFFF", $borderColor="#052E56")
+  UpdateElementStyle(lgCore, $bgColor="#0F766E", $fontColor="#FFFFFF", $borderColor="#0B4F4A")
+  UpdateElementStyle(lgWork, $bgColor="#B45309", $fontColor="#FFFFFF", $borderColor="#7C3A06")
+  UpdateElementStyle(lgDown, $bgColor="#6B7280", $fontColor="#FFFFFF", $borderColor="#4B5563")
+  UpdateElementStyle(lgIdp, $bgColor="#6D28D9", $fontColor="#FFFFFF", $borderColor="#4C1D95")
+  UpdateElementStyle(lgSoc, $bgColor="#B91C1C", $fontColor="#FFFFFF", $borderColor="#7F1D1D")
+
+  UpdateRelStyle(ciso, agentSentinel, $textColor="#08427B", $lineColor="#1D4ED8", $offsetX="-150", $offsetY="0")
+  UpdateRelStyle(auditor, agentSentinel, $textColor="#08427B", $lineColor="#1D4ED8", $offsetX="10", $offsetY="-10")
+  UpdateRelStyle(ciso, auditor, $textColor="#08427B", $lineColor="#1D4ED8", $offsetX="-80", $offsetY="-50")
+  UpdateRelStyle(agentSentinel, siem, $textColor="#B91C1C", $lineColor="#DC2626", $offsetX="-60", $offsetY="55")
+  UpdateRelStyle(agentSentinel, identity, $textColor="#6D28D9", $lineColor="#6D28D9", $offsetX="-150", $offsetY="0")
+  UpdateRelStyle(agents, agentSentinel, $textColor="#B45309", $lineColor="#D97706", $offsetX="40", $offsetY="5")
+  UpdateRelStyle(agents, identity, $textColor="#6D28D9", $lineColor="#6D28D9", $offsetX="-120", $offsetY="50")
+  UpdateRelStyle(agents, llms, $textColor="#4B5563", $lineColor="#6B7280", $offsetX="-110", $offsetY="10")
+  UpdateRelStyle(agents, tools, $textColor="#4B5563", $lineColor="#6B7280", $offsetX="10", $offsetY="0")
+
+  UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")
 ```
 
 ### Implementation details
