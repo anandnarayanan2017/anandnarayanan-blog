@@ -10,36 +10,6 @@ and Splunk.
 current engine produces post-observation findings; it does not block or
 quarantine actions.
 
-## Two audiences, two levels
-
-```mermaid
-flowchart LR
-    A["linkedin/<br/>~250 words, plain English"] --> B["technical-details/<br/>architecture + code links"]
-    B --> C["Source code and tests<br/>app/..."]
-```
-
-Every part has a plain-English LinkedIn post for CISOs and business readers,
-and a technical write-up (with an "In plain terms" summary up top) for
-architects and engineers. The [traceability matrix](TRACEABILITY.md) ties each claim to its implementation,
-its regression test, and its current-versus-roadmap boundary.
-
-| # | Part | LinkedIn post | Technical write-up | Main code | Regression test |
-|---|---|---|---|---|---|
-| 1 | Why AI Agents Need a Flight Recorder | [post](linkedin/01-why-agents-need-a-flight-recorder.md) | [read](technical-details/01-why-agents-need-a-flight-recorder.md) | `pipeline.py`, `detection/engine.py` | [`test_pipeline.py`](../../app/tests/test_pipeline.py) |
-| 2 | From Simulated Traffic to Real Model Calls | coming soon | coming soon | | |
-| 3 | Rules First, Statistics Second | coming soon | coming soon | | |
-| 4 | The Enterprise Foundation | coming soon | coming soon | | |
-| 5 | Feeding the SOC, and What's Next | coming soon | coming soon | | |
-| 6 | The Blind Spot Every AI-Agent Firewall Has | coming soon | coming soon | | |
-| 7 | Visibility Without a Blank Check | coming soon | coming soon | | |
-| 8 | From Open Port to Explainable Finding | coming soon | coming soon | | |
-| 9 | Built to Fail Safe, Not Fail Quiet | coming soon | coming soon | | |
-| 10 | What This Doesn't Do Yet | coming soon | coming soon | | |
-
-Every link in this folder is relative, so the article, the code, and the tests
-always resolve on the same repository version. Run `python scripts/check_links.py` to verify
-every relative link and heading anchor.
-
 ## Single source of truth
 
 This folder is the only place the series is written, and it lives in the same
