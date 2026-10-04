@@ -98,15 +98,6 @@ C4Context
   System_Ext(llms, "Cloud Model Providers", "Azure OpenAI, Anthropic, OpenAI, Bedrock, Gemini")
   System_Ext(tools, "Enterprise Tools / MCP Servers", "Ledger APIs, payment APIs, report sinks, CRM, data platforms")
 
-  Boundary(legend, "Legend", "") {
-    Person(lgPerson, "Person", "Human user")
-    System(lgCore, "System in scope", "Agent Sentinel")
-    System_Ext(lgWork, "Observed workload", "Emits telemetry")
-    System_Ext(lgDown, "Downstream service", "Called by agents")
-    System_Ext(lgIdp, "Trust / identity", "AuthN and identity")
-    System_Ext(lgSoc, "SecOps destination", "Receives findings")
-  }
-
   Rel(ciso, agentSentinel, "Reviews dashboard, triages findings", "Web UI / API")
   Rel(auditor, agentSentinel, "Reviews read-only evidence packs", "Web UI / signed export")
   Rel(ciso, auditor, "Provides audit evidence", "DORA / EU AI Act / CSSF")
