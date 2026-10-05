@@ -5,7 +5,8 @@
 //
 //   node scripts/sync-series.mjs     # run automatically before `npm run dev` / `npm run build`
 //
-// A part appears on the site once its write-up exists in that folder.
+// A part appears on the site once its write-up exists in that folder; its date
+// comes from scripts/release-dates.json.
 import { cpSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join, posix } from "node:path";
 
@@ -18,11 +19,16 @@ const OUT_IMAGES = "public/images/agent-sentinel";
 const dir = process.env.SERIES_DIR ?? SERIES;
 const blog = join(dir, "docs/blog");
 
-// Site release date per part: the "On the site" column of the publishing-plan
-// table in docs/blog/README.md (| LinkedIn week | N. Title | site date | goal |).
-const readme = readFileSync(join(blog, "README.md"), "utf8");
+// Site release date per part, kept in scripts/release-dates.json
+// ({ "1": "2026-10-02", ... }) so the public README needs no publishing plan.
+const DATES_FILE = new URL("./release-dates.json", import.meta.url);
 const dates = new Map(
-  [...readme.matchAll(/^\| \d{4}-\d{2}-\d{2} \| (\d+)\. [^|]*\| (\d{4}-\d{2}-\d{2}) \|/gm)].map((m) => [Number(m[1]), m[2]]),
+  Object.entries(JSON.parse(readFileSync(DATES_FILE, "utf8")))
+    .filter(([k]) => /^\d+$/.test(k))
+    .map(([k, v]) => {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) throw new Error(`release-dates.json: part ${k} has "${v}", expected YYYY-MM-DD`);
+      return [Number(k), v];
+    }),
 );
 
 const files = readdirSync(join(blog, "technical-details")).filter((f) => /^\d{2}-.*\.md$/.test(f)).sort();
@@ -33,7 +39,8 @@ const parts = files.map((f) => {
   const title = text.match(/^# Part \d+ — (.+)$/m)?.[1];
   const li = readFileSync(join(blog, "linkedin", f), "utf8");
   const excerpt = li.split(/\n\s*\n/)[0].replace(/\s*\n\s*/g, " ").trim();
-  if (!title || !dates.has(n)) throw new Error(`Part ${n}: missing title or release date`);
+  if (!title) throw new Error(`Part ${n}: missing "# Part ${n} — <title>" heading`);
+  if (!dates.has(n)) throw new Error(`Part ${n}: no date in scripts/release-dates.json`);
   return { n, f, slug, title, excerpt, date: dates.get(n), text };
 });
 const published = new Set(parts.map((p) => p.n));
@@ -72,6 +79,7 @@ for (const p of parts) {
     `readTime: ${Math.max(1, Math.ceil(words / 200))}`,
     `series: "Agent Sentinel"`,
     `part: ${p.n}`,
+    `image: "/images/agent-sentinel/${img}"`,
     "---",
   ].join("\n");
   const out = [
