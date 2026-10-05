@@ -63,7 +63,7 @@ see, and it records and flags rather than blocks.
 
 ## What's in this series
 
-Few short parts, each one design decision and why it was made:
+A few short parts, each one design decision and why it was made:
 
 1. **Why AI agents need a flight recorder**: this part.
 2. From Simulated Traffic to Real Model Calls: record first, block later, and why recording must never break the agent.
@@ -88,16 +88,16 @@ C4Context
   Person(ciso, "CISO / Security Analyst", "Reviews findings, monitors agent risk, exports evidence to SOC and auditors")
   Person(auditor, "Auditor / Regulator", "Needs proof of logging, oversight, and incident handling")
   System(agentSentinel, "Agent Sentinel", "Observes, detects, explains, stores, and exports AI-agent behavior findings")
-  System_Ext(siem, "SIEM / SOAR", "Microsoft Sentinel, Splunk, PagerDuty, Jira, ServiceNow")
+  System_Ext(siem, "SIEM / SOAR", "Microsoft Sentinel, PagerDuty, Teams, Slack")
   System_Ext(identity, "Identity Provider", "Microsoft Entra ID, workload identities, service principals")
   System_Ext(agents, "AI Agents / M2M Workloads", "KYC agents, fraud agents, payment bots, reconciliation workflows")
   System_Ext(llms, "Cloud Model Providers", "Azure OpenAI, Anthropic, OpenAI, Bedrock, Gemini")
   System_Ext(tools, "Enterprise Tools / MCP Servers", "Ledger APIs, payment APIs, report sinks, CRM, data platforms")
 
   Rel(ciso, agentSentinel, "Reviews dashboard, triages findings", "Web UI / API")
-  Rel(auditor, agentSentinel, "Reviews read-only evidence packs", "Web UI / signed export")
+  Rel(auditor, agentSentinel, "Reviews read-only evidence", "API / exported findings")
   Rel(ciso, auditor, "Provides audit evidence", "DORA / EU AI Act / CSSF")
-  Rel(agentSentinel, siem, "Exports high-fidelity findings", "Log Analytics, webhook, CEF, JSON")
+  Rel(agentSentinel, siem, "Exports high-fidelity findings", "Log Analytics, webhooks, JSON")
   Rel(agentSentinel, identity, "Authenticates users, resolves agent identities", "OIDC / Entra ID / Graph")
   Rel(agents, agentSentinel, "Emit model, tool, network telemetry", "SDK, proxy, network collector")
   Rel(agents, identity, "Authenticate as workloads", "OAuth2 / managed identity")
@@ -113,12 +113,6 @@ C4Context
   UpdateElementStyle(identity, $bgColor="#6D28D9", $fontColor="#FFFFFF", $borderColor="#4C1D95")
   UpdateElementStyle(siem, $bgColor="#B91C1C", $fontColor="#FFFFFF", $borderColor="#7F1D1D")
 
-  UpdateElementStyle(lgPerson, $bgColor="#08427B", $fontColor="#FFFFFF", $borderColor="#052E56")
-  UpdateElementStyle(lgCore, $bgColor="#0F766E", $fontColor="#FFFFFF", $borderColor="#0B4F4A")
-  UpdateElementStyle(lgWork, $bgColor="#B45309", $fontColor="#FFFFFF", $borderColor="#7C3A06")
-  UpdateElementStyle(lgDown, $bgColor="#6B7280", $fontColor="#FFFFFF", $borderColor="#4B5563")
-  UpdateElementStyle(lgIdp, $bgColor="#6D28D9", $fontColor="#FFFFFF", $borderColor="#4C1D95")
-  UpdateElementStyle(lgSoc, $bgColor="#B91C1C", $fontColor="#FFFFFF", $borderColor="#7F1D1D")
 
   UpdateRelStyle(ciso, agentSentinel, $textColor="#08427B", $lineColor="#1D4ED8", $offsetX="-150", $offsetY="0")
   UpdateRelStyle(auditor, agentSentinel, $textColor="#08427B", $lineColor="#1D4ED8", $offsetX="10", $offsetY="-10")
