@@ -63,18 +63,14 @@ see, and it records and flags rather than blocks.
 
 ## What's in this series
 
-Ten short parts, each one design decision and why it was made:
+Few short parts, each one design decision and why it was made:
 
 1. **Why AI agents need a flight recorder**: this part.
 2. From Simulated Traffic to Real Model Calls: record first, block later, and why recording must never break the agent.
 3. Rules First, Statistics Second: why a readable rulebook comes before any AI model.
 4. The Enterprise Foundation: identity, audit trail and human approvals.
 5. Feeding the SOC, and What's Next: evidence for your existing SIEM, not another dashboard.
-6. The Blind Spot Every AI-Agent Firewall Has: traffic that bypasses the proxy.
-7. Visibility Without a Blank Check: watching only the machines you name.
-8. From Open Port to Explainable Finding: turning a scan result into evidence.
-9. Built to Fail Safe, Not Fail Quiet: a false-alarm flood caught in design review.
-10. What This Doesn't Do Yet: the honest limits.
+
 
 ## Design and implementation
 
