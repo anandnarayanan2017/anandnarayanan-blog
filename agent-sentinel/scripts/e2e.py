@@ -203,9 +203,11 @@ def browser(shots: Path | None) -> None:
         if shots:
             shots.mkdir(parents=True, exist_ok=True)
             page.screenshot(path=str(shots / "dashboard.png"), full_page=True)
-            row = page.locator("text=net.host_not_allowed").first
-            row.click()
-            page.wait_for_timeout(600)
+            # Click a row in the findings table (not the "top rules" panel).
+            page.locator("tr.trow").first.click()
+            page.wait_for_selector(".drawer-in", timeout=5_000)
+            page.wait_for_timeout(400)
+            check(page.locator(".drawer-in").count() == 1, "clicking a finding opens the evidence drawer")
             page.screenshot(path=str(shots / "evidence-drawer.png"))
         b.close()
     check(not errors, f"no browser console errors {errors[:3] if errors else ''}")
