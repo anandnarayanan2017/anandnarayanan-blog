@@ -66,15 +66,15 @@ see, and it records and flags rather than blocks.
 Ten short parts, each one design decision and why it was made:
 
 1. **Why AI agents need a flight recorder**: this part.
-2. Record first, block later: from simulated traffic to real model calls, and why recording must never break the agent.
-3. Rules decide, statistics advise: why a readable rulebook comes before any AI model.
-4. What makes it enterprise-ready: identity, audit trail and human approvals.
-5. Feeding the SOC: evidence for your existing SIEM, not another dashboard.
-6. The blind spot: traffic that bypasses the proxy.
-7. Visibility without a blank check: watching only the machines you name.
-8. From open port to finding: turning a scan result into evidence.
-9. The bug that never shipped: a false-alarm flood caught in design review.
-10. What it doesn't do yet: the honest limits.
+2. From Simulated Traffic to Real Model Calls: record first, block later, and why recording must never break the agent.
+3. Rules First, Statistics Second: why a readable rulebook comes before any AI model.
+4. The Enterprise Foundation: identity, audit trail and human approvals.
+5. Feeding the SOC, and What's Next: evidence for your existing SIEM, not another dashboard.
+6. The Blind Spot Every AI-Agent Firewall Has: traffic that bypasses the proxy.
+7. Visibility Without a Blank Check: watching only the machines you name.
+8. From Open Port to Explainable Finding: turning a scan result into evidence.
+9. Built to Fail Safe, Not Fail Quiet: a false-alarm flood caught in design review.
+10. What This Doesn't Do Yet: the honest limits.
 
 ## Design and implementation
 
@@ -137,6 +137,11 @@ C4Context
   UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")
 ```
 
+Agent Sentinel never sits in the agent's call path: the agent talks to models
+and tools directly, and Sentinel only sees the telemetry it is sent. Arrow
+colours follow the box colours: amber is telemetry, grey is the agent's own
+calls, purple is identity, red is export, blue is people.
+
 ### Implementation details
 
 The core loop is deliberately small:
@@ -167,12 +172,15 @@ wraps the Anthropic and Azure OpenAI SDKs, but only to observe the calls an
 exists, `Explainer(narrator=...)`, where a model could rewrite an explanation's
 prose. It defaults to `None` and nothing in the product sets it.
 
-Non-blank lines of product code, tests excluded:
+Non-blank lines of product code, tests excluded, counted in the full product
+repository when this part was written. This companion repository carries a
+trimmed copy, so a recount here gives smaller numbers; the proportions are what
+matter:
 
 | Layer | Lines | Share | What it is |
 |---|---:|---:|---|
 | Platform (API, storage, auth, collectors, export) | 4,069 | 61% | Plumbing |
-| Sequence model (`app/sentinel_sequence/` + adapter) | 1,792 | 27% | The only machine learning |
+| Sequence model (`app/sentinel_sequence/` + adapter, released with Part 3) | 1,792 | 27% | The only machine learning |
 | Deterministic detection, schema, explainability | 667 | 10% | `if` statements and string templates |
 | Descriptive statistics (`detection/baseline.py`) | 115 | 2% | Means, standard deviations, set membership |
 
@@ -191,8 +199,9 @@ and fails open at both construction and evaluation.
 
 #### Why the boring answer is the design
 
-A payments bot gets frozen mid-run and the compliance officer asks why. Two
-possible answers:
+A payments bot is flagged mid-run and the compliance officer asks why. (Today
+Agent Sentinel flags and does not stop the bot; the question is the same either
+way.) Two possible answers:
 
 > **A.** "The model scored this session at 0.87 anomalous, above our 0.85 threshold."
 >
@@ -205,8 +214,10 @@ Answer A cannot be argued with, which reads as strength until you are the one
 defending it to a regulator — or overturning it at 2am because it was wrong.
 Answer B can be checked, challenged, and changed by a human in a pull request.
 
-The layer ordering makes that structural rather than cultural (ADR-0001): the
-deterministic layer runs first and is the only layer permitted to deny. The ML
+The layer ordering makes that structural rather than cultural ([ADR-0001](../../adr/0001-rules-first-detection.md)): the
+deterministic layer runs first, is the only layer whose findings cite a policy
+clause, and is the only layer that will be allowed to deny once enforcement
+exists. The ML
 earns its place in the one spot rules cannot reach — **order**. An allow-list
 can confirm `verify_id`, `check_sanctions` and `initiate_wire_transfer` are
 each permitted. It cannot notice the transfer happened *before* the sanctions
@@ -214,7 +225,7 @@ check.
 
 One caveat, stated because the repo states it: every published figure for that
 model comes from synthetic data the author wrote — both the normal workflows
-and the attacks. `docs/EVAL_PAYMENTS_BOT.md` calls this the "author-designed
+and the attacks. `docs/EVAL_PAYMENTS_BOT.md` (released with Part 3) calls this the "author-designed
 validity ceiling" and declines to present the numbers as real-world
 performance.
 
