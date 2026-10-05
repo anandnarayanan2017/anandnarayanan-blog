@@ -46,3 +46,12 @@ To explore by hand: `SENTINEL_DEV_MODE=1 SENTINEL_POLICY=policies/fintech.yaml s
 open <http://localhost:8000>, and in a second terminal run
 `python examples/phase1/fintech_sim/sim.py` (or `sentinel demo` for the scripted attack).
 Dev mode turns authentication off; never use it on a reachable host.
+
+## References you can't follow from here
+
+This is a trimmed copy of the private Agent Sentinel product repository. Code
+comments cite documents that stay there: `design/DESIGN.md`, `spec/*.md`,
+review IDs such as `CR-16`, and ADRs other than
+[ADR-0001](docs/adr/0001-rules-first-detection.md). They explain why the code
+is the way it is; nothing here needs them to build, run or test.
+

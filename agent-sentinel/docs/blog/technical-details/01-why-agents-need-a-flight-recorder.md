@@ -66,15 +66,15 @@ see, and it records and flags rather than blocks.
 Ten short parts, each one design decision and why it was made:
 
 1. **Why AI agents need a flight recorder**: this part.
-2. Record first, block later: from simulated traffic to real model calls, and why recording must never break the agent.
-3. Rules decide, statistics advise: why a readable rulebook comes before any AI model.
-4. What makes it enterprise-ready: identity, audit trail and human approvals.
-5. Feeding the SOC: evidence for your existing SIEM, not another dashboard.
-6. The blind spot: traffic that bypasses the proxy.
-7. Visibility without a blank check: watching only the machines you name.
-8. From open port to finding: turning a scan result into evidence.
-9. The bug that never shipped: a false-alarm flood caught in design review.
-10. What it doesn't do yet: the honest limits.
+2. From Simulated Traffic to Real Model Calls: record first, block later, and why recording must never break the agent.
+3. Rules First, Statistics Second: why a readable rulebook comes before any AI model.
+4. The Enterprise Foundation: identity, audit trail and human approvals.
+5. Feeding the SOC, and What's Next: evidence for your existing SIEM, not another dashboard.
+6. The Blind Spot Every AI-Agent Firewall Has: traffic that bypasses the proxy.
+7. Visibility Without a Blank Check: watching only the machines you name.
+8. From Open Port to Explainable Finding: turning a scan result into evidence.
+9. Built to Fail Safe, Not Fail Quiet: a false-alarm flood caught in design review.
+10. What This Doesn't Do Yet: the honest limits.
 
 ## Design and implementation
 
@@ -87,27 +87,68 @@ does not claim to observe uninstrumented actions or block them before they run.
 
 ```mermaid
 C4Context
-  title Agent Sentinel - AI-Agent Runtime Control Plane
+  title Agent Sentinel - AI-Agent Runtime Control Plane (System Context)
 
   Person(ciso, "CISO / Security Analyst", "Reviews findings, monitors agent risk, exports evidence to SOC and auditors")
   Person(auditor, "Auditor / Regulator", "Needs proof of logging, oversight, and incident handling")
-
-  System(agentSentinel, "Agent Sentinel", "Detects, explains, stores, and exports AI-agent behavior findings")
-
-  System_Ext(agents, "AI Agents / M2M Identities", "KYC agents, fraud agents, payment bots, reconciliation workflows")
+  System(agentSentinel, "Agent Sentinel", "Observes, detects, explains, stores, and exports AI-agent behavior findings")
+  System_Ext(siem, "SIEM / SOAR", "Microsoft Sentinel, PagerDuty, Teams, Slack")
+  System_Ext(identity, "Identity Provider", "Microsoft Entra ID, workload identities, service principals")
+  System_Ext(agents, "AI Agents / M2M Workloads", "KYC agents, fraud agents, payment bots, reconciliation workflows")
   System_Ext(llms, "Cloud Model Providers", "Azure OpenAI, Anthropic, OpenAI, Bedrock, Gemini")
   System_Ext(tools, "Enterprise Tools / MCP Servers", "Ledger APIs, payment APIs, report sinks, CRM, data platforms")
-  System_Ext(identity, "Identity Provider", "Microsoft Entra ID, workload identity, service principals")
-  System_Ext(siem, "SIEM / SOAR", "Microsoft Sentinel, Splunk, PagerDuty, Jira, ServiceNow")
 
-  Rel(agents, agentSentinel, "Send visible model/tool/network events", "SDK, proxy, optional network collector")
-  Rel(agentSentinel, llms, "Evaluates observed model calls", "Azure OpenAI / Anthropic wrappers")
-  Rel(agentSentinel, tools, "Evaluates observed tool telemetry and egress", "HTTP / MCP / internal APIs")
-  Rel(identity, agentSentinel, "Authenticates users and workloads", "OIDC / Entra ID")
-  Rel(ciso, agentSentinel, "Reviews live dashboard and evidence", "Web UI / API")
-  Rel(agentSentinel, siem, "Exports high-fidelity findings", "Log Analytics, webhook, CEF, JSON")
-  Rel(ciso, auditor, "Provides audit evidence", "DORA / EU AI Act / CSSF evidence")
+  Boundary(legend, "Legend", "") {
+    Person(lgPerson, "Person", "Human user")
+    System(lgCore, "System in scope", "Agent Sentinel")
+    System_Ext(lgWork, "Observed workload", "Emits telemetry")
+    System_Ext(lgDown, "Downstream service", "Called by agents")
+    System_Ext(lgIdp, "Trust / identity", "AuthN and identity")
+    System_Ext(lgSoc, "SecOps destination", "Receives findings")
+  }
+
+  Rel(ciso, agentSentinel, "Reviews dashboard, triages findings", "Web UI / API")
+  Rel(auditor, agentSentinel, "Reviews read-only evidence", "API / exported findings")
+  Rel(ciso, auditor, "Provides audit evidence", "DORA / EU AI Act / CSSF")
+  Rel(agentSentinel, siem, "Exports high-fidelity findings", "Log Analytics, webhooks, JSON")
+  Rel(agentSentinel, identity, "Authenticates users, resolves agent identities", "OIDC / Entra ID")
+  Rel(agents, agentSentinel, "Emit model, tool, network telemetry", "SDK, proxy, network collector")
+  Rel(agents, identity, "Authenticate as workloads", "OAuth2 / managed identity")
+  Rel(agents, llms, "Invoke models", "HTTPS / provider APIs")
+  Rel(agents, tools, "Call tools and egress", "HTTP / MCP / internal APIs")
+
+  UpdateElementStyle(ciso, $bgColor="#08427B", $fontColor="#FFFFFF", $borderColor="#052E56")
+  UpdateElementStyle(auditor, $bgColor="#08427B", $fontColor="#FFFFFF", $borderColor="#052E56")
+  UpdateElementStyle(agentSentinel, $bgColor="#0F766E", $fontColor="#FFFFFF", $borderColor="#0B4F4A")
+  UpdateElementStyle(agents, $bgColor="#B45309", $fontColor="#FFFFFF", $borderColor="#7C3A06")
+  UpdateElementStyle(llms, $bgColor="#6B7280", $fontColor="#FFFFFF", $borderColor="#4B5563")
+  UpdateElementStyle(tools, $bgColor="#6B7280", $fontColor="#FFFFFF", $borderColor="#4B5563")
+  UpdateElementStyle(identity, $bgColor="#6D28D9", $fontColor="#FFFFFF", $borderColor="#4C1D95")
+  UpdateElementStyle(siem, $bgColor="#B91C1C", $fontColor="#FFFFFF", $borderColor="#7F1D1D")
+  UpdateElementStyle(lgPerson, $bgColor="#08427B", $fontColor="#FFFFFF", $borderColor="#052E56")
+  UpdateElementStyle(lgCore, $bgColor="#0F766E", $fontColor="#FFFFFF", $borderColor="#0B4F4A")
+  UpdateElementStyle(lgWork, $bgColor="#B45309", $fontColor="#FFFFFF", $borderColor="#7C3A06")
+  UpdateElementStyle(lgDown, $bgColor="#6B7280", $fontColor="#FFFFFF", $borderColor="#4B5563")
+  UpdateElementStyle(lgIdp, $bgColor="#6D28D9", $fontColor="#FFFFFF", $borderColor="#4C1D95")
+  UpdateElementStyle(lgSoc, $bgColor="#B91C1C", $fontColor="#FFFFFF", $borderColor="#7F1D1D")
+
+  UpdateRelStyle(ciso, agentSentinel, $textColor="#08427B", $lineColor="#1D4ED8", $offsetX="-150", $offsetY="0")
+  UpdateRelStyle(auditor, agentSentinel, $textColor="#08427B", $lineColor="#1D4ED8", $offsetX="10", $offsetY="-10")
+  UpdateRelStyle(ciso, auditor, $textColor="#08427B", $lineColor="#1D4ED8", $offsetX="-80", $offsetY="-50")
+  UpdateRelStyle(agentSentinel, siem, $textColor="#B91C1C", $lineColor="#DC2626", $offsetX="-60", $offsetY="55")
+  UpdateRelStyle(agentSentinel, identity, $textColor="#6D28D9", $lineColor="#6D28D9", $offsetX="-150", $offsetY="0")
+  UpdateRelStyle(agents, agentSentinel, $textColor="#B45309", $lineColor="#D97706", $offsetX="40", $offsetY="5")
+  UpdateRelStyle(agents, identity, $textColor="#6D28D9", $lineColor="#6D28D9", $offsetX="-120", $offsetY="50")
+  UpdateRelStyle(agents, llms, $textColor="#4B5563", $lineColor="#6B7280", $offsetX="-110", $offsetY="10")
+  UpdateRelStyle(agents, tools, $textColor="#4B5563", $lineColor="#6B7280", $offsetX="10", $offsetY="0")
+
+  UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")
 ```
+
+Agent Sentinel never sits in the agent's call path: the agent talks to models
+and tools directly, and Sentinel only sees the telemetry it is sent. Arrow
+colours follow the box colours: amber is telemetry, grey is the agent's own
+calls, purple is identity, red is export, blue is people.
 
 ### Implementation details
 
@@ -139,12 +180,15 @@ wraps the Anthropic and Azure OpenAI SDKs, but only to observe the calls an
 exists, `Explainer(narrator=...)`, where a model could rewrite an explanation's
 prose. It defaults to `None` and nothing in the product sets it.
 
-Non-blank lines of product code, tests excluded:
+Non-blank lines of product code, tests excluded, counted in the full product
+repository when this part was written. This companion repository carries a
+trimmed copy, so a recount here gives smaller numbers; the proportions are what
+matter:
 
 | Layer | Lines | Share | What it is |
 |---|---:|---:|---|
 | Platform (API, storage, auth, collectors, export) | 4,069 | 61% | Plumbing |
-| Sequence model (`app/sentinel_sequence/` + adapter) | 1,792 | 27% | The only machine learning |
+| Sequence model (`app/sentinel_sequence/` + adapter, released with Part 3) | 1,792 | 27% | The only machine learning |
 | Deterministic detection, schema, explainability | 667 | 10% | `if` statements and string templates |
 | Descriptive statistics (`detection/baseline.py`) | 115 | 2% | Means, standard deviations, set membership |
 
@@ -163,8 +207,9 @@ and fails open at both construction and evaluation.
 
 #### Why the boring answer is the design
 
-A payments bot gets frozen mid-run and the compliance officer asks why. Two
-possible answers:
+A payments bot is flagged mid-run and the compliance officer asks why. (Today
+Agent Sentinel flags and does not stop the bot; the question is the same either
+way.) Two possible answers:
 
 > **A.** "The model scored this session at 0.87 anomalous, above our 0.85 threshold."
 >
@@ -177,8 +222,10 @@ Answer A cannot be argued with, which reads as strength until you are the one
 defending it to a regulator — or overturning it at 2am because it was wrong.
 Answer B can be checked, challenged, and changed by a human in a pull request.
 
-The layer ordering makes that structural rather than cultural (ADR-0001): the
-deterministic layer runs first and is the only layer permitted to deny. The ML
+The layer ordering makes that structural rather than cultural ([ADR-0001](../../adr/0001-rules-first-detection.md)): the
+deterministic layer runs first, is the only layer whose findings cite a policy
+clause, and is the only layer that will be allowed to deny once enforcement
+exists. The ML
 earns its place in the one spot rules cannot reach — **order**. An allow-list
 can confirm `verify_id`, `check_sanctions` and `initiate_wire_transfer` are
 each permitted. It cannot notice the transfer happened *before* the sanctions
@@ -186,7 +233,7 @@ check.
 
 One caveat, stated because the repo states it: every published figure for that
 model comes from synthetic data the author wrote — both the normal workflows
-and the attacks. `docs/EVAL_PAYMENTS_BOT.md` calls this the "author-designed
+and the attacks. `docs/EVAL_PAYMENTS_BOT.md` (released with Part 3) calls this the "author-designed
 validity ceiling" and declines to present the numbers as real-world
 performance.
 
