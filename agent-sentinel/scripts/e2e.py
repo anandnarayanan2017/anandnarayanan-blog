@@ -3,13 +3,18 @@
     python scripts/e2e.py                       # API + traffic checks
     python scripts/e2e.py --browser             # ...plus the dashboard in headless Chromium
     python scripts/e2e.py --browser --shots out # ...and save screenshots into ./out
+    python scripts/e2e.py --url http://localhost:8000 --postgres
+                                                # test a running stack (docker compose)
+                                                # instead of starting a server
 
 What it does, in order:
-  1. starts `sentinel serve` (dev auth mode, fintech policy, in-memory store);
+  1. starts `sentinel serve` (dev auth mode, fintech policy, in-memory store),
+     or with --url uses a server that is already running;
   2. sends known-good and known-bad agent traffic to POST /ingest and checks
      that each produces exactly the expected findings, with explanations;
   3. runs the fintech simulator for a few seconds for realistic volume;
-  4. checks /findings, /events, /stats, the SSE /stream and the audit chain;
+  4. checks /findings, /events, /stats and the audit chain (with --postgres the
+     audit chain and approvals must work, not just be skipped);
   5. (--browser) opens the dashboard, waits for live data, checks it renders
      the findings with no console errors, and optionally takes screenshots.
 
@@ -38,10 +43,19 @@ PORT = int(os.environ.get("E2E_PORT", "8000"))  # the dashboard hardcodes :8000
 BASE = f"http://localhost:{PORT}"
 
 failures: list[str] = []
+results: list[dict] = []
+_section = ""
+
+
+def section(title: str) -> None:
+    global _section
+    _section = title
+    print(f"\n{title}")
 
 
 def check(ok: bool, what: str) -> None:
     print(f"  {'PASS' if ok else 'FAIL'}  {what}")
+    results.append({"section": _section, "check": what, "passed": bool(ok)})
     if not ok:
         failures.append(what)
 
@@ -88,7 +102,7 @@ def ingest(agent: str, session: str, **flow) -> list[dict]:
 
 
 def scripted_traffic() -> None:
-    print("\n[2] scripted traffic: known-good must stay quiet, known-bad must be explained")
+    section("[2] scripted traffic: known-good must stay quiet, known-bad must be explained")
     s = "e2e-session"
     good = ingest("recon-bot", s, host="ledger.internal", path="/v1/transactions", method="GET")
     check(good == [], "approved host -> no finding")
@@ -125,10 +139,10 @@ def scripted_traffic() -> None:
 
 
 def simulator() -> None:
-    print("\n[3] fintech simulator (6 agents, mixed normal/attack traffic) for ~8s")
+    section("[3] fintech simulator (6 agents, mixed normal/attack traffic) for ~8s")
     proc = subprocess.Popen(  # nosec B603 - fixed argv
         [sys.executable, "examples/phase1/fintech_sim/sim.py", "--rate", "0.15", "--burst", "2",
-         "--attack-prob", "0.35", "--no-color"],
+         "--attack-prob", "0.35", "--no-color", "--api", BASE + "/ingest"],
         cwd=ROOT,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
@@ -141,8 +155,8 @@ def simulator() -> None:
         proc.kill()
 
 
-def api_checks() -> None:
-    print("\n[4] read APIs")
+def api_checks(postgres: bool) -> None:
+    section("[4] read APIs")
     findings = call("/findings?limit=500")["items"]
     events = call("/events?limit=500")["items"]
     stats = call("/stats")
@@ -155,13 +169,23 @@ def api_checks() -> None:
     check("Agent Sentinel" in html, "GET / serves the dashboard")
     try:
         v = call("/audit-log/verify")
-        check(bool(v.get("valid", v.get("ok", True))), f"audit chain verifies ({v})")
-    except Exception as exc:  # PostgreSQL-only feature on some builds
-        print(f"  skip  audit chain verify ({exc})")
+        check(v.get("verified") is True, f"audit chain verifies ({v})")
+    except Exception as exc:  # PostgreSQL-only: DuckDB answers 501
+        if postgres:
+            check(False, f"audit chain verifies ({exc})")
+        else:
+            print(f"  skip  audit chain verify ({exc})")
+    if postgres:
+        approvals = call("/approvals?limit=1000")["items"]
+        high = [f for f in findings if f.get("severity") in {"high", "critical"}]
+        check(len(approvals) >= 1 and len(high) >= 1,
+              f"high findings get approval records ({len(approvals)} approvals, {len(high)} high findings)")
+        audit = call("/audit-log?limit=5")["items"]
+        check(len(audit) >= 1, f"audit log has entries ({len(audit)} read back)")
 
 
 def browser(shots: Path | None) -> None:
-    print("\n[5] dashboard in headless Chromium")
+    section("[5] dashboard in headless Chromium")
     from playwright.sync_api import sync_playwright
 
     cdn = os.environ.get("E2E_CDN_DIR")
@@ -217,23 +241,54 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--browser", action="store_true", help="also drive the dashboard in headless Chromium")
     ap.add_argument("--shots", type=Path, help="directory for dashboard screenshots (implies --browser)")
+    ap.add_argument("--url", help="test a server that is already running (e.g. docker compose) at this URL")
+    ap.add_argument("--postgres", action="store_true", help="the server uses PostgreSQL: require audit chain and approvals")
+    ap.add_argument("--report", type=Path, help="write the check results as JSON to this file")
     args = ap.parse_args()
 
-    print("[1] starting the server")
-    server = start_server()
-    try:
+    global BASE
+    server = None
+    if args.url:
+        BASE = args.url.rstrip("/")
+        section(f"[1] using the running server at {BASE}")
+        try:
+            healthy = call("/healthz").get("status") == "ok"
+        except (OSError, ValueError) as exc:
+            sys.exit(f"server at {BASE} is not reachable: {exc}")
+        check(healthy, f"server healthy on {BASE}")
+    else:
+        section("[1] starting the server")
+        server = start_server()
         check(True, f"server healthy on {BASE}")
+    try:
         scripted_traffic()
         simulator()
-        api_checks()
+        api_checks(args.postgres)
         if args.browser or args.shots:
             browser(args.shots)
     finally:
-        server.terminate()
-        try:
-            server.wait(timeout=10)
-        except subprocess.TimeoutExpired:
-            server.kill()
+        if server:
+            server.terminate()
+            try:
+                server.wait(timeout=10)
+            except subprocess.TimeoutExpired:
+                server.kill()
+    if args.report:
+        args.report.parent.mkdir(parents=True, exist_ok=True)
+        args.report.write_text(json.dumps({"base_url": BASE, "postgres": args.postgres,
+                                           "passed": not failures, "checks": results}, indent=2))
+    summary = os.environ.get("GITHUB_STEP_SUMMARY")
+    if summary:  # GitHub Actions: show the results on the run page
+        rows = "\n".join(
+            f"| {r['section']} | {r['check']} | {'✅' if r['passed'] else '❌'} |" for r in results
+        )
+        passed = sum(r["passed"] for r in results)
+        with open(summary, "a", encoding="utf-8") as fh:
+            fh.write(
+                f"### End-to-end checks against {BASE}"
+                f"{' (PostgreSQL)' if args.postgres else ''}: {passed}/{len(results)} passed\n\n"
+                f"| Step | Check | Result |\n|---|---|---|\n{rows}\n"
+            )
     print(f"\n{'FAILED' if failures else 'ALL CHECKS PASSED'}" + (f": {len(failures)} failing" if failures else ""))
     return 1 if failures else 0
 

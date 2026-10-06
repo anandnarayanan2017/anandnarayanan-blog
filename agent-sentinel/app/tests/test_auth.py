@@ -516,3 +516,57 @@ def test_malformed_agent_ids_claim_is_treated_as_absent_not_as_empty():
     character-by-character allow-list."""
     p = _principal(["sentinel.write"], agent_ids="recon-bot")
     assert p.allowed_agent_ids is None
+
+
+def test_verify_token_rejects_hs256_forged_with_the_public_key(monkeypatch):
+    """CVE-2026-85394 (python-jose <= 3.5.0, no fixed release): an attacker
+    holding the service's public key can forge an HS256 token, keyed with the
+    DER-encoded public key, that verifies *when algorithms are not
+    restricted*. _verify_token pins algorithms=["RS256"]; this proves the
+    forged token is rejected while a genuinely RS256-signed one is accepted.
+    CI's pip-audit ignores this CVE on the strength of this test."""
+    pytest.importorskip("jose")
+    from cryptography.hazmat.primitives import hashes, hmac, serialization
+    from cryptography.hazmat.primitives.asymmetric import padding, rsa
+    from jose import jwk
+
+    auth = _reload_auth(monkeypatch, tenant="tenant-1", client_id="client-1")
+    key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+    pub_pem = key.public_key().public_bytes(
+        serialization.Encoding.PEM, serialization.PublicFormat.SubjectPublicKeyInfo
+    )
+    pub_der = key.public_key().public_bytes(
+        serialization.Encoding.DER, serialization.PublicFormat.SubjectPublicKeyInfo
+    )
+    public_jwk = jwk.construct(pub_pem, "RS256").to_dict()
+    public_jwk["kid"] = "kid-1"
+    monkeypatch.setattr(auth, "_get_jwks", lambda force=False: {"keys": [public_jwk]})
+
+    def _b64(b: bytes) -> str:
+        return base64.urlsafe_b64encode(b).rstrip(b"=").decode()
+
+    claims = {
+        "oid": "attacker",
+        "roles": ["sentinel.admin"],
+        "aud": "client-1",
+        "iss": "https://login.microsoftonline.com/tenant-1/v2.0",
+        "exp": 4_102_444_800,
+    }
+
+    def _token(alg: str) -> str:
+        header = _b64(json.dumps({"alg": alg, "typ": "JWT", "kid": "kid-1"}).encode())
+        body = _b64(json.dumps(claims).encode())
+        signing_input = f"{header}.{body}".encode()
+        if alg == "HS256":
+            mac = hmac.HMAC(pub_der, hashes.SHA256())
+            mac.update(signing_input)
+            sig = mac.finalize()
+        else:
+            sig = key.sign(signing_input, padding.PKCS1v15(), hashes.SHA256())
+        return f"{header}.{body}.{_b64(sig)}"
+
+    assert auth._verify_token(_token("RS256"))["oid"] == "attacker"  # control: setup is valid
+
+    with pytest.raises(HTTPException) as exc:
+        auth._verify_token(_token("HS256"))
+    assert exc.value.status_code == 401

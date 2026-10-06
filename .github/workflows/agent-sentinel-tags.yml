@@ -1,0 +1,39 @@
+name: Tag Agent Sentinel parts
+# When a part's write-up first lands on main, tag that commit
+# agent-sentinel-part-N so readers can check out the code exactly as the part
+# describes it. Existing tags are never moved.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "agent-sentinel/docs/blog/technical-details/**"
+      - ".github/workflows/agent-sentinel-tags.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: agent-sentinel-tags
+  cancel-in-progress: false
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Tag newly published parts
+        run: |
+          set -euo pipefail
+          git fetch --tags --quiet
+          for f in agent-sentinel/docs/blog/technical-details/[0-9][0-9]-*.md; do
+            n=$((10#$(basename "$f" | cut -c1-2)))
+            tag="agent-sentinel-part-$n"
+            if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
+              echo "$tag exists, left as is"
+              continue
+            fi
+            git tag "$tag" "$GITHUB_SHA"
+            git push origin "refs/tags/$tag"
+            echo "created $tag at $GITHUB_SHA" | tee -a "$GITHUB_STEP_SUMMARY"
+          done

@@ -1,0 +1,57 @@
+# Local stack: Agent Sentinel (API + dashboard) on PostgreSQL.
+#
+#   docker compose up --build -d          # dashboard at http://localhost:8000
+#   docker compose --profile demo up -d   # ...plus the fintech traffic simulator
+#   docker compose down -v                # stop and delete the database
+#
+# Authentication is OFF (SENTINEL_DEV_MODE=1) so it runs without an Entra ID
+# tenant. Ports are published on 127.0.0.1 only; never expose this stack as is.
+# For Entra ID sign-in, set SENTINEL_DEV_MODE=0 plus AZURE_TENANT_ID and
+# AZURE_CLIENT_ID.
+name: agent-sentinel
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: sentinel
+      POSTGRES_PASSWORD: sentinel   # local demo only
+      POSTGRES_DB: sentinel
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sentinel -d sentinel"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  sentinel:
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://sentinel:sentinel@postgres:5432/sentinel
+      SENTINEL_POLICY: ${SENTINEL_POLICY:-policies/fintech.yaml}
+      SENTINEL_DEV_MODE: ${SENTINEL_DEV_MODE:-1}
+      SENTINEL_CORS_ORIGINS: http://localhost:8000
+      AZURE_TENANT_ID: ${AZURE_TENANT_ID:-}
+      AZURE_CLIENT_ID: ${AZURE_CLIENT_ID:-}
+    ports:
+      # The dashboard calls the API on :8000, so keep the host port at 8000.
+      - "127.0.0.1:8000:8000"
+
+  simulator:
+    profiles: ["demo"]
+    image: python:3.12-slim
+    depends_on:
+      sentinel:
+        condition: service_healthy
+    working_dir: /work   # sim.py looks for policies/fintech.yaml here
+    volumes:
+      - ./examples/phase1/fintech_sim:/sim:ro
+      - ./policies:/work/policies:ro
+    command: ["python", "/sim/sim.py", "--api", "http://sentinel:8000/ingest", "--no-color"]
+
+volumes:
+  pgdata:

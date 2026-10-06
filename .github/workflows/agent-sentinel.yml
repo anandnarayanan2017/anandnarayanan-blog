@@ -38,5 +38,25 @@ jobs:
         run: bandit -q -r app/sentinel -ll
       # PYSEC-2026-1325 (ecdsa, no fixed release): pulled in by python-jose, but
       # api/auth.py accepts RS256 only, so ecdsa never verifies a token.
+      # CVE-2026-85394 (python-jose <= 3.5.0, no fixed release): HS256 tokens
+      # forged with the public key verify only when algorithms are unrestricted;
+      # api/auth.py pins RS256, and test_verify_token_rejects_hs256_forged_with_
+      # the_public_key proves the forged token is rejected.
       - name: Dependency audit
-        run: pip-audit --skip-editable --ignore-vuln PYSEC-2026-1325
+        run: pip-audit --skip-editable --ignore-vuln PYSEC-2026-1325 --ignore-vuln CVE-2026-85394
+
+  docker-e2e:
+    # Builds the image and runs the end-to-end checks against the compose stack
+    # (Agent Sentinel on PostgreSQL), so the audit chain and approvals are
+    # exercised too. Results appear on the run's summary page.
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: agent-sentinel
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Docker end-to-end
+        run: scripts/docker_e2e.sh

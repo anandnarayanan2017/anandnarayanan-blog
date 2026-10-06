@@ -230,3 +230,6 @@ public/images/agent-sentinel/
 
 # Agent Sentinel local databases
 *.duckdb
+
+# Agent Sentinel docker end-to-end report
+agent-sentinel/e2e-docker-report.json
