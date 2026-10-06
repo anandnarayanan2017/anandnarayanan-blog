@@ -7,7 +7,7 @@ requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
 authors = [{ name = "Agent Sentinel contributors" }]
 dependencies = [
-    "pydantic>=2.6",
+    "pydantic>=2.13.5",
     "duckdb>=0.10",
     "pyyaml>=6.0",
     "fastapi>=0.110",
@@ -17,7 +17,7 @@ dependencies = [
 
 [project.optional-dependencies]
 # Phase 1
-proxy     = ["mitmproxy>=10.0"]
+proxy     = ["mitmproxy>=11.0.2"]
 # Phase 2 — real cloud SDK interceptors
 azure     = ["openai>=1.30"]
 anthropic = ["anthropic>=1.8.0"]
@@ -25,11 +25,11 @@ cloud     = ["openai>=1.30", "anthropic>=1.8.0"]
 # Phase 3 — persistent storage + SIEM
 postgres  = ["psycopg2-binary>=2.9"]
 siem      = ["psycopg2-binary>=2.9", "azure-monitor-ingestion>=1.0", "azure-identity>=1.25.3"]
-auth      = ["msal>=1.28", "python-jose[cryptography]>=3.4"]
+auth      = ["msal>=1.39.0", "python-jose[cryptography]>=3.4"]
 # Development
 dev = [
     "pytest>=8.0",
-    "httpx>=0.27",
+    "httpx>=0.28.1",
     "ruff==0.16.9",
     "python-dotenv>=1.0",
     "mypy>=2.2.0",
@@ -37,7 +37,7 @@ dev = [
     "bandit>=1.8",
     "types-PyYAML>=6.0",
     "types-psycopg2>=2.9.21.20260911",
-    "types-python-jose>=3.3",
+    "types-python-jose>=3.5.0.20260408",
 ]
 
 [project.scripts]
