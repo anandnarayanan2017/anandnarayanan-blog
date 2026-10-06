@@ -1,0 +1,53 @@
+name: Commit policy
+# Commits must carry only the human author: no AI co-author trailers, AI
+# session links or "Generated with" lines. Checked on every PR (all of its
+# commits, since a squash merge copies their trailers into main) and, as a
+# backstop, on every push to main. Make "commit-policy" a required status
+# check in the branch ruleset so a failing PR cannot be merged.
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  commit-policy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: No AI co-author or session lines
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          set -euo pipefail
+          pattern='^[[:space:]*]*co-authored-by:.*(claude|anthropic)|^[[:space:]*]*claude-session:|generated with \[claude code\]|claude\.ai/code/session_'
+          if [ -z "${BASE:-}" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ]; then
+            range="$HEAD"
+          else
+            range="$BASE..$HEAD"
+          fi
+          bad=0
+          for c in $(git rev-list --no-merges "$range"); do
+            if git show -s --format=%B "$c" | grep -Eiq "$pattern"; then
+              echo "::error::commit $(git show -s --format='%h %s' "$c") has an AI co-author or session line:"
+              git show -s --format=%B "$c" | grep -Ei "$pattern" | sed 's/^/    /'
+              bad=1
+            fi
+          done
+          # The PR description only reaches main if the repo squashes with the
+          # PR description as the message, so this is a warning, not a failure.
+          if printf '%s\n%s\n' "${PR_TITLE:-}" "${PR_BODY:-}" | grep -Eiq "$pattern"; then
+            echo "::warning::the PR title or description has an AI co-author or session line; remove it before a squash merge"
+          fi
+          if [ "$bad" = 1 ]; then
+            echo "Remove those lines (git rebase -i, reword) and push again."
+            exit 1
+          fi
+          echo "No AI co-author or session lines in $(git rev-list --no-merges --count "$range") commit(s)."
