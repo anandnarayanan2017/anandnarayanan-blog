@@ -165,7 +165,7 @@ agents:
       Azure cloud model provider.  Sentinel monitors for drift, exfil,
       and shadow model usage just as it does for the Anthropic-hosted twin.
     allowed_hosts:
-      - agent-sentinel-openai.openai.azure.com   # Azure OpenAI resource endpoint
+      - agent-sentinel-openai.openai.azure.com   # Azure OpenAI endpoint; replace with your own resource host
       - payments.internal
       - swift.internal
       - sepa.internal

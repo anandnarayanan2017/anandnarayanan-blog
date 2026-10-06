@@ -66,7 +66,7 @@ see, and it records and flags rather than blocks.
 A few short parts, each one design decision and why it was made:
 
 1. **Why AI agents need a flight recorder**: this part.
-2. From Simulated Traffic to Real Model Calls: record first, block later, and why recording must never break the agent.
+2. [From Simulated Traffic to Real Model Calls](02-simulation-to-real-models.md): record first, block later, and why recording must never break the agent.
 3. Rules First, Statistics Second: why a readable rulebook comes before any AI model.
 4. The Enterprise Foundation: identity, audit trail and human approvals.
 5. Feeding the SOC, and What's Next: evidence for your existing SIEM, not another dashboard.
@@ -219,4 +219,4 @@ and the attacks. `docs/EVAL_PAYMENTS_BOT.md` (released with Part 3) calls this t
 validity ceiling" and declines to present the numbers as real-world
 performance.
 
-Next: Part 2 — From Simulated Traffic to Real Model Calls.
+Next: [Part 2 — From Simulated Traffic to Real Model Calls](02-simulation-to-real-models.md).

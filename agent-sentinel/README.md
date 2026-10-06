@@ -77,6 +77,16 @@ open <http://localhost:8000>, and in a second terminal run
 `python examples/phase1/fintech_sim/sim.py` (or `sentinel demo` for the scripted attack).
 Dev mode turns authentication off; never use it on a reachable host.
 
+## Try each part locally
+
+Everything below runs on a laptop with no cloud account unless it says so.
+Each command assumes the virtual environment above is active.
+
+| Part | What to run | What you should see |
+|---|---|---|
+| 1 | `python scripts/e2e.py`, or the "explore by hand" steps below | Findings for unapproved hosts, tools and models in the dashboard |
+| 2 | `bash start_phase2.sh --azure --dry-run --attack` | Simulated Azure OpenAI calls recorded and flagged; the dashboard stays up at <http://localhost:8000> until Ctrl+C. Real calls need `pip install -e ".[cloud]"` and the keys in `examples/phase2/.env.example` |
+
 ## References you can't follow from here
 
 This is a trimmed copy of the private Agent Sentinel product repository. Code
