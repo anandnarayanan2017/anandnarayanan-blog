@@ -3,8 +3,9 @@ on:
   push:
     branches: [main]
     paths: ["agent-sentinel/**", ".github/workflows/agent-sentinel.yml"]
+  # No path filter on PRs: the main ruleset requires the "test" check, and a
+  # filtered-out workflow never reports it, which blocks every site-only PR.
   pull_request:
-    paths: ["agent-sentinel/**", ".github/workflows/agent-sentinel.yml"]
 permissions:
   contents: read
 concurrency:
