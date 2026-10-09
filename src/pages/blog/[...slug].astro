@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection, render } from "astro:content";
+import { SITE, fmtLong, isoDate } from "../../consts";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
@@ -9,20 +10,20 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content } = await render(post);
-const fmt = (d) => d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+const download = `/downloads/${post.id}`;
 ---
-<BaseLayout title={post.data.title} description={post.data.excerpt} image={post.data.image} type="article">
-  <article class="max-w-2xl mx-auto px-5 py-10">
-    <a href="/" class="inline-flex items-center gap-2 text-sm font-medium mb-8 text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300">← All posts</a>
-    <div class="flex flex-wrap gap-2 mb-4">
-      {post.data.tags.map((t) => (
-        <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300">{t}</span>
-      ))}
+<BaseLayout title={post.data.title} description={post.data.excerpt} image={post.data.image} type="article" nav="writing">
+  <article class="article">
+    <a class="back" href="/">All writing</a>
+    <div class="eyebrow" style="margin-top:32px">{post.data.tags.join(" · ")}</div>
+    <h1>{post.data.title}</h1>
+    <div class="meta">
+      {SITE.name} · <time datetime={isoDate(post.data.date)}>{fmtLong(post.data.date)}</time>
+      {post.data.readTime && <> · {post.data.readTime} min read</>}
     </div>
-    <h1 class="text-3xl sm:text-4xl font-bold leading-tight tracking-tight mb-4 text-slate-900 dark:text-white">{post.data.title}</h1>
-    <div class="flex items-center gap-4 text-sm mb-10 text-slate-500 dark:text-slate-400">
-      <span>{fmt(post.data.date)}</span>
-      {post.data.readTime && <span>{post.data.readTime} min read</span>}
+    <div class="article-downloads" role="group" aria-label="Download article">
+      <a href={`${download}.md`} download={`${post.id}.md`}>Download Markdown</a>
+      <a href={`${download}.html`} download={`${post.id}.html`}>Download HTML</a>
     </div>
     <div class="post-content">
       <Content />
