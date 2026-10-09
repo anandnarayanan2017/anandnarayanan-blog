@@ -221,6 +221,9 @@ __marimo__/
 
 # Website (Astro)
 node_modules/
+# The Python patterns above (lib/, downloads/) must not hide site source
+!src/lib/
+!src/pages/downloads/
 .astro/
 .DS_Store
 
