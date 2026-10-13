@@ -12,5 +12,4 @@ export const SITE = {
   // Default social-preview image (1200x627) for pages without their own.
   ogImage: "/images/agent-sentinel/01-why-agents-need-a-flight-recorder-1.png",
   email: "anandkn.2026@gmail.com",
-  archive: "https://anandnarayanan.wordpress.com/", // old blog, linked from About
 };
