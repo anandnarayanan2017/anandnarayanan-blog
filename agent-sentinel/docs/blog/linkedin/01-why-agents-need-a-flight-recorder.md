@@ -12,7 +12,7 @@ Agent Sentinel works like a flight recorder. It doesn't fly the plane. It makes 
 
 Blocking comes later, on the roadmap. You can't safely block what you can't yet explain.
 
-This is Part 1 of a 10-part series on building it.
+This is Part 1 of a 5-part series on building it.
 Next week: Part 2, From Simulated Traffic to Real Model Calls.
 
 If an auditor asked today what your AI agents did last week, what could you show them?

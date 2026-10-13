@@ -96,6 +96,9 @@ for (const p of parts) {
     "",
   ].join("\n");
   writeFileSync(join(OUT_POSTS, `agent-sentinel-${p.slug}.md`), out);
-  cpSync(join(blog, "images", img), join(OUT_IMAGES, img));
+  // Every image of this part: <slug>-1.png (the hero) plus any it embeds.
+  for (const f of readdirSync(join(blog, "images")).filter((f) => f.startsWith(`${p.slug}-`))) {
+    cpSync(join(blog, "images", f), join(OUT_IMAGES, f));
+  }
 }
 console.log(`synced ${parts.length} part(s): ${[...published].join(", ")}`);
