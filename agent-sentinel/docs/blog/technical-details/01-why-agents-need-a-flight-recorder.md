@@ -85,6 +85,25 @@ The [detection engine](../../../app/sentinel/detection/engine.py) implements
 these checks; the [pipeline tests](../../../app/tests/test_pipeline.py) also
 exercise disallowed destinations and oversized payloads.
 
+The same three steps were then sent to a running Sentinel server (fintech
+policy, in-memory store, development mode) through its `/ingest` API,
+alongside a few seconds of simulated traffic from the six demo fintech agents. Steps 1
+and 2 produced no findings. Step 3 produced the same two HIGH findings, and
+the dashboard showed them as they arrived:
+
+![Agent Sentinel dashboard after the Part 1 scenario: severity counts, findings timeline, per-agent status, top triggered rules and compliance coverage](../images/01-why-agents-need-a-flight-recorder-2.png)
+
+Opening the `net.host_not_allowed` finding for `recon-bot` shows the evidence
+a reviewer works from: what happened in plain language, the violated policy
+clause, and the evidence chain (agent, session, action, host, 250,000 bytes
+out, and a redacted body preview):
+
+![Evidence drawer for recon-bot's transfer to attacker-exfil.example: explanation, policy clause and evidence chain](../images/01-why-agents-need-a-flight-recorder-3.png)
+
+The screenshots come from a local run on 13 October 2026, the same day the
+end-to-end check (`scripts/e2e.py --browser`) passed against this code. The
+traffic was sent straight to the API; no live collector captured it.
+
 ## What makes the record trustworthy?
 
 The [event and finding schema](../../../app/sentinel/schema/events.py) keeps
