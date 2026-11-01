@@ -1,0 +1,54 @@
+name: AI-assisted SDLC checks
+# Runs the code behind the AI-assisted SDLC series against a real PostgreSQL.
+# Part 1, examples/double-booking: the check-then-insert race is run and its
+# result reported on the run's summary page (it varies, which is the point), then the
+# fixed version must pass its tests, including exactly one 201 of 20 simultaneous bookings.
+# No path filter, so the job can be a required check.
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: ai-assisted-sdlc-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  double-booking:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rooms
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d rooms" --health-interval 2s --health-retries 15
+    defaults:
+      run:
+        working-directory: ai-assisted-sdlc/examples/double-booking
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/rooms
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ai-assisted-sdlc/examples/double-booking/package-lock.json
+      - run: npm ci
+      - run: npm audit --omit=dev --audit-level=high
+      - name: The race (check-then-insert, no constraint), reported
+        run: |
+          {
+            echo "### Part 1: twenty simultaneous bookings, check-then-insert"
+            echo '```'
+            npm run --silent race
+            echo '```'
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: The fix (exclusion constraint) must pass
+        run: npm run verify

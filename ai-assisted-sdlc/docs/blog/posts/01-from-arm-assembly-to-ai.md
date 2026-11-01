@@ -100,6 +100,7 @@ More layers. Same question:
 
 ## References and further reading
 
+- **The booking specification, as code:** [examples/double-booking](https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc/examples/double-booking). The twenty-request test, the check-then-insert attempt an AI agent wrote first (it booked the room ten times), and the database constraint that fixed it. Runs in CI on every change.
 - **Specifications over wishes:** David Thomas and Andrew Hunt, *The Pragmatic Programmer*, 20th Anniversary Edition (Addison-Wesley, 2019). Its point that no one knows exactly what they want is why “Build a booking API” needs a specification.
 - **The arrows:** [The fallacies of distributed computing](https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing), attributed to L Peter Deutsch and colleagues at Sun Microsystems. The network is not reliable, latency is not zero, and so on.
 - **Booking the boardroom ten times:** Martin Kleppmann, *Designing Data-Intensive Applications* (O’Reilly), chapter on transactions. It uses a meeting-room booking system to explain write skew and why the rule belongs in the database.
