@@ -28,8 +28,8 @@ site is built and published from the same repository that holds that evidence.
 
 | Folder | Series | What it covers |
 |---|---|---|
-| [`agent-sentinel/`](agent-sentinel/) | Agent Sentinel | An explainable runtime observability and policy-detection layer for AI agents in regulated environments: detect, explain, export. The code, tests, policies and a local Docker stack live in the folder. |
-| [`ai-assisted-sdlc/`](ai-assisted-sdlc/) | AI-assisted SDLC | What it takes to delegate software work to AI agents and still know it works: specifications, harnesses, deterministic checks and human approval. The essays live here; the harness code lives in its own repository. |
+(https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/agent-sentinel) | Agent Sentinel | An explainable runtime observability and policy-detection layer for AI agents in regulated environments: detect, explain, export. The code, tests, policies and a local Docker stack live in the folder. |
+|(https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc) | AI-assisted SDLC | What it takes to delegate software work to AI agents and still know it works: specifications, harnesses, deterministic checks and human approval. The essays live here; the harness code lives in its own repository. |
 
 Each series folder is the single source of truth for its posts. `docs/blog/series.json` holds its release
 dates, excerpts and home-page card.
@@ -37,11 +37,7 @@ dates, excerpts and home-page card.
 ## How the site is built
 
 - [Astro](https://astro.build) with Tailwind CSS. Pages and layout are in `src/`.
-- `scripts/sync-series.mjs` runs before every `npm run dev` and `npm run build`. It generates the site's
-  posts and images from each series folder. The generated files are git-ignored, so a post is only ever
-  edited in its series folder.
-- Pushing to `main` publishes the site: GitHub Actions builds it and syncs it to Amazon S3 behind
-  CloudFront, using short-lived AWS credentials through OIDC.
+
 
 ```bash
 npm ci
