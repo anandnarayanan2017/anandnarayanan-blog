@@ -42,7 +42,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm audit --omit=dev --audit-level=high
-      - run: npm run build   # prebuild generates the posts from agent-sentinel/
+      - run: npm run build   # prebuild generates the posts from every series folder (scripts/sync-series.mjs)
       # Third-party action: SHA-pinned (tag v6.3.0, resolved with
       # `git ls-remote https://github.com/aws-actions/configure-aws-credentials refs/tags/v6.3.0`).
       - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
