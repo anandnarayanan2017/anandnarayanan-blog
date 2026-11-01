@@ -9,7 +9,25 @@ concurrency:
   group: deploy-blog
   cancel-in-progress: false
 jobs:
+  # Nothing is published unless every new commit is the owner's own and the
+  # owner pushed it or started the run (scripts/check-commits.sh).
+  commit-policy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Owner-only commits, no AI co-author or session lines
+        env:
+          BASE: ${{ github.event.before }}
+          HEAD: ${{ github.sha }}
+          ACTOR: ${{ github.actor }}
+        run: scripts/check-commits.sh
   deploy:
+    needs: commit-policy
+    if: github.actor == 'anandnarayanan2017'
     runs-on: ubuntu-latest
     permissions:
       id-token: write   # OIDC to AWS; no long-lived keys
