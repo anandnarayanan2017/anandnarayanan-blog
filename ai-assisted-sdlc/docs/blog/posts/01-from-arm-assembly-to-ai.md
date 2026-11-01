@@ -22,6 +22,8 @@ In assembly, I knew which register held my value.
 
 In enterprise Java, I sometimes needed three people to explain which service owned it.
 
+The abstraction had moved up a layer. My job hadn’t: know where things live, and what happens when they break.
+
 Eventually, I became an architect.
 
 I drew boxes and connected them with arrows.
@@ -84,7 +86,7 @@ After twenty years, I find myself using old lessons in a new setting.
 
 Measure the result. Question assumptions. Check failure paths. Understand the arrows.
 
-AI makes producing code faster. That makes engineering judgment valuable at more points in the process.
+AI makes producing code faster. It doesn’t make deciding what ‘correct’ means any faster.
 
 I began by writing instructions for an ARM processor.
 
