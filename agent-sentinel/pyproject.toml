@@ -28,7 +28,7 @@ siem      = ["psycopg2-binary>=2.9", "azure-monitor-ingestion>=1.0", "azure-iden
 auth      = ["msal>=1.39.0", "python-jose[cryptography]>=3.4"]
 # Development
 dev = [
-    "pytest>=8.0",
+    "pytest>=9.2.0",
     "httpx>=0.28.1",
     "ruff==0.16.9",
     "python-dotenv>=1.2.4",
