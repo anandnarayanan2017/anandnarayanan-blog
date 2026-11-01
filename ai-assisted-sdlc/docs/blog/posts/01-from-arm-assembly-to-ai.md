@@ -96,7 +96,7 @@ More layers. Same question:
 
 **How do we know it works?**
 
-[Explore the project on GitHub](https://github.com/anandnarayanan2017/ai-assisted-sdlc)
+[Follow the series on GitHub](https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc)
 
 ## References and further reading
 
