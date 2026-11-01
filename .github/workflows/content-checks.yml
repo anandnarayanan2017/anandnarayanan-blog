@@ -1,0 +1,59 @@
+name: Content checks
+# Spelling and internal links for posts, READMEs and the built site. Both jobs
+# run on every pull request (no path filter) so they can be required checks.
+# External links are checked weekly instead: other sites go down, and that
+# should not block a merge.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 5 * * 1"   # Mondays 05:17 UTC: external links
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: content-checks-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  spelling:
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: crate-ci/typos@7f9d0819ca1c008ade73f4b41fa9d258d48f605b # v1.51.1
+
+  links:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Internal links (built site and Markdown)
+        if: github.event_name != 'schedule'
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          args: >-
+            --offline --no-progress --root-dir ${{ github.workspace }}/dist
+            --exclude-path node_modules --exclude-path src/content
+            'dist/**/*.html' './**/*.md'
+          fail: true
+      - name: External links (weekly, report only)
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          args: >-
+            --no-progress --max-retries 3 --accept 200..=299,403,429
+            --exclude-path node_modules --exclude-path src/content
+            'dist/**/*.html' './**/*.md'
+          fail: false
