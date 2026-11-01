@@ -1,0 +1,21 @@
+{
+  "_comment": "Site settings for this series. dates: site date (YYYY-MM-DD) per part; every part in posts/ needs one or the build fails. excerpts: the summary shown on cards and in link previews. card: the home-page series card. Edit freely.",
+  "name": "AI-assisted SDLC",
+  "layout": "essay",
+  "tags": ["AI-assisted SDLC", "Software Architecture", "AI Agents"],
+  "card": {
+    "order": 2,
+    "badge": "Series",
+    "title": "AI-assisted SDLC: engineering with agents",
+    "description": "What it takes to delegate software work to AI agents and still know it works: specifications, harnesses, deterministic checks and human approval. Start with Part 1.",
+    "codeLabel": "Code, tests and design records:",
+    "codeUrl": "https://github.com/anandnarayanan2017/ai-assisted-sdlc",
+    "codeText": "github.com/anandnarayanan2017/ai-assisted-sdlc"
+  },
+  "dates": {
+    "1": "2026-11-01"
+  },
+  "excerpts": {
+    "1": "“Build a booking API” is a wish. Twenty years from ARM assembly to AI agents, and the one question that has not changed: how do we know it works?"
+  }
+}

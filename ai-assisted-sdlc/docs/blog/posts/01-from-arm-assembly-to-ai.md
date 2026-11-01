@@ -1,0 +1,97 @@
+# From ARM Assembly to AI: Twenty Years of Explaining Myself to Computers
+
+![AI-Native SDLC Factory: an architect relaxes with a "Still in control... right?" mug while monkey agents build, test and deploy. Every dashboard check is green; the anomalies panel reads "Boardroom booked 10 times".](../images/01-from-arm-assembly-to-ai-1.png)
+
+*All checks green. Every anomaly red. Spot the problem.*
+
+I started my career writing C and ARM assembly to optimise codecs.
+
+Back then, I would study a loop, examine memory access, and rearrange instructions to save a few CPU cycles.
+
+A small performance improvement could make my day.
+
+Today, my browser uses more memory to display a meeting invitation than some of those systems had available.
+
+I try not to take it personally.
+
+Then I moved into Java enterprise development.
+
+Memory management became somebody else’s responsibility. In return, I met factories, interfaces, dependency injection, and stack traces with enough material for a weekend reading plan.
+
+In assembly, I knew which register held my value.
+
+In enterprise Java, I sometimes needed three people to explain which service owned it.
+
+Eventually, I became an architect.
+
+I drew boxes and connected them with arrows.
+
+The boxes had impressive names. The arrows looked simple.
+
+Those arrows contained authentication, retries, timeouts, network failures, and the small question of what happened if the money left one system but never arrived in the other.
+
+Experience taught me to spend more time asking about the arrows.
+
+Then came the cloud.
+
+Infrastructure became code. Environments could be created in minutes. Scaling became much easier.
+
+So did accidentally leaving something expensive running.
+
+I had progressed from asking, “Why does this take so many cycles?” to “Why does this subscription have seventeen databases?”
+
+And now, AI.
+
+I can type:
+
+“Build a booking API.”
+
+An agent produces endpoints, database models, tests, and documentation.
+
+For a moment, I wonder whether twenty years of engineering was an elaborate training programme for typing one sentence.
+
+Then I review the result.
+
+Right. Still work to do.
+
+**“Build a booking API” is a wish.**
+
+Here is an illustrative specification:
+
+> Twenty people try to book the same room for the same time slot simultaneously. Exactly one request succeeds with HTTP 201. The other nineteen receive HTTP 409. The database enforces the rule.
+
+Now we have something we can design and test.
+
+Without that detail, you can end up with an implementation that passes every happy-path test and books the boardroom ten times.
+
+The dashboard is green.
+
+The meeting is a contact sport.
+
+This is what interests me about AI-assisted development: how much engineering work goes into making a task clear enough to delegate and a result reliable enough to accept.
+
+We need to define behaviour, constraints, failure cases, and the evidence that will convince us it works.
+
+We also need a harness: the context, tools, permissions, and checks surrounding the agent.
+
+Which files can it change? Which commands can it run? What requires review? What happens when a check fails?
+
+“Please be careful” remains a charming security policy.
+
+That thinking is behind my **AI-assisted SDLC project**: exploring how intent, specifications, and a structured development workflow can guide AI-assisted implementation.
+
+After twenty years, I find myself using old lessons in a new setting.
+
+Measure the result. Question assumptions. Check failure paths. Understand the arrows.
+
+AI makes producing code faster. That makes engineering judgment valuable at more points in the process.
+
+I began by writing instructions for an ARM processor.
+
+Now I write instructions for an agent that writes instructions for a processor.
+
+More layers. Same question:
+
+**How do we know it works?**
+
+[Explore the project on GitHub](https://github.com/anandnarayanan2017/ai-assisted-sdlc)

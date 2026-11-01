@@ -224,9 +224,10 @@ node_modules/
 .astro/
 .DS_Store
 
-# Generated from agent-sentinel/ by scripts/sync-series.mjs (single source of truth)
+# Generated from each series folder (<folder>/docs/blog/) by scripts/sync-series.mjs (single source of truth)
 src/content/blog/
 public/images/agent-sentinel/
+public/images/ai-assisted-sdlc/
 
 # Agent Sentinel local databases
 *.duckdb
