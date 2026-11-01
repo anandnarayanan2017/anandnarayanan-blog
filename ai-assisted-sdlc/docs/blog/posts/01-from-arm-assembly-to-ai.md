@@ -97,3 +97,17 @@ More layers. Same question:
 **How do we know it works?**
 
 [Explore the project on GitHub](https://github.com/anandnarayanan2017/ai-assisted-sdlc)
+
+## References and further reading
+
+- **Specifications over wishes:** David Thomas and Andrew Hunt, *The Pragmatic Programmer*, 20th Anniversary Edition (Addison-Wesley, 2019). Its point that no one knows exactly what they want is why “Build a booking API” needs a specification.
+- **The arrows:** [The fallacies of distributed computing](https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing), attributed to L Peter Deutsch and colleagues at Sun Microsystems. The network is not reliable, latency is not zero, and so on.
+- **Booking the boardroom ten times:** Martin Kleppmann, *Designing Data-Intensive Applications* (O’Reilly), chapter on transactions. It uses a meeting-room booking system to explain write skew and why the rule belongs in the database.
+- **Letting the database enforce it:** PostgreSQL documentation, [Exclusion constraints](https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-EXCLUSION), which reject overlapping bookings for the same room.
+- **201 and 409:** [RFC 9110, HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110), sections 15.3.2 (201 Created) and 15.5.10 (409 Conflict).
+- **Agents and harnesses:** Anthropic, [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents) and [Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents).
+- **Engineering discipline for agents:** Matt Pocock, [Skills for real engineers](https://github.com/mattpocock/skills), agent skills grounded in classic software engineering practice.
+
+## Acknowledgements
+
+Thanks to Claude by Anthropic, which I used as a reviewer and editor while writing this post. The ideas, opinions and any mistakes are my own.
