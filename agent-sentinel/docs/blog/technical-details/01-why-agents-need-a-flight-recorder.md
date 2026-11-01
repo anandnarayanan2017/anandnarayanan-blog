@@ -1,6 +1,6 @@
 # Part 1 — Why AI Agents Need a Flight Recorder
 
-> **Reader path:** [LinkedIn post](../linkedin/01-why-agents-need-a-flight-recorder.md) → this design → [code-and-test traceability](../TRACEABILITY.md#publication-traceability)
+> **Reader path:** [LinkedIn post](../linkedin/01-why-agents-need-a-flight-recorder.md) → this article → [design and implementation](#design-and-implementation) → [code-and-test traceability](../TRACEABILITY.md#publication-traceability)
 
 ## What is Agent Sentinel?
 
@@ -14,164 +14,44 @@ each agent did, checks it against rules you wrote, and turns anything
 outside those rules into a plain-language finding your security team and
 auditors can read.
 
-It records the actions its collectors can observe. Whether that record is
-trustworthy also depends on identity, collector coverage and how the evidence
-is stored and protected.
+## One night, one finding
 
-## The use case
-
-The following is an illustrative scenario, not a production incident.
-
-A payments-reconciliation agent runs every night. Its job is to read the
-ledger, ask an approved AI model to summarise discrepancies, and email a
-report to finance. Nothing else.
-
-One night it does something different:
+An illustrative scenario, not a production incident. A payments-reconciliation
+agent runs every night: read the ledger, ask an approved AI model to summarise
+discrepancies, email finance. One night:
 
 1. It reads the ledger. *Allowed.*
 2. It asks the approved model for a summary. *Allowed.*
 3. It sends a 250KB file to a server that isn't on its approved list.
    *Not allowed.*
 
-Agent Sentinel records all three steps as one timeline for that agent, and
-raises a finding for step 3: which agent, where the data went, which rule it
-broke, when, and which regulatory control that relates to. The finding can
-be exported to the security team's existing SIEM.
-
-Today it records and flags the transfer after it happens. Stopping it before
-it happens is on the roadmap.
-
-## The business problem it solves
-
-Ask most firms what their AI agents did last month, and whether they can
-prove it was safe, and the honest answer is "not really":
-
-- **Scattered logs alone don't provide a complete audit trail.** Properly
-  designed logs can be evidence, but connecting the agent, its session, the
-  action and the applicable policy often takes extra work.
-- **The trail is scattered.** Model calls, tool use and network traffic sit
-  in different systems, owned by different teams.
-- **Auditors need readable answers.** "The model scored it 0.87" can't be
-  checked or challenged. "It broke rule X, here is the evidence" can.
-- **Regulators are asking.** In a regulated firm, "we think it was fine" is
-  not an answer to a question about an automated system.
-
-That isn't a technical gap. It's a business risk, in the same category as
-not knowing who has access to your production database.
-
-**In one line:** Agent Sentinel turns what your AI agents did into evidence
-you can show an auditor.
-
-**What it doesn't do (yet):** it only sees what its collectors are set up to
-see, and it records and flags rather than blocks.
-
-## A finding from the detection engine
-
-A local check of the implementation used a synthetic event: agent
-`recon-bot`, session `demo-run`, a POST to `attacker-exfil.example`, and
-250,000 outbound bytes. The test policy allowed only `ledger.internal` and
-set a 100,000-byte per-call limit. Running the published detection engine on
-13 October 2026 produced two HIGH findings:
-
-- `net.host_not_allowed`: the destination was outside `allowed_hosts`.
-- `net.oversize_egress`: 250,000 bytes exceeded `max_bytes_out_per_call=100000`.
-
-Both findings referenced the triggering event ID and included the violated
-policy clause. This is a reproducible demonstration of policy evaluation on a
-normalized event, not proof that a live collector captured a transfer or that
-data was actually stolen.
-
-The [detection engine](../../../app/sentinel/detection/engine.py) implements
-these checks; the [pipeline tests](../../../app/tests/test_pipeline.py) also
-exercise disallowed destinations and oversized payloads.
-
-The same three steps were then sent to a running Sentinel server (fintech
-policy, in-memory store, development mode) through its `/ingest` API,
-alongside a few seconds of simulated traffic from the six demo fintech agents. Steps 1
-and 2 produced no findings. Step 3 produced the same two HIGH findings, and
-the dashboard showed them as they arrived:
+Agent Sentinel records all three steps on one timeline and raises a finding
+for step 3: which agent, where the data went, which rule it broke, and when.
 
 ![Agent Sentinel dashboard after the Part 1 scenario: severity counts, findings timeline, per-agent status, top triggered rules and compliance coverage](../images/01-why-agents-need-a-flight-recorder-2.png)
 
-Opening the `net.host_not_allowed` finding for `recon-bot` shows the evidence
-a reviewer works from: what happened in plain language, the violated policy
-clause, and the evidence chain (agent, session, action, host, 250,000 bytes
-out, and a redacted body preview):
+*The scenario replayed against a local Agent Sentinel server: two HIGH
+findings for the transfer, none for the allowed steps.*
 
-![Evidence drawer for recon-bot's transfer to attacker-exfil.example: explanation, policy clause and evidence chain](../images/01-why-agents-need-a-flight-recorder-3.png)
+## Why it matters
 
-The screenshots come from a local run on 13 October 2026, the same day the
-end-to-end check (`scripts/e2e.py --browser`) passed against this code. The
-traffic was sent straight to the API; no live collector captured it.
+Ask most firms what their AI agents did last month, and whether they can prove
+it was safe, and the honest answer is "not really". Model calls, tool use and
+network traffic sit in different systems, and "the model scored it 0.87" can't
+be checked by an auditor. "It broke rule X, here is the evidence" can.
 
-## What makes the record trustworthy?
-
-The [event and finding schema](../../../app/sentinel/schema/events.py) keeps
-the agent ID, session ID, timestamp and event ID together. A finding carries
-its rule ID, policy clause, triggering event IDs and evidence fragments. That
-makes the explanation traceable: a reviewer can follow the finding back to the
-recorded action instead of accepting a risk score on faith.
-
-There is a separate integrity mechanism for the API audit log. The
-[hash-chain implementation](../../../app/sentinel/storage/audit_chain.py) links
-each audit entry to its predecessor, and the
-[PostgreSQL backend](../../../app/sentinel/storage/pg_store.py) serializes
-updates to the chain head. Verification can detect edited entries and broken
-links.
-
-That protection has a boundary: the hash chain covers the API audit log, not
-every agent event or finding. Someone able to rewrite the database and
-recompute the chain could still alter it consistently. Stronger assurance
-requires anchoring the chain head outside that database, protecting access and
-retention, and validating agent identity at collection. A complete-looking
-timeline is not proof that collectors saw everything.
-
-Regulatory control references help reviewers navigate from a finding to a
-relevant control. They support an audit; they do not, by themselves,
-demonstrate compliance. Applicability, implementation, operating evidence and
-review still need to be assessed.
-
-## What this adds to monitoring and SIEM
-
-Monitoring tells you about requests, errors and latency. A SIEM can correlate
-security events and apply detection rules, including agent-specific rules if
-you build them. Agent Sentinel packages that agent-specific work: a common
-event shape for model, tool and network activity; a declared policy for each
-agent; and findings that link the observed action to the rule and evidence.
-
-The intended handoff is a finding your SOC can investigate in its existing
-SIEM. The value is the agent context and policy-to-evidence link, not an
-assertion that existing monitoring tools cannot do this. Its usefulness
-depends on how much of that work your organization already has in place.
-
-## The trade-off behind rules first
-
-The project's [first architecture decision](../../adr/0001-rules-first-detection.md)
-records the choice between ML-first anomaly detection and explicit policy
-checks. I chose rules first because I wanted the answer to "why did this
-fire?" to be a clause an engineer could inspect and change in a pull request.
-
-The cost is maintaining a policy for each agent, and missing behavior that
-those rules do not describe. Statistical signals add context, but an unusual
-action is not automatically a policy violation. For this payments example,
-checking the destination and payload limit gives a more defensible
-explanation than asking a model to decide whether the transfer looks
-suspicious.
-
-Recording before enforcing is another deliberate boundary. Today, a finding
-can help investigate a transfer after it happens; it cannot recover the data
-or stop the transfer. Pre-action blocking remains a separate engineering step.
+**What it doesn't do (yet):** it only sees what its collectors are set up to
+see, and it flags actions after they happen rather than blocking them.
 
 ## What's in this series
 
-A few short parts, each one design decision and why it was made:
+Five short parts, each one design decision and why it was made:
 
 1. **Why AI agents need a flight recorder**: this part.
 2. From Simulated Traffic to Real Model Calls: record first, block later, and why recording must never break the agent.
 3. Rules First, Statistics Second: why a readable rulebook comes before any AI model.
 4. The Enterprise Foundation: identity, audit trail and human approvals.
 5. Feeding the SOC, and What's Next: evidence for your existing SIEM, not another dashboard.
-
 
 ## Design and implementation
 
@@ -199,7 +79,7 @@ C4Context
   Rel(auditor, agentSentinel, "Reviews read-only evidence", "API / exported findings")
   Rel(ciso, auditor, "Provides audit evidence", "DORA / EU AI Act / CSSF")
   Rel(agentSentinel, siem, "Exports high-fidelity findings", "Log Analytics, webhooks, JSON")
-  Rel(agentSentinel, identity, "Authenticates users, resolves agent identities", "OIDC / Entra ID / Graph")
+  Rel(agentSentinel, identity, "Authenticates users, resolves agent identities", "OIDC / Entra ID")
   Rel(agents, agentSentinel, "Emit model, tool, network telemetry", "SDK, proxy, network collector")
   Rel(agents, identity, "Authenticate as workloads", "OAuth2 / managed identity")
   Rel(agents, llms, "Invoke models", "HTTPS / provider APIs")
@@ -251,6 +131,72 @@ collector -> parser -> AgentEvent -> detection engine -> Finding -> storage -> d
 | [`app/sentinel/storage/pg_store.py`](../../../app/sentinel/storage/pg_store.py) | PostgreSQL / TimescaleDB storage for enterprise-grade persistence |
 | [`app/sentinel/api/main.py`](../../../app/sentinel/api/main.py) | REST API, SSE stream, approvals, audit log, dashboard serving |
 | [`dashboard/index.html`](../../../dashboard/index.html) | CISO dashboard with live findings, evidence drawer, approvals, events feed |
+
+### The Part 1 scenario, reproduced
+
+The detection engine was run on a synthetic event: agent `recon-bot`, session
+`demo-run`, a POST to `attacker-exfil.example` with 250,000 outbound bytes,
+under a test policy that allowed only `ledger.internal` and set a
+100,000-byte per-call limit. On 13 October 2026 it produced two HIGH findings:
+
+- `net.host_not_allowed`: the destination was outside `allowed_hosts`.
+- `net.oversize_egress`: 250,000 bytes exceeded `max_bytes_out_per_call=100000`.
+
+Both findings reference the triggering event ID and the violated policy
+clause. The [detection engine](../../../app/sentinel/detection/engine.py)
+implements these checks; the [pipeline tests](../../../app/tests/test_pipeline.py)
+exercise disallowed destinations and oversized payloads.
+
+The same three steps were then sent through the `/ingest` API of a running
+server (fintech policy, in-memory store, development mode), alongside a few
+seconds of simulated traffic from the six demo fintech agents. That run
+produced the dashboard above. Opening the `net.host_not_allowed` finding shows
+what a reviewer works from: the plain-language explanation, the violated
+policy clause, and the evidence chain (agent, session, action, host, bytes out,
+redacted body preview):
+
+![Evidence drawer for recon-bot's transfer to attacker-exfil.example: explanation, policy clause and evidence chain](../images/01-why-agents-need-a-flight-recorder-3.png)
+
+The screenshots come from that local run, the same day the end-to-end check
+(`scripts/e2e.py --browser`) passed against this code. The traffic was sent
+straight to the API: this demonstrates policy evaluation on a normalized
+event, not that a live collector captured a transfer or that data was stolen.
+
+### What makes the record trustworthy
+
+The [event and finding schema](../../../app/sentinel/schema/events.py) keeps
+the agent ID, session ID, timestamp and event ID together. A finding carries
+its rule ID, policy clause, triggering event IDs and evidence fragments, so a
+reviewer can follow it back to the recorded action instead of accepting a risk
+score on faith.
+
+The API audit log has its own integrity mechanism: the
+[hash chain](../../../app/sentinel/storage/audit_chain.py) links each entry to
+its predecessor, and the [PostgreSQL backend](../../../app/sentinel/storage/pg_store.py)
+serializes updates to the chain head, so verification detects edited entries
+and broken links.
+
+The boundaries:
+
+- The hash chain covers the API audit log, not every agent event or finding.
+- Someone able to rewrite the database and recompute the chain could alter it
+  consistently. Stronger assurance needs the chain head anchored outside that
+  database, protected access and retention, and agent identity validated at
+  collection.
+- A complete-looking timeline is not proof that collectors saw everything.
+- Regulatory control references help a reviewer navigate from a finding to a
+  relevant control. They support an audit; they do not demonstrate compliance
+  on their own.
+
+### Next to monitoring and SIEM
+
+Monitoring reports requests, errors and latency. A SIEM correlates security
+events and can run agent-specific rules if you build them. Agent Sentinel
+packages that agent-specific work: one event shape for model, tool and network
+activity, a declared policy per agent, and findings that link each action to
+its rule and evidence. The handoff is a finding your SOC investigates in its
+existing SIEM; how much this adds depends on how much of that work you
+already have.
 
 ### Where the AI actually is
 
@@ -313,6 +259,12 @@ earns its place in the one spot rules cannot reach — **order**. An allow-list
 can confirm `verify_id`, `check_sanctions` and `initiate_wire_transfer` are
 each permitted. It cannot notice the transfer happened *before* the sanctions
 check.
+
+The cost is maintaining a policy for each agent, and missing behavior those
+rules do not describe. Recording before enforcing is the other deliberate
+boundary: a finding helps investigate a transfer after it happens; it cannot
+recover the data or stop it. Pre-action blocking remains a separate
+engineering step.
 
 One caveat, stated because the repo states it: every published figure for that
 model comes from synthetic data the author wrote — both the normal workflows

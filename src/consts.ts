@@ -1,5 +1,5 @@
 export const SITE = {
-  name: "Anand Kumar Narayanan",
+  name: "Anand Narayanan",
   tagline: "Solutions Architect writing about cloud, data platforms, and enterprise AI.",
   intro:
     "I have over 20 years of experience in enterprise architecture across fintech, manufacturing, automotive, and telecom. My fintech background has shaped my interest in designing scalable, secure, and audit-ready cloud, data, and AI platforms, with a particular focus on regulated environments and alignment with CSSF requirements, DORA, and ISO 27001.",
