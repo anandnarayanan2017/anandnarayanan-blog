@@ -85,3 +85,7 @@ review IDs such as `CR-16`, and ADRs other than
 [ADR-0001](docs/adr/0001-rules-first-detection.md). They explain why the code
 is the way it is; nothing here needs them to build, run or test.
 
+## Licence
+
+Code is licensed under [Apache 2.0](LICENSE). The write-ups and images in `docs/blog/` are licensed under
+[CC BY 4.0](LICENSE-CONTENT): reuse them with credit to Anand Narayanan. See [NOTICE](NOTICE).
