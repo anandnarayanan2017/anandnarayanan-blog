@@ -1,0 +1,17 @@
+{
+  "name": "double-booking",
+  "private": true,
+  "type": "module",
+  "description": "AI-assisted SDLC Part 1: twenty simultaneous bookings, exactly one 201, the database enforces the rule.",
+  "license": "Apache-2.0",
+  "scripts": {
+    "verify": "tsc --noEmit && vitest run",
+    "race": "tsx scripts/race.ts"
+  },
+  "dependencies": { "express": "^5.1.0", "pg": "^8.13.0", "zod": "^3.24.0" },
+  "devDependencies": {
+    "@types/express": "^5.0.0", "@types/node": "^22.10.0", "@types/pg": "^8.11.0",
+    "@types/supertest": "^6.0.2", "supertest": "^7.0.0", "tsx": "^4.19.0",
+    "typescript": "^5.7.0", "vitest": "^3.0.0"
+  }
+}

@@ -19,6 +19,13 @@ updates:
     groups:
       site:
         update-types: [minor, patch]
+  - package-ecosystem: npm
+    directory: /ai-assisted-sdlc/examples/double-booking
+    target-branch: develop
+    schedule: { interval: weekly, day: monday }
+    groups:
+      double-booking:
+        update-types: [minor, patch]
   - package-ecosystem: pip
     directory: /agent-sentinel
     target-branch: develop

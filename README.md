@@ -29,7 +29,7 @@ site is built and published from the same repository that holds that evidence.
 | Folder | Series | What it covers |
 |---|---|---|
 | [`agent-sentinel/`](agent-sentinel/) | Agent Sentinel | An explainable runtime observability and policy-detection layer for AI agents in regulated environments: detect, explain, export. The code, tests, policies and a local Docker stack live in the folder. |
-| [`ai-assisted-sdlc/`](ai-assisted-sdlc/) | AI-assisted SDLC | What it takes to delegate software work to AI agents and still know it works: specifications, harnesses, deterministic checks and human approval. The essays live here; the harness code lives in its own repository. |
+| [`ai-assisted-sdlc/`](ai-assisted-sdlc/) | AI-assisted SDLC | What it takes to delegate software work to AI agents and still know it works: specifications, harnesses, deterministic checks and human approval. The essays and the code each part cites live here, starting with Part 1's double-booking example; the full harness lives in its own repository. |
 
 Each series folder is the single source of truth for its posts. `docs/blog/series.json` holds its release
 dates, excerpts and home-page card.
