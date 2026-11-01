@@ -49,7 +49,7 @@ the run's summary page.
 
 ### Where "ten times" comes from
 
-The code is a trimmed copy of the room-booking example in the private `ai-assisted-sdlc` harness repository, where
+The code is a trimmed copy of the room-booking example in the author's own unpublished delivery harness, where
 an AI generator built the API sprint by sprint against these tests. The check-then-insert route was its first
 attempt at the concurrency sprint. The AI evaluator approved it; the deterministic check did not. From the run log:
 
