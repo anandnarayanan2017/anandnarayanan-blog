@@ -29,6 +29,14 @@ jobs:
     needs: commit-policy
     if: github.actor == 'anandnarayanan2017'
     runs-on: ubuntu-latest
+    # Settings > Environments > production: required reviewer (the owner) and
+    # deployment branch main only, so nothing is published without approval.
+    # With an environment, the OIDC subject GitHub sends to AWS becomes
+    # repo:anandnarayanan2017/anandnarayanan-blog:environment:production, and
+    # the github-blog-deploy role's trust policy must allow that subject.
+    environment:
+      name: production
+      url: https://anandnarayanan.net
     permissions:
       id-token: write   # OIDC to AWS; no long-lived keys
       contents: read

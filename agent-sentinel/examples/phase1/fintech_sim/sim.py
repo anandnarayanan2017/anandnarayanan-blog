@@ -844,7 +844,7 @@ AGENTS: dict[str, dict[str, Any]] = {
 
 # ── Attack scenario narratives (printed to console) ───────────────────────────
 
-ATTACK_NARATIVES: dict[str, str] = {
+ATTACK_NARRATIVES: dict[str, str] = {
     "EXFIL": "💀 Prompt injection → data exfiltration",
     "TOOL_CREEP": "🔑 Tool scope creep (privilege escalation)",
     "SHADOW_MODEL": "🤖 Shadow / unapproved model substitution",
@@ -999,7 +999,7 @@ def run(api_url: str, attack_prob: float, rate: float, burst: int) -> None:
                     )
                     sev_col = {"critical": R, "high": OR, "medium": Y, "low": B}.get(worst, GR)
                     status_str = col(sev_col, f"🚨 {worst.upper():8}")
-                    narr = ATTACK_NARATIVES.get(tag, desc)
+                    narr = ATTACK_NARRATIVES.get(tag, desc)
                     rule = findings[0].get("rule_id", "")
                     detail = col(sev_col, f"{host_str:<30} {col(GR, 'rule:')} {rule}")
                     narr_line = col(sev_col, f"       ↳ {narr}")

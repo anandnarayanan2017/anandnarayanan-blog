@@ -1,0 +1,39 @@
+# Dependency update pull requests, opened against develop.
+#
+# The commit-policy check only accepts the owner's own commits, so a Dependabot
+# pull request fails it by design and is never merged as is. To take an update:
+#
+#   git fetch origin <dependabot-branch>
+#   git checkout develop && git cherry-pick FETCH_HEAD
+#   git commit --amend --reset-author --no-edit
+#   git push origin develop
+#
+# Dependabot closes its pull request once develop has the update. Security
+# alerts work independently of this file (Settings > Advanced Security).
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    target-branch: develop
+    schedule: { interval: weekly, day: monday }
+    groups:
+      site:
+        update-types: [minor, patch]
+  - package-ecosystem: pip
+    directory: /agent-sentinel
+    target-branch: develop
+    schedule: { interval: weekly, day: monday }
+    groups:
+      agent-sentinel:
+        update-types: [minor, patch]
+  - package-ecosystem: docker
+    directory: /agent-sentinel
+    target-branch: develop
+    schedule: { interval: weekly, day: monday }
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: develop
+    schedule: { interval: weekly, day: monday }
+    groups:
+      actions:
+        update-types: [minor, patch]

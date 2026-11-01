@@ -1,0 +1,9 @@
+# Spell check (crate-ci/typos), run by .github/workflows/content-checks.yml.
+# typos only flags known misspellings, so British and American spellings both pass.
+[default]
+extend-ignore-re = [
+  'integrity="sha\d{3}-[A-Za-z0-9+/=]+"',  # Subresource Integrity hashes
+]
+
+[files]
+extend-exclude = ["package-lock.json", "LICENSE", "LICENSE-CONTENT", "*.svg"]
