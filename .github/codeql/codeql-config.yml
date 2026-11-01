@@ -1,0 +1,9 @@
+# CodeQL configuration, used by .github/workflows/codeql.yml.
+#
+# Series examples are test-only demonstrations: they run in CI against a
+# throwaway database and are never deployed. Scanning them reports findings
+# such as missing rate limiting on demo Express routes, which do not apply.
+# The site, Agent Sentinel and the workflows are still scanned in full.
+name: anandnarayanan-blog
+paths-ignore:
+  - ai-assisted-sdlc/examples/**
