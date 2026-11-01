@@ -9,6 +9,12 @@ const posts = (await getCollection("blog")).sort(
     (a.data.part ?? 0) - (b.data.part ?? 0)
 );
 const tags = ["All", ...new Set(posts.flatMap((p) => p.data.tags))];
+// One card per series (<folder>/docs/blog/series.json) that has a published Part 1.
+const series = Object.values(import.meta.glob("/*/docs/blog/series.json", { eager: true, import: "default" }))
+  .filter((s) => s.card)
+  .map((s) => ({ ...s.card, first: posts.find((p) => p.data.series === s.name && p.data.part === 1) }))
+  .filter((s) => s.first)
+  .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
 const fmt = (d) => d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 ---
 <BaseLayout>
@@ -19,16 +25,18 @@ const fmt = (d) => d.toLocaleDateString("en-US", { year: "numeric", month: "long
       <p class="mt-4 text-[15px] leading-relaxed max-w-xl text-slate-500">{SITE.personalNote}</p>
     </section>
 
-    <a href={SITE.series}
+    {series.map((s) => (<>
+    <a href={`/blog/${s.first.id}/`}
       class="group block rounded-2xl border p-6 mb-10 transition-all duration-200 hover:-translate-y-0.5 bg-white border-slate-200 hover:border-indigo-300 hover:shadow-lg dark:bg-slate-800/50 dark:border-slate-700 dark:hover:border-indigo-500/50">
-      <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300">Series · 5 parts</span>
-      <h3 class="text-xl font-bold leading-snug tracking-tight mt-3 mb-2 text-slate-900 group-hover:text-indigo-700 dark:text-white dark:group-hover:text-indigo-300">Agent Sentinel: a flight recorder for AI agents</h3>
-      <p class="text-[15px] leading-relaxed text-slate-600 dark:text-slate-400">How to record, explain and export what AI agents do in regulated environments, with the design, code and tests behind each part. Start with Part 1.</p>
+      <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300">{s.badge}</span>
+      <h3 class="text-xl font-bold leading-snug tracking-tight mt-3 mb-2 text-slate-900 group-hover:text-indigo-700 dark:text-white dark:group-hover:text-indigo-300">{s.title}</h3>
+      <p class="text-[15px] leading-relaxed text-slate-600 dark:text-slate-400">{s.description}</p>
     </a>
-    <p class="-mt-6 mb-10 text-sm text-slate-500">
-      Code, tests and technical write-ups:{" "}
-      <a href={SITE.seriesRepo} target="_blank" rel="noopener noreferrer" class="underline hover:text-indigo-600 dark:hover:text-indigo-400">github.com/anandnarayanan2017/anandnarayanan-blog</a>
-    </p>
+    {s.codeUrl && <p class="-mt-6 mb-10 text-sm text-slate-500">
+      {s.codeLabel}{" "}
+      <a href={s.codeUrl} target="_blank" rel="noopener noreferrer" class="underline hover:text-indigo-600 dark:hover:text-indigo-400">{s.codeText}</a>
+    </p>}
+    </>))}
 
     {posts.length > 0 && <div class="flex flex-wrap gap-2 mb-8" id="tag-filter">
       {tags.map((t, i) => (

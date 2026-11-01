@@ -1,0 +1,27 @@
+{
+  "_comment": "Site settings for this series. dates: site date (YYYY-MM-DD) per part; every part in technical-details/ needs one or the build fails, and dates for unreleased parts are ignored. card: the home-page series card. Edit freely.",
+  "name": "Agent Sentinel",
+  "layout": "technical",
+  "tags": ["Agent Sentinel", "AI Security", "Compliance"],
+  "card": {
+    "order": 1,
+    "badge": "Series · 5 parts",
+    "title": "Agent Sentinel: a flight recorder for AI agents",
+    "description": "How to record, explain and export what AI agents do in regulated environments, with the design, code and tests behind each part. Start with Part 1.",
+    "codeLabel": "Code, tests and technical write-ups:",
+    "codeUrl": "https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/agent-sentinel",
+    "codeText": "github.com/anandnarayanan2017/anandnarayanan-blog"
+  },
+  "dates": {
+    "1": "2026-10-02",
+    "2": "2026-10-13",
+    "3": "2026-10-20",
+    "4": "2026-10-27",
+    "5": "2026-11-03",
+    "6": "2026-11-10",
+    "7": "2026-11-17",
+    "8": "2026-11-24",
+    "9": "2026-12-01",
+    "10": "2026-12-08"
+  }
+}
