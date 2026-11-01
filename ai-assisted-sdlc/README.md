@@ -12,3 +12,8 @@ plus a multi-vendor model benchmark) lives in its own repository:
 | `docs/blog/series.json` | Site settings: release date and excerpt per part, tags, home-page card. |
 
 `npm run build` at the repository root generates the site's pages from this folder (`scripts/sync-series.mjs`).
+
+## Licence
+
+Code is licensed under [Apache 2.0](../LICENSE). The write-ups and images in `docs/blog/` are licensed under
+[CC BY 4.0](../LICENSE-CONTENT): reuse them with credit to Anand Narayanan. See [NOTICE](../NOTICE).
