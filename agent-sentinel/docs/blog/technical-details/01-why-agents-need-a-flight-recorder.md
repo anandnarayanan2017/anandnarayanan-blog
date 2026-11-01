@@ -199,7 +199,7 @@ C4Context
   Rel(auditor, agentSentinel, "Reviews read-only evidence", "API / exported findings")
   Rel(ciso, auditor, "Provides audit evidence", "DORA / EU AI Act / CSSF")
   Rel(agentSentinel, siem, "Exports high-fidelity findings", "Log Analytics, webhooks, JSON")
-  Rel(agentSentinel, identity, "Authenticates users, resolves agent identities", "OIDC / Entra ID / Graph")
+  Rel(agentSentinel, identity, "Authenticates users, resolves agent identities", "OIDC / Entra ID")
   Rel(agents, agentSentinel, "Emit model, tool, network telemetry", "SDK, proxy, network collector")
   Rel(agents, identity, "Authenticate as workloads", "OAuth2 / managed identity")
   Rel(agents, llms, "Invoke models", "HTTPS / provider APIs")
