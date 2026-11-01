@@ -1,11 +1,11 @@
 {
-  "_comment": "Site settings for this series. dates: site date (YYYY-MM-DD) per part; every part in technical-details/ needs one or the build fails, and dates for unreleased parts are ignored. card: the home-page series card. Edit freely.",
+  "_comment": "Site settings for this series. dates: site date (YYYY-MM-DD) per part; every part in technical-details/ needs one or the build fails, and dates for unreleased parts are ignored. card: the home-page series card (the badge gets the published part count appended). Edit freely.",
   "name": "Agent Sentinel",
   "layout": "technical",
   "tags": ["Agent Sentinel", "AI Security", "Compliance"],
   "card": {
     "order": 1,
-    "badge": "Series · 5 parts",
+    "badge": "Series",
     "title": "Agent Sentinel: a flight recorder for AI agents",
     "description": "How to record, explain and export what AI agents do in regulated environments, with the design, code and tests behind each part. Start with Part 1.",
     "codeLabel": "Code, tests and technical write-ups:",

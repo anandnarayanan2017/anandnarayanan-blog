@@ -1,5 +1,5 @@
 {
-  "_comment": "Site settings for this series. dates: site date (YYYY-MM-DD) per part; every part in posts/ needs one or the build fails. excerpts: the summary shown on cards and in link previews. card: the home-page series card. Edit freely.",
+  "_comment": "Site settings for this series. dates: site date (YYYY-MM-DD) per part; every part in posts/ needs one or the build fails. excerpts: the summary shown on cards and in link previews. card: the home-page series card (the badge gets the published part count appended). Edit freely.",
   "name": "AI-assisted SDLC",
   "layout": "essay",
   "tags": ["AI-assisted SDLC", "Software Architecture", "AI Agents"],
