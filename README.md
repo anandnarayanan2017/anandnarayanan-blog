@@ -68,4 +68,3 @@ its projects. The ideas, opinions and any mistakes are my own.
   inside the write-ups are also available under Apache 2.0.
 
 Copyright 2026 Anand Narayanan. See [NOTICE](NOTICE).
-Apache License 2.0. See [LICENSE](LICENSE).
