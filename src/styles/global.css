@@ -23,3 +23,6 @@
 .dark .post-content th, .dark .post-content td { border-color: rgb(51 65 85); }
 .post-content th { background: rgba(99,102,241,0.08); font-weight: 600; }
 .post-content hr { margin: 2.5rem 0; border-color: rgb(226 232 240); }
+
+/* Visible keyboard focus on every interactive element */
+a:focus-visible, button:focus-visible { outline: 2px solid rgb(99 102 241); outline-offset: 2px; border-radius: 0.5rem; }
