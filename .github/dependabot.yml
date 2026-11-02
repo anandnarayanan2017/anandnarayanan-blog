@@ -23,6 +23,11 @@ updates:
     directory: /ai-assisted-sdlc/examples/double-booking
     target-branch: develop
     schedule: { interval: weekly, day: monday }
+    ignore:
+      # Keep @types/node on the Node major the example runs on (node 22 in CI
+      # and docker-compose.yml). Take its next major with the runtime upgrade.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
     groups:
       double-booking:
         update-types: [minor, patch]
