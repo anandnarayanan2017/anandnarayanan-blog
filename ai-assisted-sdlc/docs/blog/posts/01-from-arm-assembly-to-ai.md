@@ -4,9 +4,11 @@
 
 *All checks green. Every anomaly red. Spot the problem.*
 
-I started my career writing C and ARM assembly to optimise codecs.
+Recently, an AI agent built me a booking API. Every test passed. It booked the boardroom ten times.
 
-Back then, I would study a loop, examine memory access, and rearrange instructions to save a few CPU cycles.
+Twenty years ago, my biggest worry was a few wasted CPU cycles.
+
+I started out writing C and ARM assembly to optimise codecs. I would study a loop, examine memory access, and rearrange instructions to save a few of those cycles.
 
 A small performance improvement could make my day.
 
@@ -14,7 +16,7 @@ Today, my browser uses more memory to display a meeting invitation than some of 
 
 I try not to take it personally.
 
-Then I moved into Java enterprise development.
+Then I moved into enterprise Java development.
 
 Memory management became somebody else’s responsibility. In return, I met factories, interfaces, dependency injection, and stack traces with enough material for a weekend reading plan.
 
@@ -86,7 +88,7 @@ After twenty years, I find myself using old lessons in a new setting.
 
 Measure the result. Question assumptions. Check failure paths. Understand the arrows.
 
-AI makes producing code faster. It doesn’t make deciding what ‘correct’ means any faster.
+AI makes producing code faster. It doesn’t make deciding what “correct” means any faster.
 
 I began by writing instructions for an ARM processor.
 
@@ -95,6 +97,8 @@ Now I write instructions for an agent that writes instructions for a processor.
 More layers. Same question:
 
 **How do we know it works?**
+
+Next in the series: turning that booking specification into the harness and checks around the agent.
 
 [Follow the series on GitHub](https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc)
 
