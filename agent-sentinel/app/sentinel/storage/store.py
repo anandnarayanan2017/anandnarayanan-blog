@@ -158,7 +158,7 @@ class Store(StoreBase):
                 if isinstance(d.get(col), str):
                     try:
                         d[col] = json.loads(d[col])
-                    except Exception:  # noqa: BLE001, S110 - keep the raw value
+                    except ValueError:  # not JSON: keep the raw value
                         pass
             result.append(d)
         return result
@@ -178,7 +178,7 @@ class Store(StoreBase):
                 if isinstance(d.get(col), str):
                     try:
                         d[col] = json.loads(d[col])
-                    except Exception:  # noqa: BLE001, S110 - keep the raw value
+                    except ValueError:  # not JSON: keep the raw value
                         pass
             result.append(d)
         return result

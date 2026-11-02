@@ -29,14 +29,20 @@ browser build is not installed.
 from __future__ import annotations
 
 import argparse
+import http.client
 import json
 import os
 import signal
 import subprocess
 import sys
 import time
+import urllib.error
 import urllib.request
 from pathlib import Path
+
+# What call() raises: connection/HTTP errors (URLError and HTTPError are
+# OSErrors), a dropped connection mid-response, or a body that is not JSON.
+CALL_ERRORS = (OSError, http.client.HTTPException, ValueError)
 
 ROOT = Path(__file__).resolve().parents[1]
 PORT = int(os.environ.get("E2E_PORT", "8000"))  # the dashboard hardcodes :8000
@@ -91,7 +97,7 @@ def start_server() -> subprocess.Popen:
         try:
             if call("/healthz").get("status") == "ok":
                 return proc
-        except Exception:  # noqa: BLE001 - server not up yet; retry
+        except CALL_ERRORS:  # server not up yet; retry
             time.sleep(0.5)
     proc.kill()
     sys.exit("server did not start:\n" + (proc.stdout.read() if proc.stdout else ""))
@@ -206,7 +212,7 @@ def api_checks(postgres: bool) -> None:
     try:
         v = call("/audit-log/verify")
         check(v.get("verified") is True, f"audit chain verifies ({v})")
-    except Exception as exc:  # noqa: BLE001 - PostgreSQL-only: DuckDB answers 501
+    except CALL_ERRORS as exc:  # PostgreSQL-only: DuckDB answers 501
         if postgres:
             check(False, f"audit chain verifies ({exc})")
         else:

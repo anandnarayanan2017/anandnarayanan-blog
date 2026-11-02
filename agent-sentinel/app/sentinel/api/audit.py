@@ -84,6 +84,24 @@ def _warn_audit_unsupported_once(detail: str) -> None:
         logger.warning("audit trail unavailable on this storage backend: %s", detail)
 
 
+def _agent_id_from_body(body: bytes) -> str | None:
+    """Best-effort agent_id for the audit row; never fails the request.
+
+    Only a string is accepted. Anything else (an object, list or number, a
+    non-object body, invalid or too deeply nested JSON) is recorded as None, so
+    the audit row is still written: a non-string value used to reach the store,
+    fail the INSERT, and leave the request with no audit row at all.
+    """
+    try:
+        data = json.loads(body)
+    except (ValueError, RecursionError):  # invalid JSON / encoding, or nested too deeply
+        return None
+    if not isinstance(data, dict):
+        return None
+    value = data.get("agent_id")
+    return value if isinstance(value, str) else None
+
+
 class AuditMiddleware(BaseHTTPMiddleware):
     def __init__(self, app, store) -> None:
         super().__init__(app)
@@ -101,10 +119,7 @@ class AuditMiddleware(BaseHTTPMiddleware):
 
         agent_id: str | None = None
         if body and request.headers.get("content-type", "").startswith("application/json"):
-            try:
-                agent_id = json.loads(body).get("agent_id")
-            except Exception:  # noqa: BLE001, S110 - agent_id is best effort; never fail the request
-                pass
+            agent_id = _agent_id_from_body(body)
 
         response = await call_next(request)
 

@@ -9,12 +9,15 @@ add context to the deterministic ones.
 
 from __future__ import annotations
 
+import logging
 from collections import deque
 from dataclasses import dataclass, field
 from statistics import mean, pstdev
 from typing import TYPE_CHECKING
 
 from sentinel.schema.events import AgentEvent
+
+logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from sentinel.storage.base import StoreBase
@@ -110,8 +113,13 @@ class BaselineStore:
         if self._store is not None:
             try:
                 baseline.seen_hosts = set(self._store.distinct_hosts(agent_id))
-            except Exception:  # noqa: BLE001, S110
-                pass  # store unavailable/erroring — fall back to empty, in-memory-only
+            except Exception:  # any backend's error: fall back below
+                logger.warning(
+                    "baseline: could not load known hosts for agent %s; starting empty",
+                    agent_id,
+                    exc_info=True,
+                )
+                # store unavailable/erroring — fall back to empty, in-memory-only
         self._baselines[agent_id] = baseline
         return baseline
 
