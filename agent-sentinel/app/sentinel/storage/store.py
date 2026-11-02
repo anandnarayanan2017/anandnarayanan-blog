@@ -11,7 +11,7 @@ from __future__ import annotations
 import json
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import duckdb
 
@@ -141,7 +141,7 @@ class Store(StoreBase):
         return [dict(zip(cols, r)) for r in rows]
 
     def list_findings(
-        self, limit: int = 100, since: Optional[datetime] = None
+        self, limit: int = 100, since: datetime | None = None
     ) -> list[dict[str, Any]]:
         if since is not None:
             rows, cols = self._query(
@@ -162,13 +162,13 @@ class Store(StoreBase):
                 if isinstance(d.get(col), str):
                     try:
                         d[col] = json.loads(d[col])
-                    except Exception:
+                    except Exception:  # noqa: BLE001, S110 - keep the raw value
                         pass
             result.append(d)
         return result
 
     def list_events(
-        self, limit: int = 50, since: Optional[datetime] = None
+        self, limit: int = 50, since: datetime | None = None
     ) -> list[dict[str, Any]]:
         if since is not None:
             rows, cols = self._query(
@@ -186,7 +186,7 @@ class Store(StoreBase):
                 if isinstance(d.get(col), str):
                     try:
                         d[col] = json.loads(d[col])
-                    except Exception:
+                    except Exception:  # noqa: BLE001, S110 - keep the raw value
                         pass
             result.append(d)
         return result

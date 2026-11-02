@@ -3,6 +3,7 @@ import glob
 import os
 import re
 import sys
+from pathlib import Path
 
 
 def slug(h):
@@ -10,23 +11,21 @@ def slug(h):
 
 
 def anchors(path):
-    text = open(path, encoding="utf-8").read()
-    found = {slug(m.group(1)) for m in re.finditer(r"^#+\s+(.*)$", text, re.M)}
+    text = Path(path).read_text(encoding="utf-8")
+    found = {slug(m.group(1)) for m in re.finditer(r"^#+\s+(.*)$", text, re.MULTILINE)}
     return found | set(re.findall(r'<a id="([^"]+)"', text))
 
 
 bad = []
 for f in glob.glob("**/*.md", recursive=True):
-    text = re.sub(r"```.*?```", "", open(f, encoding="utf-8").read(), flags=re.S)
+    text = re.sub(r"```.*?```", "", Path(f).read_text(encoding="utf-8"), flags=re.DOTALL)
     for m in re.finditer(r"\]\(([^)\s]+)\)", text):
         url = m.group(1)
         if url.startswith(("http", "mailto")):
             continue
         path, _, frag = url.partition("#")
         target = os.path.normpath(os.path.join(os.path.dirname(f), path)) if path else f
-        if not os.path.exists(target):
-            bad.append((f, url))
-        elif frag and target.endswith(".md") and frag not in anchors(target):
+        if not os.path.exists(target) or frag and target.endswith(".md") and frag not in anchors(target):
             bad.append((f, url))
 for f, u in bad:
     print(f"BROKEN {f}: {u}")

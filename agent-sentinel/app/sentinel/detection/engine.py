@@ -60,15 +60,15 @@ class Engine:
         policies: PolicySet,
         explainer: Explainer | None = None,
         seq_config: SeqLayerConfig | None = None,
-        store: "StoreBase | None" = None,
+        store: StoreBase | None = None,
     ) -> None:
         self.policies = policies
         self.baselines = BaselineStore(store)
         self.explainer = explainer or Explainer()
         # per-session counters for volume guards (bounded LRU — CR-9)
-        self._tool_calls: "OrderedDict[str, int]" = OrderedDict()
+        self._tool_calls: OrderedDict[str, int] = OrderedDict()
         # (agent_id, session_id) pairs already reported as unregistered (CR-16)
-        self._seen_unregistered: "OrderedDict[tuple[str, str], bool]" = OrderedDict()
+        self._seen_unregistered: OrderedDict[tuple[str, str], bool] = OrderedDict()
 
         # ---- optional L3 sequence-anomaly layer (advisory only, FR-11) -----
         # The `sentinel_sequence` import (transitively `numpy`) happens only
@@ -116,7 +116,7 @@ class Engine:
         if self._l3 is not None:
             try:
                 findings.extend(self._l3.evaluate(e, policy))
-            except Exception:  # noqa: BLE001 — advisory layer must fail open
+            except Exception:  # advisory layer must fail open (logged below)
                 logger.exception(
                     "L3 sequence layer raised while evaluating event %s; "
                     "continuing without a sequence finding",

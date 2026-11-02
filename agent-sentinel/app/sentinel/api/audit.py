@@ -24,7 +24,7 @@ import hashlib
 import json
 import logging
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
@@ -103,7 +103,7 @@ class AuditMiddleware(BaseHTTPMiddleware):
         if body and request.headers.get("content-type", "").startswith("application/json"):
             try:
                 agent_id = json.loads(body).get("agent_id")
-            except Exception:
+            except Exception:  # noqa: BLE001, S110 - agent_id is best effort; never fail the request
                 pass
 
         response = await call_next(request)
@@ -122,7 +122,7 @@ class AuditMiddleware(BaseHTTPMiddleware):
         try:
             self._store.insert_audit(
                 {
-                    "ts": datetime.now(timezone.utc),
+                    "ts": datetime.now(UTC),
                     "endpoint": request.url.path,
                     "method": request.method,
                     "agent_id": agent_id,

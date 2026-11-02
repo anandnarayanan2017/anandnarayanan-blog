@@ -12,7 +12,7 @@ hostile input.
 from __future__ import annotations
 
 import json
-from typing import Any, Optional
+from typing import Any
 
 from sentinel.schema.events import ActionType, AgentEvent, Direction
 
@@ -45,7 +45,7 @@ def _classify_host(host: str) -> str | None:
 _REDACT_PREVIEW = 256  # chars kept AFTER best-effort sensitive-value redaction
 
 
-def _safe_json(body: bytes | str | None) -> Optional[dict[str, Any]]:
+def _safe_json(body: bytes | str | None) -> dict[str, Any] | None:
     if not body:
         return None
     try:
@@ -65,7 +65,7 @@ def parse_flow(
     path: str,
     request_body: bytes | str | None = None,
     response_body: bytes | str | None = None,
-    status_code: Optional[int] = None,
+    status_code: int | None = None,
 ) -> AgentEvent:
     """Top-level entry: classify a single captured HTTP flow."""
 

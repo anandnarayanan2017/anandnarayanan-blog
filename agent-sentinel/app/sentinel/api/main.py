@@ -25,7 +25,7 @@ import threading
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -86,9 +86,9 @@ class FlowIn(BaseModel):
     host: str
     method: str = "POST"
     path: str = "/"
-    request_body: Optional[str] = None
-    response_body: Optional[str] = None
-    status_code: Optional[int] = None
+    request_body: str | None = None
+    response_body: str | None = None
+    status_code: int | None = None
 
 
 class ReviewIn(BaseModel):
@@ -171,7 +171,7 @@ def stats(principal=Depends(_read)) -> dict[str, object]:
 
 @app.get("/approvals")
 def list_approvals(
-    status: Optional[str] = None,
+    status: str | None = None,
     limit: int = Query(default=100, le=1000),
     principal=Depends(_read),
 ) -> dict[str, object]:
@@ -280,7 +280,7 @@ _STREAM_CACHE_TTL = 1.0
 class _StreamCache:
     """One snapshot shared by every connected SSE client."""
 
-    payload: Optional[dict[str, Any]] = None
+    payload: dict[str, Any] | None = None
     at: float = 0.0
     lock: threading.Lock = field(default_factory=threading.Lock)
 
@@ -314,7 +314,7 @@ async def stream(principal=Depends(_read)) -> StreamingResponse:
     """Server-Sent Events — pushes delta updates whenever new findings or events arrive."""
 
     async def _generator():
-        last_key: Optional[tuple[int, int]] = None
+        last_key: tuple[int, int] | None = None
         while True:
             try:
                 payload = _stream_snapshot()
@@ -328,7 +328,7 @@ async def stream(principal=Depends(_read)) -> StreamingResponse:
                     yield f"data: {json.dumps(payload, default=str)}\n\n"
                 else:
                     yield 'data: {"type":"ping"}\n\n'
-            except Exception:
+            except Exception:  # noqa: BLE001 - keep the event stream alive; client sees an error frame
                 yield 'data: {"type":"error","msg":"stream error"}\n\n'
             await asyncio.sleep(1.5)
 

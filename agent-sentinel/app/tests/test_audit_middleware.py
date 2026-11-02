@@ -11,7 +11,6 @@ import logging
 
 from fastapi import FastAPI, Request
 from fastapi.testclient import TestClient
-
 from sentinel.api.audit import AuditMiddleware, audit_write_failures
 
 

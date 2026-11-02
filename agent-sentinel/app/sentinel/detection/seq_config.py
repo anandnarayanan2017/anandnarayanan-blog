@@ -12,7 +12,6 @@ or the layer is disabled (NFR-3).
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass
@@ -25,7 +24,7 @@ class SeqLayerConfig:
 
     # Optional agent_id -> role override map (FR-7). `attributes["role"]` on
     # the event takes precedence over this map; both are optional.
-    role_map: Optional[dict] = None
+    role_map: dict | None = None
 
     # Buffer bounds (FR-13).
     max_events_per_session: int = 200

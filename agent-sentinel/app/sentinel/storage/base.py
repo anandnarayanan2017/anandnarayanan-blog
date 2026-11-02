@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 from sentinel.schema.events import AgentEvent, Finding
 
@@ -59,12 +59,12 @@ class StoreBase(ABC):
     # ── core reads ───────────────────────────────────────────────────────────
     @abstractmethod
     def list_findings(
-        self, limit: int = 100, since: Optional[datetime] = None
+        self, limit: int = 100, since: datetime | None = None
     ) -> list[dict[str, Any]]: ...
 
     @abstractmethod
     def list_events(
-        self, limit: int = 50, since: Optional[datetime] = None
+        self, limit: int = 50, since: datetime | None = None
     ) -> list[dict[str, Any]]: ...
 
     @abstractmethod

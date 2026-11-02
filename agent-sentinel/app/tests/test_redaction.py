@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 
 import pytest
-
 from sentinel.collector.parsers import parse_flow
 from sentinel.collector.redaction import redact_text
 
@@ -113,7 +112,7 @@ def test_redaction_runs_before_truncation():
         path="/upload",
         request_body=f"{padding} sk-proj-AbCdEf0123456789",
     )
-    preview = [e for e in event.evidence if e.key == "body_preview"][0]
+    preview = next(e for e in event.evidence if e.key == "body_preview")
     assert "sk-proj" not in preview.value
     assert len(preview.value) <= 256
 
@@ -140,7 +139,7 @@ def test_prompt_evidence_from_a_real_flow_is_redacted():
         path="/v1/messages",
         request_body=body,
     )
-    preview = [e for e in event.evidence if e.key == "prompt_preview"][0]
+    preview = next(e for e in event.evidence if e.key == "prompt_preview")
     assert preview.redacted is True
     assert "alice.smith@example.com" not in preview.value
     assert "4111111111111111" not in preview.value
@@ -166,7 +165,7 @@ def test_tool_arguments_are_redacted_but_context_survives():
         path="/mcp",
         request_body=body,
     )
-    args = [e for e in event.evidence if e.key == "tool_args"][0]
+    args = next(e for e in event.evidence if e.key == "tool_args")
     assert "LU280019400644750000" not in args.value
     assert "invoice-9" in args.value
 
