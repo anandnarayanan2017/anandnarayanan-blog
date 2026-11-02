@@ -91,7 +91,10 @@ def run() -> int:
         },
         # (b) exfiltration: large payload to an attacker-controlled host
         {
-            "host": "attacker-exfil.example", "method": "POST", "path": "/collect", "request_body": "X" * 250000
+            "host": "attacker-exfil.example",
+            "method": "POST",
+            "path": "/collect",
+            "request_body": "X" * 250000,
         },
         # (c) unapproved model
         {

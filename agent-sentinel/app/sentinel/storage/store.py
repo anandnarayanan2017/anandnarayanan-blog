@@ -135,9 +135,7 @@ class Store(StoreBase):
         return rows, cols
 
     def events_for_agent(self, agent_id: str) -> list[dict[str, Any]]:
-        rows, cols = self._query(
-            "SELECT * FROM events WHERE agent_id = ? ORDER BY ts", [agent_id]
-        )
+        rows, cols = self._query("SELECT * FROM events WHERE agent_id = ? ORDER BY ts", [agent_id])
         return [dict(zip(cols, r)) for r in rows]
 
     def list_findings(
@@ -149,9 +147,7 @@ class Store(StoreBase):
                 [since, limit],
             )
         else:
-            rows, cols = self._query(
-                "SELECT * FROM findings ORDER BY ts DESC LIMIT ?", [limit]
-            )
+            rows, cols = self._query("SELECT * FROM findings ORDER BY ts DESC LIMIT ?", [limit])
         result = []
         for r in rows:
             d = dict(zip(cols, r))
@@ -167,18 +163,14 @@ class Store(StoreBase):
             result.append(d)
         return result
 
-    def list_events(
-        self, limit: int = 50, since: datetime | None = None
-    ) -> list[dict[str, Any]]:
+    def list_events(self, limit: int = 50, since: datetime | None = None) -> list[dict[str, Any]]:
         if since is not None:
             rows, cols = self._query(
                 "SELECT * FROM events WHERE ts > ? ORDER BY ts DESC LIMIT ?",
                 [since, limit],
             )
         else:
-            rows, cols = self._query(
-                "SELECT * FROM events ORDER BY ts DESC LIMIT ?", [limit]
-            )
+            rows, cols = self._query("SELECT * FROM events ORDER BY ts DESC LIMIT ?", [limit])
         result = []
         for r in rows:
             d = dict(zip(cols, r))

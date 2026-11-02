@@ -1,4 +1,5 @@
 """Fail if any relative Markdown link or heading anchor in the repo is broken."""
+
 import glob
 import os
 import re
@@ -25,7 +26,12 @@ for f in glob.glob("**/*.md", recursive=True):
             continue
         path, _, frag = url.partition("#")
         target = os.path.normpath(os.path.join(os.path.dirname(f), path)) if path else f
-        if not os.path.exists(target) or frag and target.endswith(".md") and frag not in anchors(target):
+        if (
+            not os.path.exists(target)
+            or frag
+            and target.endswith(".md")
+            and frag not in anchors(target)
+        ):
             bad.append((f, url))
 for f, u in bad:
     print(f"BROKEN {f}: {u}")

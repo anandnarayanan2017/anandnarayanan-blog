@@ -525,9 +525,7 @@ class PGStore(StoreBase):
         finally:
             self._put(conn)
 
-    def list_events(
-        self, limit: int = 50, since: datetime | None = None
-    ) -> list[dict[str, Any]]:
+    def list_events(self, limit: int = 50, since: datetime | None = None) -> list[dict[str, Any]]:
         conn = self._conn()
         try:
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
