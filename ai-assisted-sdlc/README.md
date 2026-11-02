@@ -36,7 +36,7 @@ cd ai-assisted-sdlc/examples/double-booking
 docker compose up --build --abort-on-container-exit --exit-code-from check
 ```
 
-Or with Node 22 and a PostgreSQL 16 at `DATABASE_URL` (default `postgres://postgres:postgres@localhost:5432/rooms`):
+Or with Node 26 (the version in the repository's `.nvmrc`) and a PostgreSQL 16 at `DATABASE_URL` (default `postgres://postgres:postgres@localhost:5432/rooms`):
 
 ```bash
 npm ci
