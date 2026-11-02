@@ -31,9 +31,15 @@ jobs:
     runs-on: ubuntu-latest
     # Settings > Environments > production: required reviewer (the owner) and
     # deployment branch main only, so nothing is published without approval.
-    # With an environment, the OIDC subject GitHub sends to AWS becomes
-    # repo:anandnarayanan2017/anandnarayanan-blog:environment:production, and
-    # the github-blog-deploy role's trust policy must allow that subject.
+    # With an environment, the OIDC subject GitHub sends to AWS carries the
+    # owner and repository IDs (confirmed in CloudTrail, 2026-11-02):
+    #   repo:anandnarayanan2017@34368623/anandnarayanan-blog@1403953914:environment:production
+    # The github-blog-deploy role's trust policy must match it exactly
+    # (StringEquals on token.actions.githubusercontent.com:sub, with aud
+    # sts.amazonaws.com). The IDs stop a renamed or re-created repository of the
+    # same name from assuming the role. If AssumeRoleWithWebIdentity is denied,
+    # CloudTrail (eu-central-1, event AssumeRoleWithWebIdentity) shows the
+    # subject GitHub actually sent, in userIdentity.userName.
     environment:
       name: production
       url: https://anandnarayanan.net
