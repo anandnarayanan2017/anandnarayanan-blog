@@ -9,7 +9,7 @@ authors = [{ name = "Agent Sentinel contributors" }]
 dependencies = [
     "pydantic>=2.14.2",
     "duckdb>=0.10",
-    "pyyaml>=6.0",
+    "pyyaml>=6.0.3",
     "fastapi>=0.110",
     "uvicorn>=0.29",
     "numpy>=2.4.6",
