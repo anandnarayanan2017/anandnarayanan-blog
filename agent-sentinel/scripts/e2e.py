@@ -111,11 +111,26 @@ def scripted_traffic() -> None:
     rules = {f["rule_id"] for f in bad}
     check("net.host_not_allowed" in rules, "unapproved host -> net.host_not_allowed")
     f = next((x for x in bad if x["rule_id"] == "net.host_not_allowed"), {})
-    check(bool(f.get("explanation")) and bool(f.get("control_refs")), "finding carries explanation + control refs")
-    check(f.get("severity") in {"high", "critical"}, f"severity is high or critical (got {f.get('severity')})")
+    check(
+        bool(f.get("explanation")) and bool(f.get("control_refs")),
+        "finding carries explanation + control refs",
+    )
+    check(
+        f.get("severity") in {"high", "critical"},
+        f"severity is high or critical (got {f.get('severity')})",
+    )
 
-    big = ingest("recon-bot", s, host="reports.internal", path="/send", method="POST", request_body="x" * 250_000)
-    check("net.oversize_egress" in {x["rule_id"] for x in big}, "250KB upload -> net.oversize_egress")
+    big = ingest(
+        "recon-bot",
+        s,
+        host="reports.internal",
+        path="/send",
+        method="POST",
+        request_body="x" * 250_000,
+    )
+    check(
+        "net.oversize_egress" in {x["rule_id"] for x in big}, "250KB upload -> net.oversize_egress"
+    )
 
     tool = ingest(
         "recon-bot",
@@ -123,10 +138,17 @@ def scripted_traffic() -> None:
         host="tools.internal",
         path="/mcp",
         request_body=json.dumps(
-            {"jsonrpc": "2.0", "method": "tools/call", "params": {"name": "delete_all_records", "arguments": {}}}
+            {
+                "jsonrpc": "2.0",
+                "method": "tools/call",
+                "params": {"name": "delete_all_records", "arguments": {}},
+            }
         ),
     )
-    check("tool.not_allowed" in {x["rule_id"] for x in tool}, "unapproved tool requested -> tool.not_allowed")
+    check(
+        "tool.not_allowed" in {x["rule_id"] for x in tool},
+        "unapproved tool requested -> tool.not_allowed",
+    )
 
     model = ingest(
         "recon-bot",
@@ -135,14 +157,28 @@ def scripted_traffic() -> None:
         path="/v1/messages",
         request_body=json.dumps({"model": "gpt-unapproved", "messages": []}),
     )
-    check("model.not_allowed" in {x["rule_id"] for x in model}, "unapproved model -> model.not_allowed")
+    check(
+        "model.not_allowed" in {x["rule_id"] for x in model},
+        "unapproved model -> model.not_allowed",
+    )
 
 
 def simulator() -> None:
     section("[3] fintech simulator (6 agents, mixed normal/attack traffic) for ~8s")
     proc = subprocess.Popen(  # nosec B603 - fixed argv
-        [sys.executable, "examples/phase1/fintech_sim/sim.py", "--rate", "0.15", "--burst", "2",
-         "--attack-prob", "0.35", "--no-color", "--api", BASE + "/ingest"],
+        [
+            sys.executable,
+            "examples/phase1/fintech_sim/sim.py",
+            "--rate",
+            "0.15",
+            "--burst",
+            "2",
+            "--attack-prob",
+            "0.35",
+            "--no-color",
+            "--api",
+            BASE + "/ingest",
+        ],
         cwd=ROOT,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
@@ -178,8 +214,10 @@ def api_checks(postgres: bool) -> None:
     if postgres:
         approvals = call("/approvals?limit=1000")["items"]
         high = [f for f in findings if f.get("severity") in {"high", "critical"}]
-        check(len(approvals) >= 1 and len(high) >= 1,
-              f"high findings get approval records ({len(approvals)} approvals, {len(high)} high findings)")
+        check(
+            len(approvals) >= 1 and len(high) >= 1,
+            f"high findings get approval records ({len(approvals)} approvals, {len(high)} high findings)",
+        )
         audit = call("/audit-log?limit=5")["items"]
         check(len(audit) >= 1, f"audit log has entries ({len(audit)} read back)")
 
@@ -197,7 +235,9 @@ def browser(shots: Path | None) -> None:
     }
     errors: list[str] = []
     with sync_playwright() as p:
-        b = p.chromium.launch(args=["--no-sandbox"], executable_path=os.environ.get("E2E_CHROMIUM") or None)
+        b = p.chromium.launch(
+            args=["--no-sandbox"], executable_path=os.environ.get("E2E_CHROMIUM") or None
+        )
         ctx = b.new_context(viewport={"width": 1440, "height": 1000})
         page = ctx.new_page()
         page.on("pageerror", lambda e: errors.append(str(e)))
@@ -208,7 +248,8 @@ def browser(shots: Path | None) -> None:
 
             def serve(rel: str):
                 return lambda route, request=None: route.fulfill(
-                    path=str(Path(cdn) / "node_modules" / rel), content_type="application/javascript"
+                    path=str(Path(cdn) / "node_modules" / rel),
+                    content_type="application/javascript",
                 )
 
             for needle, rel in routes.items():
@@ -216,13 +257,18 @@ def browser(shots: Path | None) -> None:
             page.route(
                 BASE + "/",
                 lambda route, request=None: route.fulfill(
-                    body=re.sub(r'\s+integrity="[^"]*"', "", route.fetch().text()), content_type="text/html"
+                    body=re.sub(r'\s+integrity="[^"]*"', "", route.fetch().text()),
+                    content_type="text/html",
                 ),
             )
         page.goto(BASE + "/", wait_until="load")
-        page.wait_for_function("document.body.innerText.includes('net.host_not_allowed')", timeout=30_000)
+        page.wait_for_function(
+            "document.body.innerText.includes('net.host_not_allowed')", timeout=30_000
+        )
         text = page.inner_text("body")
-        check("net.host_not_allowed" in text, "dashboard lists live findings (net.host_not_allowed)")
+        check(
+            "net.host_not_allowed" in text, "dashboard lists live findings (net.host_not_allowed)"
+        )
         check("recon-bot" in text, "dashboard shows agent identities")
         if shots:
             shots.mkdir(parents=True, exist_ok=True)
@@ -231,7 +277,10 @@ def browser(shots: Path | None) -> None:
             page.locator("tr.trow").first.click()
             page.wait_for_selector(".drawer-in", timeout=5_000)
             page.wait_for_timeout(400)
-            check(page.locator(".drawer-in").count() == 1, "clicking a finding opens the evidence drawer")
+            check(
+                page.locator(".drawer-in").count() == 1,
+                "clicking a finding opens the evidence drawer",
+            )
             page.screenshot(path=str(shots / "evidence-drawer.png"))
         b.close()
     check(not errors, f"no browser console errors {errors[:3] if errors else ''}")
@@ -239,10 +288,20 @@ def browser(shots: Path | None) -> None:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--browser", action="store_true", help="also drive the dashboard in headless Chromium")
-    ap.add_argument("--shots", type=Path, help="directory for dashboard screenshots (implies --browser)")
-    ap.add_argument("--url", help="test a server that is already running (e.g. docker compose) at this URL")
-    ap.add_argument("--postgres", action="store_true", help="the server uses PostgreSQL: require audit chain and approvals")
+    ap.add_argument(
+        "--browser", action="store_true", help="also drive the dashboard in headless Chromium"
+    )
+    ap.add_argument(
+        "--shots", type=Path, help="directory for dashboard screenshots (implies --browser)"
+    )
+    ap.add_argument(
+        "--url", help="test a server that is already running (e.g. docker compose) at this URL"
+    )
+    ap.add_argument(
+        "--postgres",
+        action="store_true",
+        help="the server uses PostgreSQL: require audit chain and approvals",
+    )
     ap.add_argument("--report", type=Path, help="write the check results as JSON to this file")
     args = ap.parse_args()
 
@@ -275,8 +334,17 @@ def main() -> int:
                 server.kill()
     if args.report:
         args.report.parent.mkdir(parents=True, exist_ok=True)
-        args.report.write_text(json.dumps({"base_url": BASE, "postgres": args.postgres,
-                                           "passed": not failures, "checks": results}, indent=2))
+        args.report.write_text(
+            json.dumps(
+                {
+                    "base_url": BASE,
+                    "postgres": args.postgres,
+                    "passed": not failures,
+                    "checks": results,
+                },
+                indent=2,
+            )
+        )
     summary = os.environ.get("GITHUB_STEP_SUMMARY")
     if summary:  # GitHub Actions: show the results on the run page
         rows = "\n".join(
@@ -289,7 +357,10 @@ def main() -> int:
                 f"{' (PostgreSQL)' if args.postgres else ''}: {passed}/{len(results)} passed\n\n"
                 f"| Step | Check | Result |\n|---|---|---|\n{rows}\n"
             )
-    print(f"\n{'FAILED' if failures else 'ALL CHECKS PASSED'}" + (f": {len(failures)} failing" if failures else ""))
+    print(
+        f"\n{'FAILED' if failures else 'ALL CHECKS PASSED'}"
+        + (f": {len(failures)} failing" if failures else "")
+    )
     return 1 if failures else 0
 
 

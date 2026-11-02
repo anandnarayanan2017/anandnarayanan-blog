@@ -34,6 +34,8 @@ jobs:
           pip install "$(grep -oE 'ruff==[0-9.]+' pyproject.toml)"
       - name: Lint (ruff)
         run: ruff check --output-format=github .
+      - name: Format (ruff)
+        run: ruff format --check --diff .
       - name: Tests
         run: python -m pytest -q -m "not integration"
       - name: End-to-end (server, traffic, API, dashboard HTML)

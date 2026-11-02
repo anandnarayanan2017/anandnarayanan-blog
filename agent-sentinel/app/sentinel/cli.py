@@ -35,7 +35,11 @@ def main(argv: list[str] | None = None) -> int:
         from pathlib import Path
 
         scenario = (
-            Path(__file__).resolve().parents[2] / "examples" / "phase1" / "demo_agent" / "scenario.py"
+            Path(__file__).resolve().parents[2]
+            / "examples"
+            / "phase1"
+            / "demo_agent"
+            / "scenario.py"
         )
         spec = importlib.util.spec_from_file_location("sentinel_demo_scenario", scenario)
         if spec is None or spec.loader is None:
