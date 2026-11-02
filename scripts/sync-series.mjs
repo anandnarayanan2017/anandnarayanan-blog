@@ -92,7 +92,6 @@ function sync(folder) {
 
   for (const p of parts) {
     const img = `${p.slug}-1.png`;
-    const next = parts.find((q) => q.n === p.n + 1);
     let section, siteTitle, lead, tail;
     if (cfg.layout === "technical") {
       const start = p.text.search(/^## /m); // first section, after the title and reader-path line
@@ -105,7 +104,7 @@ function sync(folder) {
         "",
         "---",
         "",
-        `**For architects and engineers:** the design, diagrams, and links into the code and tests are in the [technical deep dive on GitHub](${REPO}/blob/main/${folder}/docs/blog/technical-details/${p.f}).`,
+        `**Explore the architecture:** the design, diagrams, and links into the code and tests are in the [technical deep dive on GitHub](${REPO}/blob/main/${folder}/docs/blog/technical-details/${p.f}).`,
       ];
     } else {
       section = p.text.replace(/^[\s\S]*?^# .+$\n?/m, ""); // everything after the title
@@ -133,7 +132,6 @@ function sync(folder) {
       ...lead,
       body,
       ...tail,
-      ...(next ? ["", `Next: [Part ${next.n} — ${next.title}](/blog/${folder}-${next.slug}/).`] : []),
       "",
     ].join("\n");
     writeFileSync(join(OUT_POSTS, `${folder}-${p.slug}.md`), out);

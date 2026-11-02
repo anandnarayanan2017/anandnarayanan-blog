@@ -2,6 +2,8 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection, render } from "astro:content";
 import { blogPostingJsonLd } from "../../structured-data";
+import { SITE } from "../../consts";
+import { getSeries } from "../../series";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
@@ -9,6 +11,14 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
+// Series navigation: published parts only, so nothing links to an unwritten part.
+const allSeries = getSeries(await getCollection("blog"));
+const series = allSeries.find((s) => s.name === post.data.series);
+const idx = series ? series.parts.findIndex((p) => p.id === post.id) : -1;
+const prev = idx > 0 ? series.parts[idx - 1] : undefined;
+const next = series && idx >= 0 ? series.parts[idx + 1] : undefined;
+const others = allSeries.filter((s) => s !== series);
+const short = (title) => title.replace(/^.*Part \d+: /, "");
 const { Content } = await render(post);
 const url = new URL(Astro.url.pathname, Astro.site);
 const fmt = (d) => d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
@@ -30,5 +40,33 @@ const fmt = (d) => d.toLocaleDateString("en-US", { year: "numeric", month: "long
     <div class="post-content">
       <Content />
     </div>
+
+    {series && <nav aria-label={`${series.name} series`} class="mt-14 rounded-2xl border p-6 bg-white border-slate-200 dark:bg-slate-800/50 dark:border-slate-700">
+      <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+        {series.name} · Part {post.data.part} · {series.parts.length} {series.parts.length === 1 ? "part" : "parts"} published
+      </p>
+      {series.question && <p class="mt-1 font-semibold text-slate-900 dark:text-white">{series.question}</p>}
+      {(prev || next) && <div class="mt-5 grid gap-3 sm:grid-cols-2">
+        {prev && <a href={`/blog/${prev.id}/`} class="block rounded-xl border p-4 border-slate-200 hover:border-indigo-300 dark:border-slate-700 dark:hover:border-indigo-500/50">
+          <span class="block text-xs text-slate-500">← Previous in this series</span>
+          <span class="font-medium text-slate-900 dark:text-white">Part {prev.data.part}: {short(prev.data.title)}</span>
+        </a>}
+        {next && <a href={`/blog/${next.id}/`} class="block rounded-xl border p-4 sm:col-start-2 border-slate-200 hover:border-indigo-300 dark:border-slate-700 dark:hover:border-indigo-500/50">
+          <span class="block text-xs text-slate-500">Next in this series →</span>
+          <span class="font-medium text-slate-900 dark:text-white">Part {next.data.part}: {short(next.data.title)}</span>
+        </a>}
+      </div>}
+      {series.codeUrl && <p class="mt-5 text-sm">
+        <a href={series.codeUrl} target="_blank" rel="noopener noreferrer" class="font-medium text-indigo-600 underline hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300">View implementation: source code on GitHub</a>
+      </p>}
+      {others.map((o) => (
+        <p class="mt-5 pt-5 border-t text-sm text-slate-600 border-slate-200 dark:text-slate-400 dark:border-slate-700">
+          <span class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">The other side of the question</span>
+          {o.question && <span class="block mt-1 font-semibold text-slate-900 dark:text-white">{o.question}</span>}
+          <a href={`/blog/${o.parts[0].id}/`} class="mt-1 inline-block text-indigo-600 underline hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300">{o.name}, Part 1: {short(o.parts[0].data.title)}</a>
+        </p>
+      ))}
+      <p class="mt-5 pt-5 border-t text-xs text-slate-500 border-slate-200 dark:border-slate-700">{SITE.question}</p>
+    </nav>}
   </article>
 </BaseLayout>

@@ -1,13 +1,30 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
 import { SITE } from "../consts";
+import { getSeries } from "../series";
+
+const series = getSeries(await getCollection("blog"));
 ---
-<BaseLayout title={`About — ${SITE.name}`}>
+<BaseLayout title={`About — ${SITE.name}`} description={`${SITE.name}: Solutions Architect in Luxembourg writing about ${SITE.headline.toLowerCase()}.`}>
   <main class="max-w-2xl mx-auto px-5 py-12">
     <h1 class="text-3xl font-bold tracking-tight mb-6 text-slate-900 dark:text-white">About</h1>
     <div class="post-content">
       <p>I work full time as a Solutions Architect based in Luxembourg.</p>
       <p>{SITE.intro}</p>
+
+      <h2>From assembly to architecture</h2>
+      <p>I started my career writing C and ARM assembly to optimise codecs, moved into Java enterprise development, and then into architecture and the cloud. The abstractions kept moving up a layer; the job stayed the same: know where things live, and what happens when they break.</p>
+
+      <h2>What this site is about</h2>
+      <p>{SITE.tagline} The question underneath all of it: <strong>{SITE.question.charAt(0).toLowerCase() + SITE.question.slice(1)}</strong></p>
+      {series.length > 0 && <ul>
+        {series.map((s) => (
+          <li><a href={`/blog/${s.parts[0].id}/`}>{s.name}</a>{s.question && <> asks: <em>{s.question}</em></>}</li>
+        ))}
+      </ul>}
+      <p>Each series is backed by working code and tests in the <a href={SITE.github + "/anandnarayanan-blog"} target="_blank" rel="noopener noreferrer">public repository</a>, so the claims can be checked.</p>
+
       <h2>Personal writing and projects</h2>
       <p>This blog and projects such as Agent Sentinel are independent personal pursuits that I work on in my spare time, alongside my full-time role.</p>
       <p>Find me on <a href={SITE.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>, or reach out at <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.</p>
