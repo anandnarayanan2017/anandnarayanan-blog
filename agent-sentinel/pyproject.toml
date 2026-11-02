@@ -7,7 +7,7 @@ requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
 authors = [{ name = "Agent Sentinel contributors" }]
 dependencies = [
-    "pydantic>=2.13.5",
+    "pydantic>=2.14.2",
     "duckdb>=0.10",
     "pyyaml>=6.0",
     "fastapi>=0.110",
@@ -24,13 +24,13 @@ anthropic = ["anthropic>=1.13.0"]
 cloud     = ["openai>=1.30", "anthropic>=1.13.0"]
 # Phase 3 — persistent storage + SIEM
 postgres  = ["psycopg2-binary>=2.9"]
-siem      = ["psycopg2-binary>=2.9", "azure-monitor-ingestion>=1.0", "azure-identity>=1.25.3"]
+siem      = ["psycopg2-binary>=2.9", "azure-monitor-ingestion>=1.1.0", "azure-identity>=1.25.3"]
 auth      = ["msal>=1.39.0", "python-jose[cryptography]>=3.4"]
 # Development
 dev = [
     "pytest>=8.0",
     "httpx>=0.28.1",
-    "ruff==0.16.9",
+    "ruff==0.17.3",
     "python-dotenv>=1.2.4",
     "mypy>=2.2.0",
     "pytest-cov>=7.1.0",
@@ -44,7 +44,7 @@ dev = [
 sentinel = "sentinel.cli:main"
 
 [build-system]
-requires = ["setuptools>=84.0.0"]
+requires = ["setuptools>=84.2.1"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
