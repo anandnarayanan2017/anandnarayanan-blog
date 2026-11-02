@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import logging
 
+import pytest
 from fastapi import FastAPI, Request
 from fastapi.testclient import TestClient
 from sentinel.api.audit import AuditMiddleware, audit_write_failures
@@ -149,3 +150,44 @@ def test_successful_audit_write_is_unchanged(caplog):
     assert len(store.entries) == 1
     assert not any(r.levelno == logging.WARNING for r in caplog.records)
     assert audit_write_failures() == baseline
+
+
+# ---- agent_id from the body: a non-string value must not drop the audit row --
+class StrictStore(FakeStore):
+    """Like PGStore: the INSERT fails if agent_id is not a string or None."""
+
+    def insert_audit(self, entry: dict) -> None:
+        if entry["agent_id"] is not None and not isinstance(entry["agent_id"], str):
+            raise TypeError("can't adapt type")
+        super().insert_audit(entry)
+
+
+def test_string_agent_id_is_recorded():
+    store = StrictStore()
+    resp = TestClient(audited_app(store)).post("/ingest", json={"agent_id": "recon-bot"})
+    assert resp.status_code == 200
+    assert [e["agent_id"] for e in store.entries] == ["recon-bot"]
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        b'{"agent_id": {"x": 1}}',
+        b'{"agent_id": ["a", "b"]}',
+        b'{"agent_id": 42}',
+        b'{"agent_id": null}',
+        b'["not", "an", "object"]',
+        b"not json at all",
+        b"\xff\xfe invalid utf-8",
+        b"[" * 100_000 + b"]" * 100_000,
+    ],
+    ids=["object", "list", "number", "null", "array-body", "invalid-json", "bad-utf8", "deep"],
+)
+def test_non_string_agent_id_still_writes_the_audit_row(body):
+    store = StrictStore()
+    client = TestClient(audited_app(store))
+    resp = client.post("/ingest", content=body, headers={"content-type": "application/json"})
+    # The endpoint may reject the body (422); the audit row must exist either way.
+    assert len(store.entries) == 1
+    assert store.entries[0]["agent_id"] is None
+    assert store.entries[0]["status_code"] == resp.status_code
