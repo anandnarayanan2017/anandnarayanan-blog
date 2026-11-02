@@ -10,7 +10,10 @@ Storage backend selection:
 
 Alerter and SIEM are imported lazily inside ingest_flow so that missing
 optional packages (psycopg2, azure-monitor-ingestion) never crash the server
-on startup — Phase 1/2 installs work without Phase 3 extras.
+on startup — Phase 1/2 installs work without Phase 3 extras. A build that does
+not include the alerting or SIEM package at all (such as the public copy of
+this code) treats that export as not installed: one INFO line, no per-finding
+warning, and no failure count, so the counters only measure real failures.
 
 The optional L3 sequence layer follows the same lazy/guarded philosophy: its
 config (`SeqLayerConfig`) is pure stdlib and always readable here, but the flag
@@ -43,9 +46,36 @@ logger = logging.getLogger("sentinel.pipeline")
 _export_failures = {"alerter": 0, "siem": 0}
 
 
+# Export targets whose package is not part of this build, logged once each.
+_export_not_installed: set[str] = set()
+
+
 def export_failures() -> dict[str, int]:
     """Process-wide totals of alerter/SIEM delivery failures since import."""
     return dict(_export_failures)
+
+
+def _is_not_installed(exc: BaseException, package: str) -> bool:
+    """True if `exc` says `package` itself (or one of its modules) is absent.
+
+    A ModuleNotFoundError raised from inside an installed export module (for
+    a dependency it needs) names that dependency instead, so it still counts
+    as a delivery failure.
+    """
+    if not isinstance(exc, ModuleNotFoundError) or not exc.name:
+        return False
+    return exc.name == package or exc.name.startswith(package + ".")
+
+
+def _note_not_installed(kind: str, package: str) -> None:
+    if kind in _export_not_installed:
+        return
+    _export_not_installed.add(kind)
+    logger.info(
+        "%s export not installed: %s is not part of this build; findings are not exported there",
+        kind,
+        package,
+    )
 
 
 def _build_store(db_path: str) -> StoreBase:
@@ -71,6 +101,9 @@ def _fire_alerter(finding: Finding) -> None:
 
         fire(finding)
     except Exception as exc:  # noqa: BLE001 — export must never block ingest
+        if _is_not_installed(exc, "sentinel.alerting"):
+            _note_not_installed("alerter", "sentinel.alerting")
+            return
         _export_failures["alerter"] += 1
         logger.warning(
             "alert delivery failed: finding_id=%s rule_id=%s severity=%s err=%r",
@@ -88,6 +121,9 @@ def _push_siem(finding: Finding) -> None:
 
         push(finding)
     except Exception as exc:  # noqa: BLE001 — export must never block ingest
+        if _is_not_installed(exc, "sentinel.siem"):
+            _note_not_installed("siem", "sentinel.siem")
+            return
         _export_failures["siem"] += 1
         logger.warning(
             "SIEM export failed: finding_id=%s rule_id=%s severity=%s err=%r",
