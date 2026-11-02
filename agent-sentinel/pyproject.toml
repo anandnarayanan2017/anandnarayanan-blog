@@ -32,7 +32,7 @@ dev = [
     "httpx>=0.28.1",
     "ruff==0.17.3",
     "python-dotenv>=1.2.4",
-    "mypy>=2.2.0",
+    "mypy>=2.4.1",
     "pytest-cov>=7.1.0",
     "bandit>=1.8",
     "types-PyYAML>=6.0",
