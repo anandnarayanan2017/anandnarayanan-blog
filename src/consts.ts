@@ -1,6 +1,11 @@
 export const SITE = {
   name: "Anand Narayanan",
-  tagline: "Solutions Architect writing about cloud, data platforms, and enterprise AI.",
+  // Home-page heading and the site's default description.
+  headline: "AI Security, Agent Governance & Engineering",
+  tagline:
+    "Practical architecture for building AI agents and AI-assisted systems that enterprises can control, observe, verify and audit.",
+  // The question that connects the series.
+  question: "How do we safely delegate work to AI systems?",
   intro:
     "I have over 20 years of experience in enterprise architecture across fintech, manufacturing, automotive, and telecom. My fintech background has shaped my interest in designing scalable, secure, and audit-ready cloud, data, and AI platforms, with a particular focus on regulated environments and alignment with CSSF requirements, DORA, and ISO 27001.",
   personalNote:

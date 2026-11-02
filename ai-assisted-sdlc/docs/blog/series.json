@@ -1,16 +1,15 @@
 {
-  "_comment": "Site settings for this series. dates: site date (YYYY-MM-DD) per part; every part in posts/ needs one or the build fails. excerpts: the summary shown on cards and in link previews. card: the home-page series card (the badge gets the published part count appended). Edit freely.",
+  "_comment": "Site settings for this series. dates: site date (YYYY-MM-DD) per part; every part in posts/ needs one or the build fails. excerpts: the summary shown on cards and in link previews. card: the home-page series card (the badge gets the published part count appended; question links the two series; codeUrl is the Source code on GitHub link). Edit freely.",
   "name": "AI-assisted SDLC",
   "layout": "essay",
   "tags": ["AI-assisted SDLC", "Software Architecture", "AI Agents"],
   "card": {
     "order": 2,
     "badge": "Series",
+    "question": "Can we trust what the agent built?",
     "title": "AI-assisted SDLC: engineering with agents",
     "description": "What it takes to delegate software work to AI agents and still know it works: specifications, harnesses, deterministic checks and human approval. Start with Part 1.",
-    "codeLabel": "Code, tests and write-ups:",
-    "codeUrl": "https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc",
-    "codeText": "github.com/anandnarayanan2017/anandnarayanan-blog"
+    "codeUrl": "https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc"
   },
   "dates": {
     "1": "2026-11-01"

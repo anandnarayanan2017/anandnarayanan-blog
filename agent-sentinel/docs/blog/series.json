@@ -1,16 +1,15 @@
 {
-  "_comment": "Site settings for this series. dates: site date (YYYY-MM-DD) per part; every part in technical-details/ needs one or the build fails, and dates for unreleased parts are ignored. card: the home-page series card (the badge gets the published part count appended). Edit freely.",
+  "_comment": "Site settings for this series. dates: site date (YYYY-MM-DD) per part; every part in technical-details/ needs one or the build fails, and dates for unreleased parts are ignored. card: the home-page series card (the badge gets the published part count appended; question links the two series; codeUrl is the Source code on GitHub link). Edit freely.",
   "name": "Agent Sentinel",
   "layout": "technical",
   "tags": ["Agent Sentinel", "AI Security", "Compliance"],
   "card": {
     "order": 1,
     "badge": "Series",
+    "question": "Can we trust what the agent did?",
     "title": "Agent Sentinel: a flight recorder for AI agents",
     "description": "How to record, explain and export what AI agents do in regulated environments, with the design, code and tests behind each part. Start with Part 1.",
-    "codeLabel": "Code, tests and technical write-ups:",
-    "codeUrl": "https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/agent-sentinel",
-    "codeText": "github.com/anandnarayanan2017/anandnarayanan-blog"
+    "codeUrl": "https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/agent-sentinel"
   },
   "dates": {
     "1": "2026-10-02",
