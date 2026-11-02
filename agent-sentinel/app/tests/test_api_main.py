@@ -16,7 +16,6 @@ from __future__ import annotations
 
 import pytest
 from fastapi.testclient import TestClient
-
 from sentinel.api.auth import ALL_ROLES, _Principal, require_auth
 from sentinel.api.main import app
 from sentinel.api.main import pipeline as _pipeline

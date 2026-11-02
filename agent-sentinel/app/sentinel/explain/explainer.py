@@ -13,8 +13,6 @@ evidence come from the engine, so the system stays auditable.
 
 from __future__ import annotations
 
-from typing import Optional
-
 from sentinel.schema.events import AgentEvent, Evidence, Finding, Severity
 
 _SEVERITY_RATIONALE = {
@@ -40,7 +38,7 @@ class Explainer:
         title: str,
         severity: Severity,
         reason: str,
-        policy_clause: Optional[str],
+        policy_clause: str | None,
         control_refs: list[str],
     ) -> Finding:
         evidence = self._evidence_chain(event)

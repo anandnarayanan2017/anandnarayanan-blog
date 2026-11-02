@@ -10,15 +10,15 @@ from __future__ import annotations
 
 import hashlib
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field
 
 
 def _utcnow() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 class ActionType(str, Enum):
@@ -66,13 +66,13 @@ class AgentEvent(BaseModel):
     direction: Direction = Direction.EGRESS
 
     # destination
-    host: Optional[str] = None  # e.g. api.anthropic.com, ledger.internal
-    method: Optional[str] = None  # HTTP verb where relevant
-    path: Optional[str] = None
+    host: str | None = None  # e.g. api.anthropic.com, ledger.internal
+    method: str | None = None  # HTTP verb where relevant
+    path: str | None = None
 
     # semantics
-    model: Optional[str] = None  # for LLM_CALL
-    tool_name: Optional[str] = None  # for TOOL_REQUESTED or TOOL_CALL
+    model: str | None = None  # for LLM_CALL
+    tool_name: str | None = None  # for TOOL_REQUESTED or TOOL_CALL
     bytes_out: int = 0
     bytes_in: int = 0
 
@@ -111,7 +111,7 @@ class Finding(BaseModel):
 
     # the human-readable narrative + the machine-checkable reason
     explanation: str = ""
-    policy_clause: Optional[str] = None
+    policy_clause: str | None = None
     severity_rationale: str = ""
 
     # which events triggered this

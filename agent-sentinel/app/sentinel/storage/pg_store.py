@@ -17,8 +17,8 @@ from __future__ import annotations
 
 import json
 import uuid
-from datetime import datetime, timezone
-from typing import Any, Optional
+from datetime import UTC, datetime
+from typing import Any
 
 from sentinel.schema.events import AgentEvent, Finding
 from sentinel.storage.audit_chain import GENESIS_HASH, entry_hash, verify_chain
@@ -147,7 +147,7 @@ _INDEXES = [
 
 
 def _now() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 class PGStore(StoreBase):
@@ -188,7 +188,7 @@ class PGStore(StoreBase):
                     try:
                         cur.execute(stmt)
                         conn.commit()
-                    except Exception:
+                    except Exception:  # noqa: BLE001 - idempotent DDL; roll back and continue
                         conn.rollback()
 
                 # Network-visibility column migration (design/DESIGN.md §5.2).
@@ -212,14 +212,14 @@ class PGStore(StoreBase):
                             f"if_not_exists => TRUE, migrate_data => TRUE);"
                         )
                         conn.commit()
-                    except Exception:
+                    except Exception:  # noqa: BLE001 - TimescaleDB is optional
                         conn.rollback()
 
                 for idx in _INDEXES:
                     try:
                         cur.execute(idx)
                         conn.commit()
-                    except Exception:
+                    except Exception:  # noqa: BLE001 - index may exist or be unsupported
                         conn.rollback()
         finally:
             self._put(conn)
@@ -498,7 +498,7 @@ class PGStore(StoreBase):
 
     # ── core reads ───────────────────────────────────────────────────────────
     def list_findings(
-        self, limit: int = 100, since: Optional[datetime] = None
+        self, limit: int = 100, since: datetime | None = None
     ) -> list[dict[str, Any]]:
         conn = self._conn()
         try:
@@ -518,7 +518,7 @@ class PGStore(StoreBase):
                         if isinstance(d.get(col), str):
                             try:
                                 d[col] = json.loads(d[col])
-                            except Exception:
+                            except Exception:  # noqa: BLE001, S110 - keep the raw value
                                 pass
                     result.append(d)
                 return result
@@ -526,7 +526,7 @@ class PGStore(StoreBase):
             self._put(conn)
 
     def list_events(
-        self, limit: int = 50, since: Optional[datetime] = None
+        self, limit: int = 50, since: datetime | None = None
     ) -> list[dict[str, Any]]:
         conn = self._conn()
         try:
@@ -546,7 +546,7 @@ class PGStore(StoreBase):
                         if isinstance(d.get(col), str):
                             try:
                                 d[col] = json.loads(d[col])
-                            except Exception:
+                            except Exception:  # noqa: BLE001, S110 - keep the raw value
                                 pass
                     result.append(d)
                 return result

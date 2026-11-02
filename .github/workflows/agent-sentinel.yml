@@ -29,6 +29,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip setuptools
           pip install -e ".[auth,postgres]" pytest httpx bandit pip-audit
+          # ruff at the version pinned in pyproject.toml's dev extra, so a
+          # ruff bump (and any change to its default rules) arrives as a PR.
+          pip install "$(grep -oE 'ruff==[0-9.]+' pyproject.toml)"
+      - name: Lint (ruff)
+        run: ruff check --output-format=github .
       - name: Tests
         run: python -m pytest -q -m "not integration"
       - name: End-to-end (server, traffic, API, dashboard HTML)

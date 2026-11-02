@@ -65,6 +65,11 @@ markers = [
 line-length = 100
 target-version = "py311"
 
+[tool.ruff.lint.flake8-bugbear]
+# FastAPI's dependency injection: Depends(...)/Security(...) in argument
+# defaults is the documented pattern, evaluated once per request by FastAPI.
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Security", "fastapi.params.Depends", "fastapi.params.Security"]
+
 [tool.ruff.lint.per-file-ignores]
 # pytest.importorskip(...) intentionally precedes other imports so the whole
 # module is skipped (not collected) when the optional dependency is absent.

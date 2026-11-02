@@ -875,7 +875,7 @@ def post_event(api_url: str, payload: dict[str, Any]) -> dict[str, Any] | None:
             return json.loads(resp.read())
     except urllib.error.URLError as e:
         return {"error": str(e)}
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - simulator reports any failure as a result
         return {"error": str(e)}
 
 

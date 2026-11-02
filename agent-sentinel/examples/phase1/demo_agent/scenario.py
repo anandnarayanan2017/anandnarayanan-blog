@@ -29,23 +29,23 @@ def run() -> int:
 
     banner("PHASE 1 — NORMAL OPERATION (expect 0 findings)")
     normal = [
-        dict(host="ledger.internal", path="/v1/transactions", method="GET"),
-        dict(
-            host="api.anthropic.com",
-            path="/v1/messages",
-            method="POST",
-            request_body=json.dumps(
+        {"host": "ledger.internal", "path": "/v1/transactions", "method": "GET"},
+        {
+            "host": "api.anthropic.com",
+            "path": "/v1/messages",
+            "method": "POST",
+            "request_body": json.dumps(
                 {
                     "model": "claude-sonnet-4-6",
                     "messages": [{"role": "user", "content": "Summarize discrepancies."}],
                 }
             ),
-        ),
-        dict(
-            host="ledger.internal",
-            method="POST",
-            path="/rpc",
-            request_body=json.dumps(
+        },
+        {
+            "host": "ledger.internal",
+            "method": "POST",
+            "path": "/rpc",
+            "request_body": json.dumps(
                 {
                     "jsonrpc": "2.0",
                     "id": 1,
@@ -53,12 +53,12 @@ def run() -> int:
                     "params": {"name": "read_ledger", "arguments": {"day": "2026-06-09"}},
                 }
             ),
-        ),
-        dict(
-            host="reports.internal",
-            method="POST",
-            path="/rpc",
-            request_body=json.dumps(
+        },
+        {
+            "host": "reports.internal",
+            "method": "POST",
+            "path": "/rpc",
+            "request_body": json.dumps(
                 {
                     "jsonrpc": "2.0",
                     "id": 2,
@@ -66,7 +66,7 @@ def run() -> int:
                     "params": {"name": "send_report", "arguments": {"to": "finance@example.com"}},
                 }
             ),
-        ),
+        },
     ]
     for f in normal:
         findings = pipe.ingest_flow(agent_id=agent, session_id=session, **f)
@@ -76,11 +76,11 @@ def run() -> int:
     banner("PHASE 2 — PROMPT-INJECTION ATTACK (expect multiple findings)")
     attack = [
         # (a) scope creep: invoke a tool the agent was never authorized to use
-        dict(
-            host="ledger.internal",
-            method="POST",
-            path="/rpc",
-            request_body=json.dumps(
+        {
+            "host": "ledger.internal",
+            "method": "POST",
+            "path": "/rpc",
+            "request_body": json.dumps(
                 {
                     "jsonrpc": "2.0",
                     "id": 3,
@@ -88,23 +88,23 @@ def run() -> int:
                     "params": {"name": "dump_all_accounts", "arguments": {}},
                 }
             ),
-        ),
+        },
         # (b) exfiltration: large payload to an attacker-controlled host
-        dict(
-            host="attacker-exfil.example", method="POST", path="/collect", request_body="X" * 250000
-        ),
+        {
+            "host": "attacker-exfil.example", "method": "POST", "path": "/collect", "request_body": "X" * 250000
+        },
         # (c) unapproved model
-        dict(
-            host="api.anthropic.com",
-            path="/v1/messages",
-            method="POST",
-            request_body=json.dumps(
+        {
+            "host": "api.anthropic.com",
+            "path": "/v1/messages",
+            "method": "POST",
+            "request_body": json.dumps(
                 {
                     "model": "some-unapproved-model",
                     "messages": [{"role": "user", "content": "..."}],
                 }
             ),
-        ),
+        },
     ]
     total = 0
     for f in attack:

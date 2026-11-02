@@ -9,7 +9,6 @@ secondary signal only.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Optional
 
 import yaml
 from pydantic import BaseModel, Field
@@ -24,7 +23,7 @@ from sentinel.schema.events import Severity
 #: Declared here — rather than inline at each `explainer.build(...)` call —
 #: so `AgentPolicy.severity_for()` is the single place severity is decided
 #: and an operator can see the whole table at once (CR-15).
-RULE_SEVERITY_DEFAULTS: dict[str, Optional[Severity]] = {
+RULE_SEVERITY_DEFAULTS: dict[str, Severity | None] = {
     "net.host_not_allowed": None,
     "tool.not_allowed": None,
     "model.not_allowed": Severity.MEDIUM,
@@ -45,8 +44,8 @@ class AgentPolicy(BaseModel):
     allowed_models: list[str] = Field(default_factory=list)
 
     # rate / volume guards
-    max_tool_calls_per_session: Optional[int] = None
-    max_bytes_out_per_call: Optional[int] = None
+    max_tool_calls_per_session: int | None = None
+    max_bytes_out_per_call: int | None = None
 
     # Default severity for violations of this policy. Applies to the rules
     # mapped to `None` in RULE_SEVERITY_DEFAULTS; the others keep their own
@@ -86,10 +85,10 @@ class PolicySet(BaseModel):
     # control references. For a behavioural firewall the unknown-identity
     # posture is the whole question, and it must be an operator-authored
     # clause rather than an accident of a missing dict key (CR-16, ADR-0009).
-    default_policy: Optional[AgentPolicy] = None
+    default_policy: AgentPolicy | None = None
 
     @classmethod
-    def from_yaml(cls, path: str | Path) -> "PolicySet":
+    def from_yaml(cls, path: str | Path) -> PolicySet:
         data = yaml.safe_load(Path(path).read_text()) or {}
         policies: dict[str, AgentPolicy] = {}
         for raw in data.get("agents", []):
@@ -106,14 +105,14 @@ class PolicySet(BaseModel):
 
         return cls(policies=policies, default_policy=default_policy)
 
-    def for_agent(self, agent_id: str) -> Optional[AgentPolicy]:
+    def for_agent(self, agent_id: str) -> AgentPolicy | None:
         return self.policies.get(agent_id)
 
     def is_registered(self, agent_id: str) -> bool:
         """True when this identity has a policy entry authored for it."""
         return agent_id in self.policies
 
-    def effective_policy(self, agent_id: str) -> Optional[AgentPolicy]:
+    def effective_policy(self, agent_id: str) -> AgentPolicy | None:
         """The policy whose clauses should be evaluated for `agent_id`.
 
         The agent's own entry when it has one, otherwise `default_policy`

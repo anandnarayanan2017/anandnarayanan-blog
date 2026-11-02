@@ -13,7 +13,6 @@ from collections import deque
 from dataclasses import dataclass, field
 from statistics import mean, pstdev
 from typing import TYPE_CHECKING
-from typing import Deque
 
 from sentinel.schema.events import AgentEvent
 
@@ -35,7 +34,7 @@ class AgentBaseline:
     agent_id: str
     seen_hosts: set[str] = field(default_factory=set)
     seen_tools: set[str] = field(default_factory=set)
-    bytes_out_samples: "Deque[int]" = field(
+    bytes_out_samples: deque[int] = field(
         default_factory=lambda: deque(maxlen=_MAX_BYTES_OUT_SAMPLES)
     )
 
@@ -99,7 +98,7 @@ class BaselineStore:
     docstring claimed persistence the class didn't actually implement).
     """
 
-    def __init__(self, store: "StoreBase | None" = None) -> None:
+    def __init__(self, store: StoreBase | None = None) -> None:
         self._baselines: dict[str, AgentBaseline] = {}
         self._store = store
 
@@ -111,7 +110,7 @@ class BaselineStore:
         if self._store is not None:
             try:
                 baseline.seen_hosts = set(self._store.distinct_hosts(agent_id))
-            except Exception:
+            except Exception:  # noqa: BLE001, S110
                 pass  # store unavailable/erroring — fall back to empty, in-memory-only
         self._baselines[agent_id] = baseline
         return baseline

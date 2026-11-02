@@ -30,7 +30,8 @@ from __future__ import annotations
 
 import hashlib
 import json
-from typing import Any, Iterable, Optional
+from collections.abc import Iterable
+from typing import Any
 
 #: The chain's anchor. A fixed, well-known value so the very first entry has a
 #: real predecessor hash to commit to rather than a NULL that could be forged.
@@ -70,7 +71,7 @@ def entry_hash(prev_hash: str, entry: dict[str, Any]) -> str:
     return hashlib.sha256(material.encode("utf-8")).hexdigest()
 
 
-def verify_chain(rows: Iterable[dict[str, Any]]) -> Optional[dict[str, Any]]:
+def verify_chain(rows: Iterable[dict[str, Any]]) -> dict[str, Any] | None:
     """Walk `rows` oldest-first and return the first broken link, or None.
 
     A row breaks the chain when its stored `prev_hash` does not match the

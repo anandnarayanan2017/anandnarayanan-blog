@@ -88,9 +88,10 @@ _jwks_state: dict[str, Any] = {"data": None, "fetched_at": 0.0}
 def _fetch_jwks() -> dict[str, Any]:
     """Fetch the tenant's JWKS from its OpenID Connect discovery endpoint."""
     try:
-        from jose.backends import RSAKey  # noqa: F401  (import check only)
         import json
         import urllib.request
+
+        from jose.backends import RSAKey  # noqa: F401  (import check only)
 
         oid_url = (
             f"https://login.microsoftonline.com/{_TENANT}/v2.0/.well-known/openid-configuration"
@@ -121,7 +122,7 @@ def _get_jwks(force: bool = False) -> dict[str, Any]:
 
 
 def _verify_token(token: str) -> dict[str, Any]:
-    from jose import jwt, JWTError
+    from jose import JWTError, jwt
 
     try:
         unverified_header = jwt.get_unverified_header(token)

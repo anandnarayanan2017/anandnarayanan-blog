@@ -91,7 +91,7 @@ def start_server() -> subprocess.Popen:
         try:
             if call("/healthz").get("status") == "ok":
                 return proc
-        except Exception:
+        except Exception:  # noqa: BLE001 - server not up yet; retry
             time.sleep(0.5)
     proc.kill()
     sys.exit("server did not start:\n" + (proc.stdout.read() if proc.stdout else ""))
@@ -170,7 +170,7 @@ def api_checks(postgres: bool) -> None:
     try:
         v = call("/audit-log/verify")
         check(v.get("verified") is True, f"audit chain verifies ({v})")
-    except Exception as exc:  # PostgreSQL-only: DuckDB answers 501
+    except Exception as exc:  # noqa: BLE001 - PostgreSQL-only: DuckDB answers 501
         if postgres:
             check(False, f"audit chain verifies ({exc})")
         else:

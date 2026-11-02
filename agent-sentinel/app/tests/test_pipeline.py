@@ -4,7 +4,6 @@ import json
 from pathlib import Path
 
 import pytest
-
 from sentinel.collector.parsers import parse_flow
 from sentinel.detection.engine import Engine
 from sentinel.detection.policy import PolicySet
