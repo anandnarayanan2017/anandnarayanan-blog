@@ -19,6 +19,7 @@ const ldJson = jsonLd && JSON.stringify(jsonLd).replace(/</g, "\\u003c");
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
     <meta name="author" content={SITE.name} />
+    {SITE.googleSiteVerification && <meta name="google-site-verification" content={SITE.googleSiteVerification} />}
     <link rel="canonical" href={canonical} />
     <meta property="og:site_name" content={SITE.name} />
     <meta property="og:type" content={type} />
