@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 import os
 import threading
 import time
@@ -42,6 +43,8 @@ from sentinel.api.auth import (
 )
 from sentinel.pipeline import Pipeline
 from sentinel.storage.base import ApprovalNotFoundError, BackendCapabilityError
+
+logger = logging.getLogger(__name__)
 
 POLICY_PATH = os.environ.get("SENTINEL_POLICY", "policies/example.yaml")
 DB_PATH = os.environ.get("SENTINEL_DB", ":memory:")
@@ -328,7 +331,8 @@ async def stream(principal=Depends(_read)) -> StreamingResponse:
                     yield f"data: {json.dumps(payload, default=str)}\n\n"
                 else:
                     yield 'data: {"type":"ping"}\n\n'
-            except Exception:  # noqa: BLE001 - keep the event stream alive; client sees an error frame
+            except Exception:  # keep the event stream alive; client sees an error frame
+                logger.exception("stream: snapshot failed")
                 yield 'data: {"type":"error","msg":"stream error"}\n\n'
             await asyncio.sleep(1.5)
 

@@ -32,6 +32,7 @@ Options
 from __future__ import annotations
 
 import argparse
+import http.client
 import json
 import os
 import random
@@ -875,7 +876,7 @@ def post_event(api_url: str, payload: dict[str, Any]) -> dict[str, Any] | None:
             return json.loads(resp.read())
     except urllib.error.URLError as e:
         return {"error": str(e)}
-    except Exception as e:  # noqa: BLE001 - simulator reports any failure as a result
+    except (http.client.HTTPException, OSError, ValueError) as e:  # dropped connection, bad JSON
         return {"error": str(e)}
 
 
