@@ -3,13 +3,11 @@
 <!--
 DRAFT, not published. Before moving this file to docs/blog/technical-details/:
 
-1. RELEASE THE SDK COLLECTORS. app/sentinel/collector/__init__.py names
-   collector.sdk_base, collector.anthropic_sdk and collector.azure_openai, but
-   they are not in this companion repository yet. Copy them (and their tests)
-   from the product repository, as Part 1 did for the Part 1 code.
-2. VERIFY EVERY SENTENCE MARKED "VERIFY" against that code. They describe what
-   the wrappers must do for this article to be true. If the code differs, change
-   the sentence, not the code, unless the code is wrong.
+1. DONE: SDK collectors and their tests copied from agent-sentinel-series
+   (lint fixes only). Every claim below was checked against them.
+2. DECIDE: fix the gaps in "Testing the rule against my own code" before
+   publishing (then rewrite that table as "found → fixed"), or publish them
+   as known gaps. Either is honest; the table must match the code.
 3. Add a Part 2 row to ../../TRACEABILITY.md.
 4. Add a hero image as ../../images/02-from-simulated-traffic-to-real-model-calls-1.png.
 5. Check the "2" date in ../../series.json (currently 2026-10-13).
@@ -71,18 +69,37 @@ discover in an audit.
 
 ## Connecting real model calls
 
-<!-- VERIFY this whole section against collector/sdk_base.py,
-anthropic_sdk.py and azure_openai.py once they are released. -->
+To record real calls, Agent Sentinel wraps the Anthropic and Azure OpenAI
+Python SDKs that agents already use. The agent swaps `anthropic.Anthropic` for
+`AnthropicSentinel`. The wrapper makes the real call, reports a redacted copy
+of the request and response to Agent Sentinel, and hands the agent the
+provider's response unchanged. When the model proposes a tool call, the
+wrapper reports it as *requested*, not executed: from where it sits, it can't
+know whether the agent actually ran it.
 
-To record real calls, Agent Sentinel wraps the Anthropic and Azure OpenAI SDKs
-that agents already use. The agent swaps one client class for another; its
-code, prompts and responses are otherwise unchanged. The wrapper observes the
-call and reports it. It never asks a model anything itself, and it never
-changes what the agent receives.
+## Testing the rule against my own code
 
-The same rule applies here as everywhere else: **VERIFY** if Agent Sentinel is
-slow or unreachable, the agent's model call still completes and returns
-normally. The event is dropped and counted, not retried in the agent's path.
+I wrote "if the recorder fails, the agent must not" before I tested the
+wrappers against it. Testing them for this article found where they meet the
+rule and where they don't:
+
+| What happens | Result |
+|---|---|
+| Agent Sentinel is down | **Holds.** The agent gets its response immediately; the failed delivery is logged. |
+| Agent Sentinel accepts the connection but never answers | **Partly.** Reporting happens in the agent's path, so each call waits up to the 2-second timeout. In an async agent, that wait also blocks the event loop. |
+| The agent uses `client.messages.stream`, `count_tokens` or batches | **Fails.** Only `messages.create` (and Azure's `chat.completions.create`) is wrapped. Anything else on that object raises an error in the agent. |
+| A prompt is longer than about 8KB | **Detection gap.** The request is cut to 8KB before it's sent, so Agent Sentinel can no longer read which model was called. The unapproved-model rule stays silent, and the payload is recorded as 8KB, so the oversize rule can't fire on model calls either. |
+| The provider returns an error | **Not recorded.** The error reaches the agent unchanged, but the failed call never reaches Agent Sentinel. |
+
+None of these is hard to fix, and that is the point of writing it down. A
+rule only means something if you test your own code against it, and a
+recorder that claims more coverage than it has is worse than one that states
+its gaps.
+
+<!-- If the fixes land before publishing, change this table to
+"found → fixed" and link the fixing commits. -->
+
+Every row above was reproduced against the code in this repository.
 
 ## The trade-off
 
@@ -113,17 +130,17 @@ per collector.
 ```mermaid
 sequenceDiagram
   participant Agent as Agent code
-  participant Wrap as SDK wrapper (VERIFY: Part 2 release)
+  participant Wrap as AnthropicSentinel / SentinelReporter
   participant LLM as Model provider
-  participant Pipe as Pipeline.ingest_flow
+  participant Pipe as POST /ingest → Pipeline.ingest_flow
   participant Store as Event and finding store
   participant Export as Alerting / SIEM
 
   Agent->>Wrap: messages.create(...)
   Wrap->>LLM: original request, unchanged
   LLM-->>Wrap: response
+  Wrap->>Pipe: redacted flow (2s timeout; any error logged, never raised)
   Wrap-->>Agent: response, unchanged
-  Wrap->>Pipe: flow (host, path, bodies, agent_id)
   Pipe->>Pipe: parse_flow: redact, then truncate; malformed degrades, never raises
   Pipe->>Store: insert_event
   Pipe->>Pipe: Engine.evaluate (deterministic rules)
@@ -140,7 +157,10 @@ sequenceDiagram
 | Redaction before storage, before truncation, never raises | [`collector/redaction.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/sentinel/collector/redaction.py) | `test_redaction_runs_before_truncation`, `test_redaction_never_raises_on_hostile_input`, `test_prompt_evidence_from_a_real_flow_is_redacted` in [`test_redaction.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/tests/test_redaction.py) |
 | Export is fail-open, not fail-silent | `_fire_alerter` and `_push_siem` in [`pipeline.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/sentinel/pipeline.py) | `test_installed_module_that_raises_is_a_failure`, `test_successful_export_counts_nothing` in [`test_export.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/tests/test_export.py) |
 | Missing optional packages don't crash the server, and aren't counted as failures | Lazy imports in [`pipeline.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/sentinel/pipeline.py) | `test_missing_packages_are_not_failures_and_log_once` in [`test_export.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/tests/test_export.py) |
-| SDK wrappers return the provider response unchanged and never raise into the agent | VERIFY: `collector/anthropic_sdk.py`, `collector/azure_openai.py` (not yet in this repository) | VERIFY: their tests |
+| SDK wrappers return the provider response unchanged; a delivery failure never raises into the agent | [`collector/sdk_base.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/sentinel/collector/sdk_base.py), [`collector/anthropic_sdk.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/sentinel/collector/anthropic_sdk.py), [`collector/azure_openai.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/sentinel/collector/azure_openai.py) | `test_report_is_fail_open_when_sentinel_is_unreachable`, `test_report_is_fail_open_on_an_unparseable_response` in [`test_sdk_base.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/tests/test_sdk_base.py) |
+| Redaction at the edge, before telemetry leaves the agent | `SentinelReporter.report` in [`sdk_base.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/sentinel/collector/sdk_base.py) | `test_reporter_sends_bearer_token_and_redacts_before_transport` in [`test_collector_contracts.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/tests/test_collector_contracts.py) |
+| Model-proposed tools are "requested", not "executed" | `report_tool_request` in [`sdk_base.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/sentinel/collector/sdk_base.py) | `test_model_proposal_is_tool_requested_not_executed`, `test_tool_policy_does_not_treat_requested_tool_as_executed` in [`test_collector_contracts.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/tests/test_collector_contracts.py) |
+| **Known gaps** (the "Testing the rule" table) | Same files | No regression tests yet: add one per gap with its fix |
 
 ### Why the guarantees sit in the pipeline, not in each collector
 
