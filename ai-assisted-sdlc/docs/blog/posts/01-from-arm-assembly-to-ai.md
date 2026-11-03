@@ -85,15 +85,15 @@ Which of these is your team struggling with most right now? [Tell me on LinkedIn
 
 ## References and further reading
 
-- **The booking specification, as code:** [examples/double-booking](https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc/examples/double-booking). The twenty-request test, the check-then-insert attempt an AI agent wrote first (it booked the room ten times), and the database constraint that fixed it. Runs in CI on every change.
-- **Specifications over wishes:** David Thomas and Andrew Hunt, *The Pragmatic Programmer*, 20th Anniversary Edition (Addison-Wesley, 2019). Its point that no one knows exactly what they want is why “Build a booking API” needs a specification.
-- **The arrows:** [The fallacies of distributed computing](https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing), attributed to L Peter Deutsch and colleagues at Sun Microsystems. The network is not reliable, latency is not zero, and so on.
-- **Booking the boardroom ten times:** Martin Kleppmann, *Designing Data-Intensive Applications* (O’Reilly), chapter on transactions. It uses a meeting-room booking system to explain write skew and why the rule belongs in the database.
-- **Letting the database enforce it:** PostgreSQL documentation, [Exclusion constraints](https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-EXCLUSION), which reject overlapping bookings for the same room.
-- **201 and 409:** [RFC 9110, HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110), sections 15.3.2 (201 Created) and 15.5.10 (409 Conflict).
+- **The booking specification, as code:** [examples/double-booking](https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc/examples/double-booking). The twenty-request concurrency test, the check-then-insert implementation the agent produced first, and the database constraint that fixes it. The example runs in CI on every change.
+- **From intent to specification:** David Thomas and Andrew Hunt, *The Pragmatic Programmer*, 20th Anniversary Edition (Addison-Wesley, 2019). A useful reminder that requirements become clearer through feedback and refinement rather than arriving perfectly formed.
+- **The arrows between the boxes:** the [fallacies of distributed computing](https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing), associated with L. Peter Deutsch and colleagues at Sun Microsystems. The network is reliable, latency is zero: the assumptions that make an arrow look simple.
+- **Concurrency and meeting-room bookings:** Martin Kleppmann, *Designing Data-Intensive Applications* (O’Reilly), chapter on transactions. The discussion of write skew and booking systems is a useful example of why some invariants belong in the data layer.
+- **Letting the database enforce the invariant:** PostgreSQL documentation, [Exclusion constraints](https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-EXCLUSION).
+- **HTTP semantics:** [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110), sections 15.3.2 (201 Created) and 15.5.10 (409 Conflict).
 - **Agents and harnesses:** Anthropic, [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents) and [Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents).
 - **Engineering discipline for agents:** Matt Pocock, [Skills for real engineers](https://github.com/mattpocock/skills), agent skills grounded in classic software engineering practice.
 
 ## Acknowledgements
 
-Thanks to Claude by Anthropic, which I used as a reviewer and editor while writing this post. The ideas, opinions and any mistakes are my own.
+Thanks to Claude by Anthropic, which I used as a reviewer and editor while writing this post. The architecture, examples, opinions and any mistakes are my own.
