@@ -20,6 +20,6 @@ Is your team giving its agents specifications, or wishes?
 ![All checks green. Every anomaly red: an architect relaxes while agents build, test and deploy, and the anomalies panel reads "Boardroom booked 10 times".](../images/01-from-arm-assembly-to-ai-1.png)
 
 First comment: Read the full article → https://anandnarayanan.net/blog/ai-assisted-sdlc-01-from-arm-assembly-to-ai/
-Code and tests: https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc/examples/double-booking
+Code, tests and the run log behind "ten times": https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc#where-ten-times-comes-from
 
 #AIAgents #SoftwareArchitecture #AIAssistedDevelopment #SoftwareEngineering
