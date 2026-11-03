@@ -71,6 +71,55 @@ agent, model call, network destination, and either an executed MCP call or a
 model-proposed tool request. It then produces evidence-backed findings. It
 does not claim to observe uninstrumented actions or block them before they run.
 
+### See it in two minutes
+
+**1. The rule.** Each agent declares what it may do. This is the payments
+agent from the story, from [`policies/example.yaml`](../../../policies/example.yaml):
+
+```yaml
+- agent_id: recon-bot
+  allowed_hosts:
+    - api.anthropic.com        # approved model provider
+    - ledger.internal          # internal ledger API
+    - reports.internal         # internal report sink
+  allowed_tools: [read_ledger, send_report]
+  allowed_models: [claude-sonnet-4-6]
+  max_bytes_out_per_call: 100000      # 100 KB; reports are small
+```
+
+**2. Run the story.** From the `agent-sentinel` folder, after the install step
+in the [README](../../../README.md#run-the-tests):
+
+```bash
+sentinel demo
+```
+
+It replays a clean run (no findings), then an attack:
+a tool the agent may not use, the 250KB transfer to an unknown server, and an
+unapproved model.
+
+**3. The finding.** One of the four it prints:
+
+```text
+[HIGH    ] Egress to non-allow-listed host attacker-exfil.example
+   rule: net.host_not_allowed
+   why : Agent 'recon-bot' sent traffic to 'attacker-exfil.example', which is not
+         in its permitted egress allow-list.
+   clause: allowed_hosts=['api.anthropic.com', 'ledger.internal', 'reports.internal']
+   evidence: agent_id=recon-bot -> session_id=run-2026-06-10 -> action=network_call
+             -> host=attacker-exfil.example -> bytes_out=250000
+```
+
+That is the whole idea: a rule a person wrote, an action that broke it, and
+the evidence linking the two. The rest of this section explains how the code
+gets from step 2 to step 3.
+
+**Words used here.** *Collector*: the part that sees agent traffic and sends
+it to Agent Sentinel. *Finding*: one rule broken by one action, with its
+evidence. *MCP*: Model Context Protocol, a common way for agents to call
+tools. *SIEM*: the security team's central log and alert system, such as
+Microsoft Sentinel or Splunk. *SOC*: the team that watches it.
+
 ### C4 Level 1 — System Context
 
 ```mermaid
