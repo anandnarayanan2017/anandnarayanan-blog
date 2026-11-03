@@ -32,7 +32,7 @@ def bound_request(model: str, messages: Any, fields: dict[str, Any]) -> tuple[st
 
     The body is always valid JSON that names the model. Cutting the JSON text at
     a fixed length, as this used to do, made any request over the limit
-    unparseable: Sentinel then recorded the call without its model and with a
+    unparsable: Sentinel then recorded the call without its model and with a
     capped size, so the model allowlist and the oversize rule could not fire on
     a long prompt. Over the limit, the messages are replaced by a redacted,
     bounded preview and the real size travels separately.

@@ -74,7 +74,7 @@ def test_report_is_fail_open_when_sentinel_is_unreachable(monkeypatch):
     assert SentinelReporter("a", "s").report(host="h") == {}
 
 
-def test_report_is_fail_open_on_an_unparseable_response(monkeypatch):
+def test_report_is_fail_open_on_an_unparsable_response(monkeypatch):
     class _Garbage:
         def read(self):
             return b"not json at all"
@@ -124,7 +124,7 @@ def test_report_tool_call_parses_string_arguments(captured):
     assert body["params"]["arguments"] == {"k": "v"}
 
 
-def test_report_tool_call_keeps_unparseable_arguments_as_raw(captured):
+def test_report_tool_call_keeps_unparsable_arguments_as_raw(captured):
     """Evidence must survive even when the arguments are not valid JSON."""
     SentinelReporter("a", "s").report_tool_call(host="h", tool_name="t", args="not json")
     body = json.loads(captured["body"]["request_body"])
