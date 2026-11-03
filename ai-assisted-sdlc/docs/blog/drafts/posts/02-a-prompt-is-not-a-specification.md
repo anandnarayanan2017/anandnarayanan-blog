@@ -2,12 +2,18 @@
 
 <!--
 DRAFT, not published. To publish: move this file to docs/blog/posts/, add a
-"2" date and a "2" excerpt to docs/blog/series.json, and add a hero image as
-docs/blog/images/02-a-prompt-is-not-a-specification-1.png.
+"2" date and a "2" excerpt to docs/blog/series.json. The hero image is
+ready at docs/blog/images/02-a-prompt-is-not-a-specification-1.png (copied to
+the site only once this part is published). When moving the file, change the
+image link below from ../../images/ to ../images/.
 Suggested excerpt: "A prompt describes what to build. A specification also
 says what must never happen. Turning “Build a booking API” into four testable
 invariants, and why the fourth sentence mattered most."
 -->
+
+![A prompt is not a specification: the prompt “Build a booking API” says nothing about double bookings; three questions turn it into a specification with an invariant the database enforces, checked by a test where 20 simultaneous requests give one 201 and nineteen 409s.](../../images/02-a-prompt-is-not-a-specification-1.png)
+
+*A prompt says what to build. A specification also says what must never happen.*
 
 In Part 1, I typed “Build a booking API” and called it a wish.
 
