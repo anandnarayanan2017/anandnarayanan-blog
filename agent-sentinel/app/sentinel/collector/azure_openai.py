@@ -1,8 +1,10 @@
 """Azure OpenAI SDK interceptor — Phase 2 collector.
 
-Drop-in replacement for ``openai.AzureOpenAI``.  Every chat completion and
-tool call is forwarded to Sentinel before being returned to the caller.
-If Sentinel is unreachable the call succeeds normally (fail-open).
+Drop-in replacement for ``openai.AzureOpenAI``.  Every chat.completions.create()
+call, and every tool call the model proposes, is reported to Sentinel before the
+response is returned to the caller. Calls the provider rejects are reported too.
+If Sentinel is unreachable the call succeeds normally (fail-open), and anything
+not wrapped here is passed through to the real client.
 
 Install:
     pip install "agent-sentinel[azure]"
@@ -29,84 +31,90 @@ Usage::
 
 from __future__ import annotations
 
+import asyncio
 import json
 from typing import Any
 from urllib.parse import urlparse
 
-from sentinel.collector.sdk_base import SentinelReporter
+from sentinel.collector.sdk_base import SentinelReporter, bound_request
 
 # ── Proxy wrappers ────────────────────────────────────────────────────────────
 
 
 class _CompletionsSentinel:
-    """Intercepts chat.completions.create() calls."""
+    """Intercepts chat.completions.create(). Everything else is passed through."""
 
     def __init__(self, completions: Any, reporter: SentinelReporter, host: str) -> None:
         self._completions = completions
         self._rep = reporter
         self._host = host
 
-    def create(self, *, model: str, messages: list[dict], **kwargs: Any) -> Any:
-        req_body = _serialise_request(model, messages, kwargs)
-        response = self._completions.create(model=model, messages=messages, **kwargs)
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._completions, name)
 
-        self._rep.report(
-            host=self._host,
-            method="POST",
-            path=f"/openai/deployments/{model}/chat/completions",
-            request_body=req_body,
-            response_body=_serialise_response(response),
-            status_code=200,
-        )
-        _report_tool_requests(response, self._rep, self._host)
+    def create(self, *, model: str, messages: list[dict], **kwargs: Any) -> Any:
+        body, size = _serialise_request(model, messages, kwargs)
+        try:
+            response = self._completions.create(model=model, messages=messages, **kwargs)
+        except Exception as exc:
+            _record_error(self._rep, self._host, model, body, size, exc)
+            raise
+        _record(self._rep, self._host, model, body, size, response)
         return response
 
     async def acreate(self, *, model: str, messages: list[dict], **kwargs: Any) -> Any:
-        req_body = _serialise_request(model, messages, kwargs)
-        response = await self._completions.create(model=model, messages=messages, **kwargs)
-        self._rep.report(
-            host=self._host,
-            method="POST",
-            path=f"/openai/deployments/{model}/chat/completions",
-            request_body=req_body,
-            response_body=_serialise_response(response),
-            status_code=200,
-        )
-        _report_tool_requests(response, self._rep, self._host)
+        body, size = _serialise_request(model, messages, kwargs)
+        try:
+            response = await self._completions.create(model=model, messages=messages, **kwargs)
+        except Exception as exc:
+            await asyncio.to_thread(_record_error, self._rep, self._host, model, body, size, exc)
+            raise
+        await asyncio.to_thread(_record, self._rep, self._host, model, body, size, response)
         return response
 
 
 class _ChatSentinel:
     def __init__(self, chat: Any, reporter: SentinelReporter, host: str) -> None:
+        self._chat = chat
         self.completions = _CompletionsSentinel(chat.completions, reporter, host)
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._chat, name)
 
 
 class _AsyncCompletionsSentinel:
-    """Async SDK surface: callers still use ``await ...completions.create``."""
+    """Async SDK surface: callers still use ``await ...completions.create``.
+
+    Reporting runs in a worker thread, so a slow Sentinel never blocks the
+    agent's event loop.
+    """
 
     def __init__(self, completions: Any, reporter: SentinelReporter, host: str) -> None:
         self._completions = completions
         self._rep = reporter
         self._host = host
 
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._completions, name)
+
     async def create(self, *, model: str, messages: list[dict], **kwargs: Any) -> Any:
-        req_body = _serialise_request(model, messages, kwargs)
-        response = await self._completions.create(model=model, messages=messages, **kwargs)
-        self._rep.report(
-            host=self._host,
-            method="POST",
-            path=f"/openai/deployments/{model}/chat/completions",
-            request_body=req_body,
-            response_body=_serialise_response(response),
-            status_code=200,
-        )
-        _report_tool_requests(response, self._rep, self._host)
+        body, size = _serialise_request(model, messages, kwargs)
+        try:
+            response = await self._completions.create(model=model, messages=messages, **kwargs)
+        except Exception as exc:
+            await asyncio.to_thread(_record_error, self._rep, self._host, model, body, size, exc)
+            raise
+        await asyncio.to_thread(_record, self._rep, self._host, model, body, size, response)
         return response
 
 
 class _AsyncChatSentinel:
     def __init__(self, chat: Any, reporter: SentinelReporter, host: str) -> None:
+        self._chat = chat
         self.completions = _AsyncCompletionsSentinel(chat.completions, reporter, host)
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._chat, name)
 
 
 # ── Public wrapper ────────────────────────────────────────────────────────────
@@ -195,9 +203,9 @@ class AsyncAzureOpenAISentinel:
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 
-def _serialise_request(model: str, messages: list, kwargs: dict) -> str:
+def _serialise_request(model: str, messages: list, kwargs: dict) -> tuple[str, int]:
     safe = {k: v for k, v in kwargs.items() if k not in ("stream",)}
-    return json.dumps({"model": model, "messages": messages, **safe}, default=str)[:8192]
+    return bound_request(model, messages, safe)
 
 
 def _serialise_response(response: Any) -> str:
@@ -205,6 +213,40 @@ def _serialise_response(response: Any) -> str:
         return response.model_dump_json()[:4096]
     except Exception:  # noqa: BLE001 — any SDK response shape; telemetry must never raise into the agent
         return str(response)[:4096]
+
+
+def _path(model: str) -> str:
+    return f"/openai/deployments/{model}/chat/completions"
+
+
+def _record(
+    reporter: SentinelReporter, host: str, model: str, body: str, size: int, response: Any
+) -> None:
+    reporter.report(
+        host=host,
+        method="POST",
+        path=_path(model),
+        request_body=body,
+        request_bytes=size,
+        response_body=_serialise_response(response),
+        status_code=200,
+    )
+    _report_tool_requests(response, reporter, host)
+
+
+def _record_error(
+    reporter: SentinelReporter, host: str, model: str, body: str, size: int, exc: Exception
+) -> None:
+    """Record a call the provider rejected; the caller re-raises the error unchanged."""
+    reporter.report(
+        host=host,
+        method="POST",
+        path=_path(model),
+        request_body=body,
+        request_bytes=size,
+        response_body=json.dumps({"error": type(exc).__name__}),
+        status_code=getattr(exc, "status_code", None),
+    )
 
 
 def _report_tool_requests(response: Any, reporter: SentinelReporter, host: str) -> None:

@@ -31,7 +31,7 @@ from typing import Any
 from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, StreamingResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from sentinel.api.audit import AuditMiddleware
 from sentinel.api.auth import (
@@ -92,6 +92,8 @@ class FlowIn(BaseModel):
     request_body: str | None = None
     response_body: str | None = None
     status_code: int | None = None
+    # Real request size, when request_body is a bounded preview (SDK collectors).
+    request_bytes: int | None = Field(default=None, ge=0)
 
 
 class ReviewIn(BaseModel):

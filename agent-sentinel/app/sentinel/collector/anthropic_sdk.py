@@ -1,7 +1,9 @@
 """Anthropic SDK interceptor — Phase 2 collector.
 
 Drop-in replacement for ``anthropic.Anthropic``.  Every messages.create() call
-and embedded tool_use block is reported to Sentinel automatically.
+and embedded tool_use block is reported to Sentinel automatically, including
+calls the provider rejects. Anything not wrapped here (``messages.stream``,
+``count_tokens``, batches) is passed through to the real client unrecorded.
 
 Install:
     pip install "agent-sentinel[anthropic]"
@@ -27,84 +29,76 @@ Usage::
 
 from __future__ import annotations
 
+import asyncio
 import json
 from typing import Any
 
-from sentinel.collector.sdk_base import SentinelReporter
+from sentinel.collector.sdk_base import SentinelReporter, bound_request
 
 _ANTHROPIC_HOST = "api.anthropic.com"
+_PATH = "/v1/messages"
 
 
 # ── Proxy wrappers ────────────────────────────────────────────────────────────
 
 
 class _MessagesSentinel:
-    """Intercepts messages.create() calls."""
+    """Intercepts messages.create(). Everything else is passed through.
+
+    ``stream``, ``count_tokens``, ``batches`` and any later SDK addition reach
+    the real client unchanged (and unrecorded): a wrapper that raises
+    AttributeError for methods it doesn't know breaks the agent it watches.
+    """
 
     def __init__(self, messages: Any, reporter: SentinelReporter) -> None:
         self._messages = messages
         self._rep = reporter
 
-    def create(self, *, model: str, messages: list[dict], max_tokens: int, **kwargs: Any) -> Any:
-        req_body = _serialise_request(model, messages, max_tokens, kwargs)
-        response = self._messages.create(
-            model=model, messages=messages, max_tokens=max_tokens, **kwargs
-        )
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._messages, name)
 
-        self._rep.report(
-            host=_ANTHROPIC_HOST,
-            method="POST",
-            path="/v1/messages",
-            request_body=req_body,
-            response_body=_serialise_response(response),
-            status_code=200,
-        )
-        _report_tool_use(response, self._rep)
+    def create(self, *, model: str, messages: list[dict], max_tokens: int, **kwargs: Any) -> Any:
+        body, size = _serialise_request(model, messages, max_tokens, kwargs)
+        try:
+            response = self._messages.create(
+                model=model, messages=messages, max_tokens=max_tokens, **kwargs
+            )
+        except Exception as exc:
+            _record_error(self._rep, body, size, exc)
+            raise
+        _record(self._rep, body, size, response)
         return response
 
 
 class _AsyncMessagesSentinel:
-    """Async SDK surface: callers use ``await client.messages.create``."""
+    """Async SDK surface: callers use ``await client.messages.create``.
+
+    Reporting runs in a worker thread, so a slow Sentinel delays this call by at
+    most the reporter's timeout and never blocks the agent's event loop.
+    """
 
     def __init__(self, messages: Any, reporter: SentinelReporter) -> None:
         self._messages = messages
         self._rep = reporter
 
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._messages, name)
+
     async def create(
         self, *, model: str, messages: list[dict], max_tokens: int, **kwargs: Any
     ) -> Any:
-        req_body = _serialise_request(model, messages, max_tokens, kwargs)
-        response = await self._messages.create(
-            model=model, messages=messages, max_tokens=max_tokens, **kwargs
-        )
-        self._rep.report(
-            host=_ANTHROPIC_HOST,
-            method="POST",
-            path="/v1/messages",
-            request_body=req_body,
-            response_body=_serialise_response(response),
-            status_code=200,
-        )
-        _report_tool_use(response, self._rep)
+        body, size = _serialise_request(model, messages, max_tokens, kwargs)
+        try:
+            response = await self._messages.create(
+                model=model, messages=messages, max_tokens=max_tokens, **kwargs
+            )
+        except Exception as exc:
+            await asyncio.to_thread(_record_error, self._rep, body, size, exc)
+            raise
+        await asyncio.to_thread(_record, self._rep, body, size, response)
         return response
 
-    async def acreate(
-        self, *, model: str, messages: list[dict], max_tokens: int, **kwargs: Any
-    ) -> Any:
-        req_body = _serialise_request(model, messages, max_tokens, kwargs)
-        response = await self._messages.create(
-            model=model, messages=messages, max_tokens=max_tokens, **kwargs
-        )
-        self._rep.report(
-            host=_ANTHROPIC_HOST,
-            method="POST",
-            path="/v1/messages",
-            request_body=req_body,
-            response_body=_serialise_response(response),
-            status_code=200,
-        )
-        _report_tool_use(response, self._rep)
-        return response
+    acreate = create
 
 
 # ── Public wrapper ────────────────────────────────────────────────────────────
@@ -188,11 +182,10 @@ class AsyncAnthropicSentinel:
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 
-def _serialise_request(model: str, messages: list, max_tokens: int, kwargs: dict) -> str:
-    return json.dumps(
-        {"model": model, "messages": messages, "max_tokens": max_tokens, **kwargs},
-        default=str,
-    )[:8192]
+def _serialise_request(
+    model: str, messages: list, max_tokens: int, kwargs: dict
+) -> tuple[str, int]:
+    return bound_request(model, messages, {"max_tokens": max_tokens, **kwargs})
 
 
 def _serialise_response(response: Any) -> str:
@@ -200,6 +193,32 @@ def _serialise_response(response: Any) -> str:
         return response.model_dump_json()[:4096]
     except Exception:  # noqa: BLE001 — any SDK response shape; telemetry must never raise into the agent
         return str(response)[:4096]
+
+
+def _record(reporter: SentinelReporter, body: str, size: int, response: Any) -> None:
+    reporter.report(
+        host=_ANTHROPIC_HOST,
+        method="POST",
+        path=_PATH,
+        request_body=body,
+        request_bytes=size,
+        response_body=_serialise_response(response),
+        status_code=200,
+    )
+    _report_tool_use(response, reporter)
+
+
+def _record_error(reporter: SentinelReporter, body: str, size: int, exc: Exception) -> None:
+    """Record a call the provider rejected; the caller re-raises the error unchanged."""
+    reporter.report(
+        host=_ANTHROPIC_HOST,
+        method="POST",
+        path=_PATH,
+        request_body=body,
+        request_bytes=size,
+        response_body=json.dumps({"error": type(exc).__name__}),
+        status_code=getattr(exc, "status_code", None),
+    )
 
 
 def _report_tool_use(response: Any, reporter: SentinelReporter) -> None:

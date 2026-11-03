@@ -66,8 +66,39 @@ def parse_flow(
     request_body: bytes | str | None = None,
     response_body: bytes | str | None = None,
     status_code: int | None = None,
+    request_bytes: int | None = None,
 ) -> AgentEvent:
-    """Top-level entry: classify a single captured HTTP flow."""
+    """Top-level entry: classify a single captured HTTP flow.
+
+    `request_bytes` is the real request size, sent by SDK collectors when
+    `request_body` is a bounded preview of a larger request.
+    """
+    event = _classify_flow(
+        agent_id=agent_id,
+        session_id=session_id,
+        host=host,
+        method=method,
+        path=path,
+        request_body=request_body,
+        response_body=response_body,
+        status_code=status_code,
+    )
+    if request_bytes is not None:
+        event.bytes_out = request_bytes
+    return event
+
+
+def _classify_flow(
+    *,
+    agent_id: str,
+    session_id: str,
+    host: str,
+    method: str,
+    path: str,
+    request_body: bytes | str | None,
+    response_body: bytes | str | None,
+    status_code: int | None,
+) -> AgentEvent:
 
     provider = _classify_host(host)
     body = _safe_json(request_body)
@@ -143,7 +174,10 @@ def _parse_llm_call(
     msgs = (body or {}).get("messages")
     if msgs:
         ev.add_evidence("prompt_preview", _preview(json.dumps(msgs)), redacted=True)
-        ev.attributes["message_count"] = len(msgs)
+        # A bounded preview carries the original count (sdk_base.bound_request).
+        ev.attributes["message_count"] = (body or {}).get("message_count") or len(msgs)
+    if (body or {}).get("sentinel_truncated"):
+        ev.attributes["request_truncated"] = True
     return ev
 
 

@@ -15,6 +15,8 @@ In practice:
 
 Fail-open has a cost: you can lose evidence. The design accepts that, but never silently.
 
+Then I tested my own code against that rule. It failed in five places, invisible in the simulator. One was a detection bypass: a long enough prompt hid which model the agent called. All five are fixed, with a test each, and the article shows them.
+
 This is Part 2 of a 5-part series on building it.
 Next week: Part 3, Rules First, Statistics Second.
 
