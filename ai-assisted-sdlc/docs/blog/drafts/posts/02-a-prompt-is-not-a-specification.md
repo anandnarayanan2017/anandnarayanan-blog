@@ -59,7 +59,7 @@ The second question is the one people skip. It turned out to be the one that mat
 
 The first attempt at concurrency safety looked careful. Open a transaction. Check whether the slot is taken. If it is free, insert the booking. Commit.
 
-Read it in a code review and it looks right. An AI reviewer read it and scored it 9 out of 10.
+Read it in a code review and it looks right. An AI reviewer read it and scored it 9 out of 10. (Why that score and a failing test can both be honest is Part 5.)
 
 It isn’t right. In PostgreSQL’s default isolation level, Read Committed, one transaction can’t see another’s booking until that booking is committed. Twenty requests arrive together, all twenty check, all twenty find the slot free, and then they all insert. The transaction makes each request consistent with itself, not with the other nineteen.
 
