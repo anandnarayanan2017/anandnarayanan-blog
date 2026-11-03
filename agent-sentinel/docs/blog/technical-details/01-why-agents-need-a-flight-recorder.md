@@ -47,11 +47,22 @@ see, and it flags actions after they happen rather than blocking them.
 
 Five short parts, each one design decision and why it was made:
 
-1. **Why AI agents need a flight recorder**: this part.
-2. From Simulated Traffic to Real Model Calls: record first, block later, and why recording must never break the agent.
-3. Rules First, Statistics Second: why a readable rulebook comes before any AI model.
-4. The Enterprise Foundation: identity, audit trail and human approvals.
-5. Feeding the SOC, and What's Next: evidence for your existing SIEM, not another dashboard.
+1. **Why AI Agents Need a Flight Recorder** *(this part).* Why agent activity
+   needs durable, attributable evidence before you can govern it.
+2. **From Simulated Traffic to Real Model Calls.** Moving from test events to
+   real agent activity, while keeping recording non-blocking and failure-safe:
+   if the recorder fails, the agent must not.
+3. **Rules First, Statistics Second.** Why deterministic, human-readable policy
+   rules come before probabilistic detection.
+4. **The Enterprise Foundation.** Agent identity, attribution, scoped
+   permissions, audit trails and human approval points.
+5. **Feeding the SOC, and What Comes Next.** Turning findings into evidence your
+   existing SIEM and SOC can consume, and the path from detection toward
+   enforcement.
+
+Which of these matters most in your organisation today? [Tell me on
+LinkedIn](https://linkedin.com/in/anandkn2012); it will shape where the series
+goes deepest.
 
 ## Design and implementation
 

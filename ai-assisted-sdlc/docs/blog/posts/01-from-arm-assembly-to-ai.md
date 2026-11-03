@@ -66,6 +66,21 @@ More layers. Same question:
 
 **How do we know it works?**
 
+## What’s next in this series
+
+This first part was about the shift in abstraction: AI can produce code quickly, but engineering still starts with deciding what “correct” means.
+
+The next six parts go deeper into the system around the agent, one question at a time:
+
+2. **A Prompt Is Not a Specification.** Turning vague intent into explicit, testable invariants.
+3. **The Harness Around the Agent.** Context, tools, feedback loops and recovery: what surrounds the model matters as much as the model.
+4. **“Please Be Careful” Is Not a Permission Model.** What the agent may read, change and execute, enforced by the system rather than requested in a prompt.
+5. **When the AI Reviewer Says 9/10 and the Test Still Fails.** Where probabilistic judgement helps, and where deterministic verification must win.
+6. **Human Approval Is a Control, Not a Button.** Deciding which changes proceed automatically and which need a person, and making that review mean something.
+7. **From Coding Agent to Engineering Factory.** Specifications, tools, verification, approvals and evidence brought together into one delivery flow.
+
+Which of these is your team struggling with most right now? [Tell me on LinkedIn](https://linkedin.com/in/anandkn2012). It will shape what I go deeper on.
+
 [Follow the series on GitHub](https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc)
 
 ## References and further reading
