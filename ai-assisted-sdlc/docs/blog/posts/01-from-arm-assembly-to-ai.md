@@ -90,7 +90,7 @@ Which of these is your team struggling with most right now? [Tell me on LinkedIn
 - **The arrows between the boxes:** the [fallacies of distributed computing](https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing), associated with L. Peter Deutsch and colleagues at Sun Microsystems. The network is reliable, latency is zero: the assumptions that make an arrow look simple.
 - **Concurrency and meeting-room bookings:** Martin Kleppmann, *Designing Data-Intensive Applications* (O’Reilly), chapter on transactions. The discussion of write skew and booking systems is a useful example of why some invariants belong in the data layer.
 - **Letting the database enforce the invariant:** PostgreSQL documentation, [Exclusion constraints](https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-EXCLUSION).
-- **HTTP semantics:** [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110), including 201 Created and 409 Conflict.
+- **HTTP semantics:** [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110), sections 15.3.2 (201 Created) and 15.5.10 (409 Conflict).
 - **Agents and harnesses:** Anthropic, [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents) and [Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents).
 - **Engineering discipline for agents:** Matt Pocock, [Skills for real engineers](https://github.com/mattpocock/skills), agent skills grounded in classic software engineering practice.
 
