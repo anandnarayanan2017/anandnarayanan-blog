@@ -92,6 +92,7 @@ Which of these is your team struggling with most right now? [Tell me on LinkedIn
 - **Letting the database enforce the invariant:** PostgreSQL documentation, [Exclusion constraints](https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-EXCLUSION).
 - **HTTP semantics:** [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110), including 201 Created and 409 Conflict.
 - **Agents and harnesses:** Anthropic, [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents) and [Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents).
+- **Engineering discipline for agents:** Matt Pocock, [Skills for real engineers](https://github.com/mattpocock/skills), agent skills grounded in classic software engineering practice.
 
 ## Acknowledgements
 
