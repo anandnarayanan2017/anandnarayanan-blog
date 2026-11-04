@@ -12,6 +12,7 @@
 import { createHash } from "node:crypto";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
+import { parse } from "parse5";
 
 const POLICY = "infra/cloudfront/security-headers-policy.json";
 const DIST = "dist";
@@ -29,10 +30,30 @@ const allowed = new Set(scriptSrc.match(/'sha256-[A-Za-z0-9+/=]+'/g) ?? []);
 
 const needed = new Map(); // hash -> first file that uses it
 const handlers = [];
+
+const walk = (node, visit) => {
+  visit(node);
+  for (const child of node.childNodes ?? []) walk(child, visit);
+};
+
+const scriptNodes = (html) => {
+  const doc = parse(html);
+  const nodes = [];
+  walk(doc, (node) => {
+    if (node?.nodeName === "script") nodes.push(node);
+  });
+  return nodes;
+};
+
 for (const file of htmlFiles(DIST)) {
   const html = readFileSync(file, "utf8");
-  for (const [, attrs, body] of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
-    if (/\bsrc\s*=/i.test(attrs) || DATA_TYPES.test(attrs)) continue;
+  for (const node of scriptNodes(html)) {
+    const attrs = Object.fromEntries((node.attrs ?? []).map((a) => [a.name.toLowerCase(), a.value]));
+    if ("src" in attrs || DATA_TYPES.test(`type="${attrs.type ?? ""}"`)) continue;
+    const body = (node.childNodes ?? [])
+      .filter((c) => c.nodeName === "#text")
+      .map((c) => c.value)
+      .join("");
     const hash = `'sha256-${createHash("sha256").update(body, "utf8").digest("base64")}'`;
     if (!needed.has(hash)) needed.set(hash, file);
   }
