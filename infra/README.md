@@ -46,9 +46,17 @@ aws cloudfront create-response-headers-policy \
 ```
 
 Then, in the console under CloudFront > Distributions > `ESTVCZ8II465N` > Behaviors > Default
-> Response headers policy, choose `blog-security-headers` and save. With the CLI, set
-`DefaultCacheBehavior.ResponseHeadersPolicyId` in the distribution config and run
-`update-distribution` with the config's ETag.
+> Response headers policy, choose `blog-security-headers` and save. Prefer the console for
+this step.
+
+> **Warning:** `update-distribution` replaces the whole distribution config with the one you
+> send. An AWS CLI older than origin access control (August 2022) drops
+> `OriginAccessControlId` when it reads the config, so writing it back removes OAC from the S3
+> origin and every request returns 403. Before editing the distribution with the CLI, check
+> that `aws cloudfront get-distribution-config --id ESTVCZ8II465N --query
+> 'DistributionConfig.Origins.Items[0].OriginAccessControlId'` prints the OAC ID, not `null`.
+> If you do use the CLI, set `DefaultCacheBehavior.ResponseHeadersPolicyId` in the config and
+> run `update-distribution` with the config's ETag.
 
 To change the policy later:
 
