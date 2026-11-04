@@ -7,6 +7,7 @@ part cites. Each part brings only the code it needs, so this folder grows with t
 |---|---|
 | `docs/blog/posts/NN-<slug>.md` | One post per part, published whole. The `# ` heading is the title. |
 | `docs/blog/images/NN-<slug>-1.png` | The part's hero and social-preview image (more images: `-2.png`, ...). |
+| `docs/blog/linkedin/NN-<slug>.md` | The LinkedIn post that shares the part; `NN-<slug>-article.md`, where present, is the LinkedIn Article version. |
 | `docs/blog/series.json` | Site settings: release date and excerpt per part, tags, home-page card. |
 | [`examples/double-booking/`](examples/double-booking/) | Part 1: the booking specification as code and tests. |
 
