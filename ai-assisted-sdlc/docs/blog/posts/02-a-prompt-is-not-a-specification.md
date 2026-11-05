@@ -1,17 +1,6 @@
 # A Prompt Is Not a Specification
 
-<!--
-DRAFT, not published. To publish: move this file to docs/blog/posts/, add a
-"2" date and a "2" excerpt to docs/blog/series.json. The hero image is
-ready at docs/blog/images/02-a-prompt-is-not-a-specification-1.png (copied to
-the site only once this part is published). When moving the file, change the
-image link below from ../../images/ to ../images/.
-Suggested excerpt: "A prompt describes what to build. A specification also
-says what must never happen. Turning “Build a booking API” into four testable
-invariants, and why the fourth sentence mattered most."
--->
-
-![A prompt is not a specification: the prompt “Build a booking API” says nothing about double bookings; three questions turn it into a specification with an invariant the database enforces, checked by a test where 20 simultaneous requests give one 201 and nineteen 409s.](../../images/02-a-prompt-is-not-a-specification-1.png)
+![A prompt is not a specification: the prompt “Build a booking API” says nothing about double bookings; three questions turn it into a specification with an invariant the database enforces, checked by a test where 20 simultaneous requests give one 201 and nineteen 409s.](../images/02-a-prompt-is-not-a-specification-1.png)
 
 *A prompt says what to build. A specification also says what must never happen.*
 
@@ -69,7 +58,7 @@ Read it in a code review and it looks right. An AI reviewer read it and scored i
 
 It isn’t right. In PostgreSQL’s default isolation level, Read Committed, one transaction can’t see another’s booking until that booking is committed. Twenty requests arrive together, all twenty check, all twenty find the slot free, and then they all insert. The transaction makes each request consistent with itself, not with the other nineteen.
 
-The twenty-request test caught it: ten bookings for the same room and the same hour. The failure went back to the agent, and the second attempt passed.
+The twenty-request test caught it: the same room, the same hour, booked again and again. In my local runs, 19 or 20 of the twenty requests succeeded. The failure went back to the agent, and the second attempt passed.
 
 What it changed is the point of this part. The fix wasn’t smarter application code. It was moving the rule to where the invariant said it belonged, into the database:
 
@@ -130,7 +119,7 @@ What is one rule in your system that everyone knows and nobody has written down?
 
 ## References and further reading
 
-- **The code:** [examples/double-booking](https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc/examples/double-booking): the four tests, the check-then-insert first attempt, the exclusion constraint, and the run log behind “ten times”. It runs in CI on every change.
+- **The code:** [examples/double-booking](https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc/examples/double-booking): the four tests, the check-then-insert first attempt, the exclusion constraint, and the race script that reproduces the double booking. It runs in CI on every change.
 - **Why the transaction didn’t help:** PostgreSQL documentation, [Transaction Isolation](https://www.postgresql.org/docs/current/transaction-iso.html), on what Read Committed does and doesn’t protect against.
 - **The constraint:** PostgreSQL documentation, [Exclusion constraints](https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-EXCLUSION).
 - **Write skew, with meeting rooms:** Martin Kleppmann, *Designing Data-Intensive Applications* (O’Reilly), chapter on transactions.
