@@ -15,6 +15,12 @@
 //   "essay": posts/NN-<slug>.md, published whole; the "# " heading is the title
 //     and the excerpt comes from "excerpts" in series.json.
 //
+// Optional per part, also in series.json:
+//   "updated": { "1": "2027-03-01" }   last time the part was checked against its
+//                                     sources; the post shows "Last reviewed".
+//   "sources": { "1": [{ "title": "...", "url": "https://..." }] }
+//                                     external sources, listed at the top of the post.
+//
 // Images live in images/ and are named <NN-slug>-1.png (the hero) and so on.
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join, posix } from "node:path";
@@ -49,6 +55,24 @@ function sync(folder) {
       .map(([k, v]) => {
         if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) throw new Error(`${where}: part ${k} has "${v}", expected YYYY-MM-DD`);
         return [Number(k), v];
+      }),
+  );
+
+  const updated = new Map(
+    Object.entries(cfg.updated ?? {})
+      .filter(([k]) => /^\d+$/.test(k))
+      .map(([k, v]) => {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) throw new Error(`${where}: "updated" part ${k} has "${v}", expected YYYY-MM-DD`);
+        return [Number(k), v];
+      }),
+  );
+  const sources = new Map(
+    Object.entries(cfg.sources ?? {})
+      .filter(([k]) => /^\d+$/.test(k))
+      .map(([k, list]) => {
+        const ok = Array.isArray(list) && list.every((s) => typeof s?.title === "string" && /^https?:\/\//.test(s?.url ?? ""));
+        if (!ok) throw new Error(`${where}: "sources" part ${k} must be a list of { "title", "url" } with http(s) URLs`);
+        return [Number(k), list.map(({ title, url }) => ({ title, url }))];
       }),
   );
 
@@ -118,6 +142,8 @@ function sync(folder) {
       "---",
       `title: ${JSON.stringify(siteTitle)}`,
       `date: ${p.date}`,
+      ...(updated.has(p.n) ? [`updated: ${updated.get(p.n)}`] : []),
+      ...(sources.has(p.n) ? [`sources: ${JSON.stringify(sources.get(p.n))}`] : []),
       `excerpt: ${JSON.stringify(p.excerpt)}`,
       `tags: [${cfg.tags.map((t) => JSON.stringify(t)).join(", ")}]`,
       `readTime: ${Math.max(1, Math.ceil(words / 200))}`,
