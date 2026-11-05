@@ -1,5 +1,5 @@
-// Site behaviour. Served as a file (not inline) so the CSP allows it through
-// 'self' and no script hash needs updating when it changes. Every page works
+// Site behaviour. Served as a file, not inline, so a strict Content-Security-Policy
+// can allow it with 'self' and no script hash is needed when it changes. Every page works
 // without it: it only adds the dark-mode toggle and the home-page tag filter.
 (function () {
   var toggle = document.getElementById("theme-toggle");

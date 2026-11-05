@@ -83,7 +83,7 @@ const ldJson = jsonLd && JSON.stringify(jsonLd).replace(/</g, "\\u003c");
       </div>
     </footer>
 
-    <!-- External file, not an inline script: 'self' in the CSP covers it, so it needs no hash. -->
+    <!-- External file, not an inline script, so a strict CSP can allow it with 'self'. -->
     <script is:inline src="/js/site.js" defer></script>
   </body>
 </html>
