@@ -28,7 +28,7 @@ export function homeJsonLd() {
   return { "@context": "https://schema.org", "@graph": [website, person] };
 }
 
-type Post = { title: string; excerpt: string; date: Date; tags: string[]; image?: string; series?: string };
+type Post = { title: string; excerpt: string; date: Date; updated?: Date; tags: string[]; image?: string; series?: string };
 
 export function blogPostingJsonLd(post: Post, url: URL) {
   return {
@@ -37,6 +37,7 @@ export function blogPostingJsonLd(post: Post, url: URL) {
     headline: post.title,
     description: post.excerpt,
     datePublished: post.date.toISOString(),
+    dateModified: (post.updated ?? post.date).toISOString(),
     url: url.href,
     mainEntityOfPage: url.href,
     inLanguage: "en",

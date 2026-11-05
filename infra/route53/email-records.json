@@ -1,0 +1,39 @@
+{
+  "Comment": "Mail for anandnarayanan.net: forward hello@ through ImprovMX (see infra/README.md, Email)",
+  "Changes": [
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "anandnarayanan.net",
+        "Type": "MX",
+        "TTL": 3600,
+        "ResourceRecords": [
+          { "Value": "10 mx1.improvmx.com" },
+          { "Value": "20 mx2.improvmx.com" }
+        ]
+      }
+    },
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "anandnarayanan.net",
+        "Type": "TXT",
+        "TTL": 3600,
+        "ResourceRecords": [
+          { "Value": "\"v=spf1 include:spf.improvmx.com ~all\"" }
+        ]
+      }
+    },
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "_dmarc.anandnarayanan.net",
+        "Type": "TXT",
+        "TTL": 3600,
+        "ResourceRecords": [
+          { "Value": "\"v=DMARC1; p=none\"" }
+        ]
+      }
+    }
+  ]
+}

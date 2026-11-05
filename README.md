@@ -32,11 +32,23 @@ site is built and published from the same repository that holds that evidence.
 |(https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc) | AI-assisted SDLC | What it takes to delegate software work to AI agents and still know it works: specifications, harnesses, deterministic checks and human approval. The essays live here; the harness code lives in its own repository. |
 
 Each series folder is the single source of truth for its posts. `docs/blog/series.json` holds its release
-dates, excerpts and home-page card.
+dates, excerpts and home-page card. Optionally, per part, it holds an `updated` date (shown as
+"Last reviewed") and a list of `sources` (shown at the top of the post):
+
+```json
+"updated": { "1": "2027-03-01" },
+"sources": { "1": [{ "title": "Claude prompting best practices", "url": "https://platform.claude.com/docs/" }] }
+```
 
 ## How the site is built
 
-- [Astro](https://astro.build) with Tailwind CSS. Pages and layout are in `src/`.
+- [Astro](https://astro.build) and plain CSS, built to last: no CSS framework, system fonts, and posts in
+  standard Markdown. Pages and layout are in `src/`.
+- Colours, fonts and widths are CSS custom properties at the top of `src/styles/global.css`. Restyling the
+  site means changing those tokens, not the templates. Dark mode redefines the same tokens.
+- The only JavaScript is the small inline dark-mode script and `public/js/site.js`
+  (theme toggle, tag filter). Every page reads correctly without it; the table of contents is plain HTML.
+- `/rss.xml` is the feed and `/sitemap-index.xml` the sitemap.
 
 
 ```bash
