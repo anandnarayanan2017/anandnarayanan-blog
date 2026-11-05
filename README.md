@@ -46,7 +46,7 @@ dates, excerpts and home-page card. Optionally, per part, it holds an `updated` 
   standard Markdown. Pages and layout are in `src/`.
 - Colours, fonts and widths are CSS custom properties at the top of `src/styles/global.css`. Restyling the
   site means changing those tokens, not the templates. Dark mode redefines the same tokens.
-- The only JavaScript is the inline dark-mode script (its hash is in the CSP) and `public/js/site.js`
+- The only JavaScript is the small inline dark-mode script and `public/js/site.js`
   (theme toggle, tag filter). Every page reads correctly without it; the table of contents is plain HTML.
 - `/rss.xml` is the feed and `/sitemap-index.xml` the sitemap.
 
