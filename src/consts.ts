@@ -22,7 +22,9 @@ export const SITE = {
   seriesRepo: "https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/agent-sentinel",
   // Default social-preview image (1200x627) for pages without their own.
   ogImage: "/images/agent-sentinel/01-why-agents-need-a-flight-recorder-1.png",
-  email: "anandkn.2026@gmail.com",
+  // An address on the site's own domain, forwarded to a personal inbox, so it
+  // outlives any one mail provider. Change the forwarding, never this value.
+  email: "hello@anandnarayanan.net",
   // Google Search Console ownership check (HTML tag method). Public by design;
   // remove only after verifying another way (for example a DNS TXT record).
   googleSiteVerification: "hUjxtW9nJkAgIVTS2-CHlzOM0zeFzaQJzOXY__8MCko",

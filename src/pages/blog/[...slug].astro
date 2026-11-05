@@ -19,54 +19,99 @@ const prev = idx > 0 ? series.parts[idx - 1] : undefined;
 const next = series && idx >= 0 ? series.parts[idx + 1] : undefined;
 const others = allSeries.filter((s) => s !== series);
 const short = (title) => title.replace(/^.*Part \d+: /, "");
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
+// Table of contents: the post's own ## and ### headings. No JavaScript.
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 const url = new URL(Astro.url.pathname, Astro.site);
-const fmt = (d) => d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+const fmt = (d) => d.toLocaleDateString("en-GB", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
+const iso = (d) => d.toISOString().slice(0, 10);
+// "Last reviewed" is the published date until series.json gives an "updated" date.
+const reviewed = post.data.updated ?? post.data.date;
 ---
 <BaseLayout title={post.data.title} description={post.data.excerpt} image={post.data.image} type="article"
-  published={post.data.date} tags={post.data.tags} jsonLd={blogPostingJsonLd(post.data, url)}>
-  <article class="max-w-2xl mx-auto px-5 py-10">
-    <a href="/" class="inline-flex items-center gap-2 text-sm font-medium mb-8 text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300">← All posts</a>
-    <div class="flex flex-wrap gap-2 mb-4">
-      {post.data.tags.map((t) => (
-        <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300">{t}</span>
-      ))}
-    </div>
-    <h1 class="text-3xl sm:text-4xl font-bold leading-tight tracking-tight mb-4 text-slate-900 dark:text-white">{post.data.title}</h1>
-    <div class="flex items-center gap-4 text-sm mb-10 text-slate-500 dark:text-slate-400">
-      <time datetime={post.data.date.toISOString().slice(0, 10)}>{fmt(post.data.date)}</time>
-      {post.data.readTime && <span>{post.data.readTime} min read</span>}
-    </div>
-    <div class="post-content">
-      <Content />
-    </div>
-
-    {series && <nav aria-label={`${series.name} series`} class="mt-14 rounded-2xl border p-6 bg-white border-slate-200 dark:bg-slate-800/50 dark:border-slate-700">
-      <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-        {series.name} · Part {post.data.part} · {series.parts.length} {series.parts.length === 1 ? "part" : "parts"} published
-      </p>
-      {series.question && <p class="mt-1 font-semibold text-slate-900 dark:text-white">{series.question}</p>}
-      {(prev || next) && <div class="mt-5 grid gap-3 sm:grid-cols-2">
-        {prev && <a href={`/blog/${prev.id}/`} class="block rounded-xl border p-4 border-slate-200 hover:border-indigo-300 dark:border-slate-700 dark:hover:border-indigo-500/50">
-          <span class="block text-xs text-slate-500">← Previous in this series</span>
-          <span class="font-medium text-slate-900 dark:text-white">Part {prev.data.part}: {short(prev.data.title)}</span>
-        </a>}
-        {next && <a href={`/blog/${next.id}/`} class="block rounded-xl border p-4 sm:col-start-2 border-slate-200 hover:border-indigo-300 dark:border-slate-700 dark:hover:border-indigo-500/50">
-          <span class="block text-xs text-slate-500">Next in this series →</span>
-          <span class="font-medium text-slate-900 dark:text-white">Part {next.data.part}: {short(next.data.title)}</span>
-        </a>}
-      </div>}
-      {series.codeUrl && <p class="mt-5 text-sm">
-        <a href={series.codeUrl} target="_blank" rel="noopener noreferrer" class="font-medium text-indigo-600 underline hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300">View implementation: source code on GitHub</a>
-      </p>}
-      {others.map((o) => (
-        <p class="mt-5 pt-5 border-t text-sm text-slate-600 border-slate-200 dark:text-slate-400 dark:border-slate-700">
-          <span class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">The other side of the question</span>
-          {o.question && <span class="block mt-1 font-semibold text-slate-900 dark:text-white">{o.question}</span>}
-          <a href={`/blog/${o.parts[0].id}/`} class="mt-1 inline-block text-indigo-600 underline hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300">{o.name}, Part 1: {short(o.parts[0].data.title)}</a>
+  published={post.data.date} updated={post.data.updated} tags={post.data.tags} jsonLd={blogPostingJsonLd(post.data, url)}>
+  <div class="container-wide post-layout">
+    <article>
+      <header class="post-header">
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <ol>
+            <li><a href="/">Home</a></li>
+            {series && <li><a href={`/blog/${series.parts[0].id}/`}>{series.name}</a></li>}
+            <li aria-current="page">{series ? `Part ${post.data.part}` : post.data.title}</li>
+          </ol>
+        </nav>
+        <h1>{post.data.title}</h1>
+        <p class="meta">
+          <time datetime={iso(post.data.date)}>{fmt(post.data.date)}</time>
+          {post.data.readTime && <span>{post.data.readTime} min read</span>}
         </p>
-      ))}
-      <p class="mt-5 pt-5 border-t text-xs text-slate-500 border-slate-200 dark:border-slate-700">{SITE.question}</p>
-    </nav>}
-  </article>
+        <ul class="tags" aria-label="Tags">
+          {post.data.tags.map((t) => <li class="chip">#{t}</li>)}
+        </ul>
+      </header>
+
+      <aside class="provenance" aria-label="About this post">
+        <dl>
+          <dt>Published</dt>
+          <dd><time datetime={iso(post.data.date)}>{fmt(post.data.date)}</time></dd>
+          <dt>Last reviewed</dt>
+          <dd><time datetime={iso(reviewed)}>{fmt(reviewed)}</time></dd>
+          {post.data.sources && post.data.sources.length > 0 && <>
+            <dt>{post.data.sources.length === 1 ? "Source" : "Sources"}</dt>
+            <dd><ul>
+              {post.data.sources.map((s) => <li><a href={s.url} target="_blank" rel="noopener noreferrer">{s.title}</a></li>)}
+            </ul></dd>
+          </>}
+        </dl>
+      </aside>
+
+      {toc.length > 1 && <details class="toc toc-mobile">
+        <summary>On this page</summary>
+        <ol>
+          {toc.map((h) => <li class={`depth-${h.depth}`}><a href={`#${h.slug}`}>{h.text}</a></li>)}
+        </ol>
+      </details>}
+
+      <div class="prose">
+        <Content />
+      </div>
+
+      {series && <nav aria-label={`${series.name} series`} class="card series-box">
+        <p class="eyebrow">
+          {series.name} · Part {post.data.part} · {series.parts.length} {series.parts.length === 1 ? "part" : "parts"} published
+        </p>
+        {series.question && <p class="question">{series.question}</p>}
+        {(prev || next) && <div class="series-nav">
+          {prev && <a href={`/blog/${prev.id}/`}>
+            <small>← Previous in this series</small>
+            Part {prev.data.part}: {short(prev.data.title)}
+          </a>}
+          {next && <a href={`/blog/${next.id}/`} class="next">
+            <small>Next in this series →</small>
+            Part {next.data.part}: {short(next.data.title)}
+          </a>}
+        </div>}
+        {series.codeUrl && <p class="divider">
+          <a href={series.codeUrl} target="_blank" rel="noopener noreferrer">View implementation: source code on GitHub</a>
+        </p>}
+        {others.map((o) => (
+          <p class="divider">
+            <span class="eyebrow other-label">The other side of the question</span>
+            {o.question && <strong class="other-question">{o.question}</strong>}
+            <a href={`/blog/${o.parts[0].id}/`}>{o.name}, Part 1: {short(o.parts[0].data.title)}</a>
+          </p>
+        ))}
+        <p class="divider footnote">{SITE.question}</p>
+      </nav>}
+    </article>
+
+    {toc.length > 1 && <aside class="toc toc-side">
+      <nav aria-label="Table of contents">
+        <p class="eyebrow">On this page</p>
+        <ol>
+          {toc.map((h) => <li class={`depth-${h.depth}`}><a href={`#${h.slug}`}>{h.text}</a></li>)}
+        </ol>
+      </nav>
+    </aside>}
+  </div>
 </BaseLayout>

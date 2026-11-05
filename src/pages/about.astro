@@ -7,9 +7,9 @@ import { getSeries } from "../series";
 const series = getSeries(await getCollection("blog"));
 ---
 <BaseLayout title={`About — ${SITE.name}`} description={`${SITE.name}: Solutions Architect in Luxembourg writing about ${SITE.headline.toLowerCase()}.`}>
-  <main class="max-w-2xl mx-auto px-5 py-12">
-    <h1 class="text-3xl font-bold tracking-tight mb-6 text-slate-900 dark:text-white">About</h1>
-    <div class="post-content">
+  <main class="container">
+    <h1 class="page-title">About</h1>
+    <div class="prose">
       <p>I work full time as a Solutions Architect based in Luxembourg.</p>
       <p>{SITE.intro}</p>
 
