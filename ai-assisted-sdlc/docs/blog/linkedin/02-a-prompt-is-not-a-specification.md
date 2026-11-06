@@ -1,6 +1,6 @@
 The AI reviewer scored the code 9/10.
 The test failed.
-Twenty people tried to book the same room at the same time. Nineteen of them got it.
+Twenty people tried to book the same room at the same time. Ten of them got it.
 
 The code looked careful: open a transaction, check the slot is free, insert, commit.
 
