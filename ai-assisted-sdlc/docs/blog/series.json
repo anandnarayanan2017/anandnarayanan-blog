@@ -12,9 +12,11 @@
     "codeUrl": "https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc"
   },
   "dates": {
-    "1": "2026-11-01"
+    "1": "2026-11-01",
+    "2": "2026-11-11"
   },
   "excerpts": {
-    "1": "“Build a booking API” is a wish. Twenty years from ARM assembly to AI agents, and the one question that has not changed: how do we know it works?"
+    "1": "“Build a booking API” is a wish. Twenty years from ARM assembly to AI agents, and the one question that has not changed: how do we know it works?",
+    "2": "A prompt describes what to build. A specification also says what must never happen. Turning “Build a booking API” into four testable invariants, and why the second question mattered most."
   }
 }

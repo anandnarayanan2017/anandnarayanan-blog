@@ -10,7 +10,7 @@ DRAFT, not published. Before moving this file to docs/blog/technical-details/:
 3. Add a Part 2 row to ../../TRACEABILITY.md.
 4. DONE: hero image at ../../images/02-from-simulated-traffic-to-real-model-calls-1.png
    (the build copies it only once Part 2 is published).
-5. Check the "2" date in ../../series.json (currently 2026-10-13).
+5. DONE: "2" date in ../../series.json is 2026-11-16; change it if the release day moves.
 6. Convert the GitHub links below to relative links, as Part 1 uses.
 -->
 
