@@ -77,6 +77,16 @@ open <http://localhost:8000>, and in a second terminal run
 `python examples/phase1/fintech_sim/sim.py` (or `sentinel demo` for the scripted attack).
 Dev mode turns authentication off; never use it on a reachable host.
 
+## Try each part locally
+
+Everything below runs on a laptop with no cloud account unless it says so.
+Each command assumes the package is installed (see "Run the tests" above).
+A row is added as each part is published.
+
+| Part | What to run | What you should see |
+|---|---|---|
+| 1 | `python scripts/e2e.py`, or the "explore by hand" steps above | Findings for unapproved hosts, tools and models in the dashboard |
+
 ## References you can't follow from here
 
 This is a trimmed copy of the private Agent Sentinel product repository. Code
