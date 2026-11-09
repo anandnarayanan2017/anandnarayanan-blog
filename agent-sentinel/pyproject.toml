@@ -11,7 +11,7 @@ dependencies = [
     "duckdb>=0.10",
     "pyyaml>=6.0",
     "fastapi>=0.110",
-    "uvicorn>=0.29",
+    "uvicorn>=0.54.0",
     "numpy>=2.4.6",
 ]
 
@@ -20,8 +20,8 @@ dependencies = [
 proxy     = ["mitmproxy>=11.0.2"]
 # Phase 2 — real cloud SDK interceptors
 azure     = ["openai>=1.30"]
-anthropic = ["anthropic>=2.3.0"]
-cloud     = ["openai>=1.30", "anthropic>=2.3.0"]
+anthropic = ["anthropic>=2.6.0"]
+cloud     = ["openai>=1.30", "anthropic>=2.6.0"]
 # Phase 3 — persistent storage + SIEM
 postgres  = ["psycopg2-binary>=2.9.13"]
 siem      = ["psycopg2-binary>=2.9.13", "azure-monitor-ingestion>=1.1.0", "azure-identity>=1.25.3"]
@@ -30,13 +30,13 @@ auth      = ["msal>=1.39.0", "python-jose[cryptography]>=3.4"]
 dev = [
     "pytest>=8.0",
     "httpx>=0.28.1",
-    "ruff==0.17.3",
+    "ruff==0.17.4",
     "python-dotenv>=1.2.4",
     "mypy>=2.2.0",
     "pytest-cov>=7.1.0",
-    "bandit>=1.8",
+    "bandit>=1.9.4",
     "types-PyYAML>=6.0",
-    "types-psycopg2>=2.9.21.20260911",
+    "types-psycopg2>=2.9.21.20261030",
     "types-python-jose>=3.5.0.20260408",
 ]
 
