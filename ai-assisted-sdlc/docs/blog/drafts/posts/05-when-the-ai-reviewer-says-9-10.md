@@ -1,6 +1,6 @@
 # When the AI Reviewer Says 9/10 and the Test Still Fails
 
-<!-- HERO (to draw): a monkey judge in a wig holding up a scorecard "9/10". Next to it, a plain grey test rig with one red light and a printout "10 bookings, expected 1". A small sign on the bench: "The machine does not do vibes." Save as ../images/05-when-the-ai-reviewer-says-9-10-1.png -->
+![The AI reviewer said 9/10 for careful-looking code with a transaction, a clash check and HTTP 409. The deterministic test ran 20 simultaneous requests for one room and got 10 bookings instead of 1. Verdict: FAIL, the check wins. A model’s judgement can add a failure but never remove one.](../../images/05-when-the-ai-reviewer-says-9-10-1.png)
 
 *The reviewer judged what it could read. The test measured what actually happened.*
 
