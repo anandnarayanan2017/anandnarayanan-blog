@@ -1,6 +1,6 @@
 # From Coding Agent to Engineering Factory
 
-<!-- HERO (to draw): callback to Part 1's factory. The same monkey agents, now on a tidy line: a spec board at the start, a test rig that can light red, a locked cabinet labelled "tests & policies", a logbook, and at the end the architect awake at a desk with an "Approve" stamp and a folder labelled "Evidence". The anomalies panel now reads "Boardroom booked 1 time". Save as ../images/07-from-coding-agent-to-engineering-factory-1.png -->
+![From coding agent to engineering factory: one flow from intent, invariants and a contract with tests, through an agent in a harness with enforced limits, deterministic checks and an AI reviewer that can only add failures, to a human gate. Evidence is a by-product: spec, tests, a commit per attempt, check output, every model call, every disagreement and the approval. Part 1: the boardroom was booked 10 times. Part 7: booked once.](../../images/07-from-coding-agent-to-engineering-factory-1.png)
 
 *A factory is not more agents. It is the same agents, inside a process that can tell you what it built and why it is safe.*
 

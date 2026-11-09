@@ -1,6 +1,6 @@
 # “Please Be Careful” Is Not a Permission Model
 
-<!-- HERO (to draw): a monkey agent at a terminal. Taped to the monitor, a polite note: "Please be careful :)". Behind the monkey, a wide-open door labelled "prod", a key ring labelled "API keys" on the desk, and a "rm -rf" sticker on the keyboard. Caption idea: "The note is not the lock." Save as ../images/04-please-be-careful-is-not-a-permission-model-1.png -->
+![“Please be careful” is not a permission model: on the left, rules written in the prompt (don’t edit the tests, only change this project, don’t run dangerous commands, never leak secrets); on the right, the same rules enforced by the system (tests restored before every check, writes outside the workspace refused, no shell and only fixed commands, keys from the environment and never logged). The thing that judges the work must not be writable by the thing being judged.](../../images/04-please-be-careful-is-not-a-permission-model-1.png)
 
 *A rule in a prompt is a request. A rule in the system is a control.*
 
