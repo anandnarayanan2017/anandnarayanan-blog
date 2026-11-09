@@ -4,7 +4,7 @@ Twenty people tried to book the same room at the same time. Ten of them got it.
 
 The code looked careful: open a transaction, check the slot is free, insert, commit.
 
-But under PostgreSQL's default isolation, twenty transactions all check before any of them commits. All twenty see a free room.
+But under PostgreSQL's default isolation, every transaction that checks before the first one commits sees a free room. Ten of the twenty did.
 
 My prompt never said "two people can't book the same room at the same time". Everyone knows that rule. That's why nobody writes it down.
 
