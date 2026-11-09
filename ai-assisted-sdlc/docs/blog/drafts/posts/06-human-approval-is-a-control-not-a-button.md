@@ -1,6 +1,6 @@
 # Human Approval Is a Control, Not a Button
 
-<!-- HERO (to draw): three monkey agents labelled Author, Reviewer and Fixer stamp APPROVED on a pull request. The human's chair is empty with a sign "back in 5 min"; on the desk, a big green button labelled "Approve all (50)". Caption idea: "Separation of duties: three agents. Six eyes. One brain." The existing master image who-approved-this.png may fit. Save as ../images/06-human-approval-is-a-control-not-a-button-1.png -->
+![Human approval is a control, not a button: an “Approve all (50)” button with fifty green ticks changes nothing. A control means the person could realistically say no, has the evidence attached, and the decision is recorded: who, when, which version. The default answer is no. A person is needed when a change can’t be undone, touches tests, policies, permissions or the pipeline, or a check was skipped or overridden.](../../images/06-human-approval-is-a-control-not-a-button-1.png)
 
 *An approval only means something if the person could have said no, and knew why they might.*
 

@@ -56,6 +56,12 @@ npm ci
 npm run dev
 ```
 
+## Contributions and commits
+
+Every commit is authored by the repository owner. `scripts/check-commits.sh` runs on pull requests and
+again before each deploy, and rejects commits from any other identity. Work happens on `develop`, and
+changes reach the live site through a pull request to `main`.
+
 ## Acknowledgements
 
 Thanks to Claude by Anthropic, which I use as a reviewer, editor and coding assistant on this blog and

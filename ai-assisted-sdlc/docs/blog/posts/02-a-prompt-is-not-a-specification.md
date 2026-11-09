@@ -56,13 +56,15 @@ In a live run of my delivery harness, with a live model writing the code and an 
 
 Read it in a code review and it looks right. An AI reviewer read it and scored it 9 out of 10. (Why that score and a failing test can both be honest is Part 5.)
 
-It isn’t right. In PostgreSQL’s default isolation level, Read Committed, one transaction can’t see another’s booking until that booking is committed. Twenty requests arrive together, all twenty check, all twenty find the slot free, and then they all insert. The transaction makes each request consistent with itself, not with the other nineteen.
+It isn’t right. In PostgreSQL’s default isolation level, Read Committed, one transaction can’t see another’s booking until that booking is committed. Twenty requests arrive together, and every one that checks before the first one commits finds the slot free and inserts. The transaction makes each request consistent with itself, not with the other nineteen.
 
-The twenty-request test caught it: ten bookings for the same room and the same hour. The failure went back to the agent, and the second attempt passed. I recorded that run so it can be replayed exactly; [the log is in the repository](https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc#where-ten-times-comes-from).
+The twenty-request test caught it: ten bookings for the same room and the same hour. Ten, not twenty, because the test’s connection pool holds ten connections, so at most ten requests could be inside the check at once; the rest waited for a connection, and by then they could see a committed booking. The failure went back to the agent, and the second attempt passed. I recorded that run so it can be replayed exactly; [the log is in the repository](https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc#where-ten-times-comes-from).
 
 What it changed is the point of this part. The fix wasn’t smarter application code. It was moving the rule to where the invariant said it belonged, into the database:
 
 ```sql
+CREATE EXTENSION IF NOT EXISTS btree_gist;  -- lets a GiST index compare room_id with =
+
 ALTER TABLE bookings
   ADD CONSTRAINT bookings_no_overlap
   EXCLUDE USING gist (room_id WITH =, tstzrange(start_at, end_at) WITH &&)
@@ -70,6 +72,8 @@ ALTER TABLE bookings
 ```
 
 Read it as English: for the same room, no two confirmed time ranges may overlap. The database now refuses the second booking, however many requests arrive and whoever writes the next version of the API. The application turns that refusal into an HTTP 409.
+
+The fixed code also does one small thing in the application: it takes a per-room advisory lock (`pg_advisory_xact_lock`) before inserting. That lock is not the rule; it only queues the writers. Concurrent inserts checked by an exclusion constraint can deadlock on each other, and PostgreSQL resolves that by aborting one with a deadlock error (SQLSTATE 40P01), which would surface as an HTTP 500 rather than a 409. With the lock, each loser gets a clean refusal. Take the lock away and the database still allows only one booking; it is the nineteen tidy 409s that depend on it.
 
 “The database enforces the rule” looked like a detail in the specification. It was the most important clause in it.
 

@@ -22,7 +22,9 @@ export function bookingsRouter(pool: Pool) {
     if (!room.rows[0]) throw new HttpError(404, "room not found");
 
     // Two layers: the exclusion constraint (migration 003) is the invariant; the per-room advisory
-    // lock only queues writers so they do not sit in Postgres's 1s deadlock-detection wait.
+    // lock only queues writers. Without it, concurrent inserts checked by the exclusion constraint can
+    // deadlock on each other: Postgres waits deadlock_timeout (1s), then aborts one with 40P01, which
+    // would surface as a 500 instead of a 409. The lock does not enforce the rule; the constraint does.
     const client = await pool.connect();
     try {
       await client.query("BEGIN");
