@@ -20,8 +20,8 @@ dependencies = [
 proxy     = ["mitmproxy>=11.0.2"]
 # Phase 2 — real cloud SDK interceptors
 azure     = ["openai>=1.30"]
-anthropic = ["anthropic>=2.3.0"]
-cloud     = ["openai>=1.30", "anthropic>=2.3.0"]
+anthropic = ["anthropic>=2.6.0"]
+cloud     = ["openai>=1.30", "anthropic>=2.6.0"]
 # Phase 3 — persistent storage + SIEM
 postgres  = ["psycopg2-binary>=2.9.13"]
 siem      = ["psycopg2-binary>=2.9.13", "azure-monitor-ingestion>=1.1.0", "azure-identity>=1.25.3"]
