@@ -1,9 +1,9 @@
 """Alerter/SIEM export: "not installed" is not a delivery failure.
 
-The public copy of Agent Sentinel does not include the alerting and SIEM
-packages. A missing package must log once at INFO and leave the failure
-counters alone; a package that is present but fails (including an import error
-inside it) must still log a warning and count as a failure.
+A build can leave out the alerting and SIEM packages (the public copy did
+until Part 4 of the series). A missing package must log once at INFO and leave
+the failure counters alone; a package that is present but fails (including an
+import error inside it) must still log a warning and count as a failure.
 """
 
 from __future__ import annotations
@@ -59,7 +59,11 @@ def _install(monkeypatch, package: str, module: str, **attrs) -> None:
     monkeypatch.setitem(sys.modules, f"{package}.{module}", mod)
 
 
-def test_missing_packages_are_not_failures_and_log_once(finding, caplog):
+def test_missing_packages_are_not_failures_and_log_once(finding, monkeypatch, caplog):
+    # None in sys.modules makes the import fail as if the package weren't there,
+    # whether or not this checkout includes it.
+    monkeypatch.setitem(sys.modules, "sentinel.alerting", None)
+    monkeypatch.setitem(sys.modules, "sentinel.siem", None)
     with caplog.at_level(logging.INFO, logger="sentinel.pipeline"):
         for _ in range(3):
             pipeline._fire_alerter(finding)
