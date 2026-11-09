@@ -77,6 +77,6 @@ extend-immutable-calls = ["fastapi.Depends", "fastapi.Security", "fastapi.params
 # data_gen.py is documented (see data_gen_payments.py's module docstring) as
 # staying byte-identical to its original baseline for training-data
 # provenance -- exempted here instead of edited in place.
-"app/sentinel_sequence/data_gen.py" = ["E731"]
+"app/sentinel_sequence/data_gen.py" = ["E731", "UP035"]
 
 [tool.mypy]
