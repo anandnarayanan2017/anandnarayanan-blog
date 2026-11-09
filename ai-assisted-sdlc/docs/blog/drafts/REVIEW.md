@@ -9,10 +9,10 @@ Nothing in `drafts/` reaches the site: `scripts/sync-series.mjs` reads only `pos
 | Part | Title | Status | Blocking before publish |
 |---|---|---|---|
 | 1 | From ARM Assembly to AI | Live (2026-11-01) | — |
-| 2 | A Prompt Is Not a Specification | **Ready.** On `develop`, site date 2026-11-11, hero done | Merge `develop` → `main` on or after 11 Nov (the build doesn't hold back future dates, so an earlier merge publishes it early). See question A. |
-| 3 | The Harness Around the Agent | Draft for final review | Hero image; excerpt and date; question A |
+| 2 | A Prompt Is Not a Specification | **Ready.** On `develop`, site date 2026-11-11, hero done | Merge `develop` → `main` on or after 11 Nov (the build doesn't hold back future dates, so an earlier merge publishes it early). |
+| 3 | The Harness Around the Agent | Draft for final review | Hero image; excerpt and date |
 | 4 | “Please Be Careful” Is Not a Permission Model | Draft for final review | Hero image; excerpt and date; check the external links |
-| 5 | When the AI Reviewer Says 9/10 and the Test Still Fails | Draft for final review | Hero image; excerpt and date; question A; question B |
+| 5 | When the AI Reviewer Says 9/10 and the Test Still Fails | Draft for final review | Hero image; excerpt and date; question B |
 | 6 | Human Approval Is a Control, Not a Button | Draft for final review | Hero image (the existing “Who approved this?” cartoon may fit); excerpt and date; question C |
 | 7 | From Coding Agent to Engineering Factory | Draft for final review | Hero image; excerpt and date; question B |
 
@@ -23,12 +23,8 @@ They use only facts from the harness's design records and the recorded run.
 
 ## Questions for the author
 
-**A. Recorded or live run?** The run log behind “ten bookings” and “9/10” is the harness's *scripted* demo run
-(scripted model, real PostgreSQL). Part 2 says “An AI reviewer read it and scored it 9 out of 10”, and the series
-README says an AI generator built it. If the script is a recording of a live model run, say so once. If it was
-written by hand, Parts 2, 3 and 5 should say “in a recorded run” rather than imply a live model. Part 3's draft
-already includes this line under “Where this stops working”: *“My demo is a recorded run … so it can be replayed
-exactly.”* Please confirm or correct it, and make Part 2 consistent before it goes live.
+**A. Recorded or live run? Resolved (2026-11-09):** a live model run, recorded for replay. Part 2, the README and
+the Part 3 and 5 drafts now say so.
 
 **B. Publish the harness code?** Parts 3–5 and 7 describe harness mechanisms: restoring tests, the path check, the
 one-way verdict rule, calibration and the benchmark. The harness repository is private and must not be named or

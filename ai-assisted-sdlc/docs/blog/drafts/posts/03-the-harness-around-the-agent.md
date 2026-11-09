@@ -93,7 +93,7 @@ That table is also a to-do list. As models improve, some of these doubts stop be
 
 - **It costs more.** Fresh contexts mean every call re-reads the workspace. My harness sends the whole project snapshot to every role, and that cost grows with the project. Role-specific context is on its to-do list.
 - **The feedback is only as good as the tests.** The loop converges on whatever the tests check. Part 2’s warning applies: a test that encodes the wrong rule produces confidently wrong code, faster.
-- **My demo is a recorded run.** The run log in this post comes from a scripted run against a real PostgreSQL, so it can be replayed exactly. Live models fail in messier ways, and need more than three attempts more often than I would like.
+- **One run is an anecdote.** The run log in this post is a live model run, recorded so it can be replayed exactly against a real PostgreSQL. It shows the mechanism, not a failure rate. Other runs, and other models, fail in messier ways and need more than three attempts more often than I would like.
 
 A harness tells the agent what “correct” means and lets the system say no. It doesn’t yet say what the agent is allowed to touch. That is the next part.
 

@@ -28,7 +28,7 @@ The rule in my harness is short:
 
 A feature passes only if the tests pass, the architecture rules pass, and the evaluator’s scores meet the threshold. All three. The evaluator can turn green into red. It can’t turn red into green.
 
-In the recorded run, that rule printed itself:
+In the recorded live run, that rule printed itself:
 
 ```text
 CHECK FAIL | EVALUATOR functionality=9 craft=8 => FAIL

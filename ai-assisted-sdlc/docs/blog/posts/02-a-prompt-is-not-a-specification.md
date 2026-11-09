@@ -52,13 +52,13 @@ The second question is the one people skip. It turned out to be the one that mat
 
 ## The sentence that did the work
 
-The first attempt at concurrency safety looked careful. Open a transaction. Check whether the slot is taken. If it is free, insert the booking. Commit.
+In a live run of my delivery harness, with a live model writing the code and an AI reviewer checking it, the first attempt at concurrency safety looked careful. Open a transaction. Check whether the slot is taken. If it is free, insert the booking. Commit.
 
 Read it in a code review and it looks right. An AI reviewer read it and scored it 9 out of 10. (Why that score and a failing test can both be honest is Part 5.)
 
 It isn’t right. In PostgreSQL’s default isolation level, Read Committed, one transaction can’t see another’s booking until that booking is committed. Twenty requests arrive together, all twenty check, all twenty find the slot free, and then they all insert. The transaction makes each request consistent with itself, not with the other nineteen.
 
-The twenty-request test caught it: ten bookings for the same room and the same hour. The failure went back to the agent, and the second attempt passed.
+The twenty-request test caught it: ten bookings for the same room and the same hour. The failure went back to the agent, and the second attempt passed. I recorded that run so it can be replayed exactly; [the log is in the repository](https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc#where-ten-times-comes-from).
 
 What it changed is the point of this part. The fix wasn’t smarter application code. It was moving the rule to where the invariant said it belonged, into the database:
 
