@@ -1,0 +1,19 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import { SITE } from "../consts";
+
+const posts = (await getCollection("blog")).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+<BaseLayout title={`Page not found — ${SITE.name}`} description="This page does not exist. The home page lists every post." noindex>
+  <main class="container">
+    <h1 class="page-title">Page not found</h1>
+    <div class="prose">
+      <p>There is nothing at this address. The link may be old, or the address mistyped.</p>
+      <p><a href="/">Go to the home page</a>, or pick a post:</p>
+      <ul>
+        {posts.map((p) => <li><a href={`/blog/${p.id}/`}>{p.data.title}</a></li>)}
+      </ul>
+    </div>
+  </main>
+</BaseLayout>

@@ -2,7 +2,7 @@
   "_comment": "Site settings for this series. dates: site date (YYYY-MM-DD) per part; every part in technical-details/ needs one or the build fails, and dates for unreleased parts are ignored. card: the home-page series card (the badge gets the published part count appended; question links the two series; codeUrl is the Source code on GitHub link). Edit freely.",
   "name": "Agent Sentinel",
   "layout": "technical",
-  "tags": ["Agent Sentinel", "AI Security", "Compliance"],
+  "tags": ["Agent Sentinel", "AI Agents", "Compliance"],
   "card": {
     "order": 1,
     "badge": "Series",

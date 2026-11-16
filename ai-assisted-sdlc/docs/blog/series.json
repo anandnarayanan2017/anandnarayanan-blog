@@ -22,7 +22,7 @@
   },
   "excerpts": {
     "1": "“Build a booking API” is a wish. Twenty years from ARM assembly to AI agents, and the one question that has not changed: how do we know it works?",
-    "2": "A prompt describes what to build. A specification also says what must never happen. Turning “Build a booking API” into four testable invariants, and why the second question mattered most.",
+    "2": "A prompt says what to build. A specification also says what must never happen. Turning “Build a booking API” into four testable invariants.",
     "3": "The same model behaves very differently depending on what surrounds it. Context, tools, feedback and recovery: what a harness has to do, and why every part of it encodes a doubt about the model.",
     "4": "A rule in a prompt is a request. A rule in the system is a control. What an agent may read, change and execute, and what stops it when it tries anyway.",
     "5": "The AI reviewer scored the code 9/10. The test proved it double-booked a room ten times. Both were honest. Where model judgement helps, and why a deterministic check must win.",
