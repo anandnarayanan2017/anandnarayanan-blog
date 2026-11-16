@@ -12,8 +12,10 @@ this is a follow-up part. Before publishing:
    on purpose.
 2. Confirm the CSSF circular position with current CSSF guidance. This draft
    only repeats the scope note already in ../../TRACEABILITY.md.
-3. Decide whether to tidy the control_refs labels in policies/fintech.yaml
-   (see "Labels worth tidying" at the end) before or with this part.
+3. DONE: the control_refs labels in policies/*.yaml were tidied with this
+   draft (see "Labels tidied while writing this" at the end), and
+   docs/COMPLIANCE.md in agent-sentinel-series no longer maps severity to
+   DORA Art. 18.
 4. Add a date for "8" to ../../series.json, add the "sources" for "8" (the
    list at the end), move this file and the LinkedIn post out of drafts/.
 5. Add the hero image at ../../images/08-from-a-finding-to-a-dora-obligation-1.png
@@ -142,9 +144,9 @@ and recovery plans, and be able to act on them.
 *What Agent Sentinel provides:* an input. It does not contain, stop or
 recover anything.
 
-The example policy in this series cites Article 11. Having written this row,
-I think that reference is the weakest one in the file. I would keep it only
-on policies whose findings are wired into a response plan.
+The example policy in this series used to cite Article 11. Writing this row
+showed it was the weakest reference in the file, so I removed it. It belongs
+only on a policy whose findings are wired into a response plan.
 
 ### DORA Article 28: ICT third-party risk
 
@@ -296,22 +298,22 @@ broken. Read those as "this agent's policy supports these controls", not
 | EU AI Act Art. 12 and 26, logs | Same as "record" above | Same | Partly: an outside record; no retention setting |
 | EU AI Act Art. 14, oversight | Approvals | Same as Art. 17 | Partly: review after the action |
 
-### Labels worth tidying
+### Labels tidied while writing this
 
-Writing this part showed that the reference labels in the example policies
-are looser than the mapping above:
+Writing this part showed that three reference labels in the example policies
+were looser than the mapping above. They are corrected in
+[`policies/fintech.yaml`](../../../../policies/fintech.yaml) and
+[`policies/example.yaml`](../../../../policies/example.yaml):
 
-- `"DORA Art.9 (ICT risk mgmt)"` in `fintech.yaml`. Article 9 is protection
-  and prevention; the risk management framework is Article 6. The engine's
-  own `IDENTITY_CONTROL_REFS` already uses the right title.
-- `"DORA Art.11 (response & recovery)"` on the reconciliation agent, as
-  discussed above.
-- `"EU AI Act Art.15 (accuracy)"` on the payments agent. Nothing in Agent
-  Sentinel measures a model's accuracy.
+| Label before | Now | Why |
+|---|---|---|
+| `DORA Art.9 (ICT risk mgmt)` | `DORA Art.9 (protection and prevention)` | That is Article 9's subject; the risk management framework is Article 6 |
+| `DORA Art.11 (response & recovery)` on the reconciliation agent | Removed | Agent Sentinel does not respond or recover |
+| `EU AI Act Art.15 (accuracy)` on the payment agents | Removed | Nothing in Agent Sentinel measures a model's accuracy |
 
-They are free text, so nothing breaks. But the label is what an analyst sees
-in the SIEM, and a wrong label there is exactly the kind of overstated claim
-this part argues against.
+The labels are free text, so nothing broke either way. But the label is what
+an analyst sees in the SIEM, and a wrong label there is exactly the kind of
+overstated claim this part argues against.
 
 ### Sources
 
