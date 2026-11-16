@@ -22,6 +22,8 @@ Next: Part 3, Rules First, Statistics Second.
 
 Which would worry you more: a recorder that occasionally misses an event, or one that occasionally blocks an agent?
 
+![Diagram: From Simulated Traffic to Real Model Calls](../images/02-from-simulated-traffic-to-real-model-calls-1.png)
+
 First comment: Read the full article → https://anandnarayanan.net/blog/agent-sentinel-02-from-simulated-traffic-to-real-model-calls/
 Code and tests: https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/agent-sentinel
 

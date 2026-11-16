@@ -7,3 +7,6 @@ extend-ignore-re = [
 
 [files]
 extend-exclude = ["package-lock.json", "LICENSE", "LICENSE-CONTENT", "*.svg"]
+
+[default.extend-words]
+AKS = "AKS"  # Azure Kubernetes Service

@@ -21,7 +21,6 @@ agents:
     severity: high
     control_refs:
       - "DORA Art.10 (anomaly detection)"
-      - "DORA Art.11 (response & recovery)"
       - "EU AI Act Art.12 (high-risk AI logging, when in scope)"
       - "CSSF 20/750 as amended (ICT risk; confirm entity scope)"
 

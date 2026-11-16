@@ -1,9 +1,9 @@
 export const SITE = {
   name: "Anand Narayanan",
   // Home-page heading and the site's default description.
-  headline: "AI Security, Agent Governance & Engineering",
+  headline: "Safely Delegating Work to AI Systems",
   tagline:
-    "Practical architecture for building AI agents and AI-assisted systems that enterprises can control, observe, verify and audit.",
+    "Practical architecture for AI agents and AI-assisted delivery that regulated enterprises can control, observe, verify and audit.",
   // The question that connects the series.
   question: "How do we safely delegate work to AI systems?",
   intro:
@@ -13,7 +13,7 @@ export const SITE = {
   homeIntro:
     "Teams are starting to hand real work to AI agents: payments, reports, code. Getting an agent to act is the easy part. The hard part is proving what it did, and knowing that what it built actually works. Each series here takes one of those questions apart, with the code and tests behind every claim.",
   personalNote:
-    "I’m a Solutions Architect with over 20 years in fintech, automotive, manufacturing and other regulated industries. This blog and its projects are personal work, written in my spare time.",
+    "I’m a Solutions Architect in Luxembourg. This blog and its projects are personal work, written in my spare time.",
   // Shown at the foot of the home page.
   acknowledgement:
     "Thanks to Claude by Anthropic, which I use as a reviewer and editor while writing these posts. The ideas, opinions and any mistakes are my own.",

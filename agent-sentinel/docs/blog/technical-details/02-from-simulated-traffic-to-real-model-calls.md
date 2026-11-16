@@ -1,24 +1,11 @@
 # Part 2 — From Simulated Traffic to Real Model Calls
 
-<!--
-DRAFT, not published. Before moving this file to docs/blog/technical-details/:
 
-1. DONE: SDK collectors and their tests copied from agent-sentinel-series
-   (lint fixes only). Every claim below was checked against them.
-2. DONE: the gaps found while testing are fixed in both repositories, with
-   regression tests in app/tests/test_collector_contracts.py.
-3. Add a Part 2 row to ../../TRACEABILITY.md.
-4. DONE: hero image at ../../images/02-from-simulated-traffic-to-real-model-calls-1.png
-   (the build copies it only once Part 2 is published).
-5. DONE: "2" date in ../../series.json is 2026-11-16; change it if the release day moves.
-6. Convert the GitHub links below to relative links, as Part 1 uses.
--->
-
-> **Reader path:** [LinkedIn post](../linkedin/02-from-simulated-traffic-to-real-model-calls.md) → this article → [design and implementation](#design-and-implementation) → code-and-test traceability
+> **Reader path:** [LinkedIn post](../linkedin/02-from-simulated-traffic-to-real-model-calls.md) → this article → [design and implementation](#design-and-implementation) → [code-and-test traceability](../TRACEABILITY.md#publication-traceability)
 
 ## Simulated traffic proves the rules. Real traffic tests the recorder.
 
-Part 1 replayed a simulated night: a payments agent reads the ledger, asks an
+[Part 1](01-why-agents-need-a-flight-recorder.md) replayed a simulated night: a payments agent reads the ledger, asks an
 approved model for a summary, then sends 250KB to a server nobody approved.
 Agent Sentinel recorded all three steps and raised a finding for the third.
 
@@ -153,15 +140,15 @@ sequenceDiagram
 
 | Guarantee | Implementation | Regression proof |
 |---|---|---|
-| One ingest path for every collector | [`Pipeline.ingest_flow` and `Pipeline.ingest_event`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/sentinel/pipeline.py) | [`test_pipeline_persists_events_and_findings`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/tests/test_pipeline.py) |
-| Malformed input degrades instead of raising | [`collector/parsers.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/sentinel/collector/parsers.py) | `test_parser_survives_malformed_body` in [`test_pipeline.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/tests/test_pipeline.py) |
-| Redaction before storage, before truncation, never raises | [`collector/redaction.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/sentinel/collector/redaction.py) | `test_redaction_runs_before_truncation`, `test_redaction_never_raises_on_hostile_input`, `test_prompt_evidence_from_a_real_flow_is_redacted` in [`test_redaction.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/tests/test_redaction.py) |
-| Export is fail-open, not fail-silent | `_fire_alerter` and `_push_siem` in [`pipeline.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/sentinel/pipeline.py) | `test_installed_module_that_raises_is_a_failure`, `test_successful_export_counts_nothing` in [`test_export.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/tests/test_export.py) |
-| Missing optional packages don't crash the server, and aren't counted as failures | Lazy imports in [`pipeline.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/sentinel/pipeline.py) | `test_missing_packages_are_not_failures_and_log_once` in [`test_export.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/tests/test_export.py) |
-| SDK wrappers return the provider response unchanged; a delivery failure never raises into the agent | [`collector/sdk_base.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/sentinel/collector/sdk_base.py), [`collector/anthropic_sdk.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/sentinel/collector/anthropic_sdk.py), [`collector/azure_openai.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/sentinel/collector/azure_openai.py) | `test_report_is_fail_open_when_sentinel_is_unreachable`, `test_report_is_fail_open_on_an_unparsable_response` in [`test_sdk_base.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/tests/test_sdk_base.py) |
-| Redaction at the edge, before telemetry leaves the agent | `SentinelReporter.report` in [`sdk_base.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/sentinel/collector/sdk_base.py) | `test_reporter_sends_bearer_token_and_redacts_before_transport` in [`test_collector_contracts.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/tests/test_collector_contracts.py) |
-| Model-proposed tools are "requested", not "executed" | `report_tool_request` in [`sdk_base.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/sentinel/collector/sdk_base.py) | `test_model_proposal_is_tool_requested_not_executed`, `test_tool_policy_does_not_treat_requested_tool_as_executed` in [`test_collector_contracts.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/tests/test_collector_contracts.py) |
-| Unwrapped SDK methods pass through; long prompts keep model and real size; async reporting off the event loop; provider errors recorded; delivery failures counted | [`collector/sdk_base.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/sentinel/collector/sdk_base.py) (`bound_request`, `delivery_failures`), [`collector/parsers.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/sentinel/collector/parsers.py) (`request_bytes`) | One test per gap, from `test_unwrapped_sdk_methods_pass_through_instead_of_breaking_the_agent` to `test_async_reporting_does_not_block_the_event_loop`, in [`test_collector_contracts.py`](https://github.com/anandnarayanan2017/anandnarayanan-blog/blob/main/agent-sentinel/app/tests/test_collector_contracts.py) |
+| One ingest path for every collector | [`Pipeline.ingest_flow` and `Pipeline.ingest_event`](../../../app/sentinel/pipeline.py) | [`test_pipeline_persists_events_and_findings`](../../../app/tests/test_pipeline.py) |
+| Malformed input degrades instead of raising | [`collector/parsers.py`](../../../app/sentinel/collector/parsers.py) | `test_parser_survives_malformed_body` in [`test_pipeline.py`](../../../app/tests/test_pipeline.py) |
+| Redaction before storage, before truncation, never raises | [`collector/redaction.py`](../../../app/sentinel/collector/redaction.py) | `test_redaction_runs_before_truncation`, `test_redaction_never_raises_on_hostile_input`, `test_prompt_evidence_from_a_real_flow_is_redacted` in [`test_redaction.py`](../../../app/tests/test_redaction.py) |
+| Export is fail-open, not fail-silent | `_fire_alerter` and `_push_siem` in [`pipeline.py`](../../../app/sentinel/pipeline.py) | `test_installed_module_that_raises_is_a_failure`, `test_successful_export_counts_nothing` in [`test_export.py`](../../../app/tests/test_export.py) |
+| Missing optional packages don't crash the server, and aren't counted as failures | Lazy imports in [`pipeline.py`](../../../app/sentinel/pipeline.py) | `test_missing_packages_are_not_failures_and_log_once` in [`test_export.py`](../../../app/tests/test_export.py) |
+| SDK wrappers return the provider response unchanged; a delivery failure never raises into the agent | [`collector/sdk_base.py`](../../../app/sentinel/collector/sdk_base.py), [`collector/anthropic_sdk.py`](../../../app/sentinel/collector/anthropic_sdk.py), [`collector/azure_openai.py`](../../../app/sentinel/collector/azure_openai.py) | `test_report_is_fail_open_when_sentinel_is_unreachable`, `test_report_is_fail_open_on_an_unparsable_response` in [`test_sdk_base.py`](../../../app/tests/test_sdk_base.py) |
+| Redaction at the edge, before telemetry leaves the agent | `SentinelReporter.report` in [`sdk_base.py`](../../../app/sentinel/collector/sdk_base.py) | `test_reporter_sends_bearer_token_and_redacts_before_transport` in [`test_collector_contracts.py`](../../../app/tests/test_collector_contracts.py) |
+| Model-proposed tools are "requested", not "executed" | `report_tool_request` in [`sdk_base.py`](../../../app/sentinel/collector/sdk_base.py) | `test_model_proposal_is_tool_requested_not_executed`, `test_tool_policy_does_not_treat_requested_tool_as_executed` in [`test_collector_contracts.py`](../../../app/tests/test_collector_contracts.py) |
+| Unwrapped SDK methods pass through; long prompts keep model and real size; async reporting off the event loop; provider errors recorded; delivery failures counted | [`collector/sdk_base.py`](../../../app/sentinel/collector/sdk_base.py) (`bound_request`, `delivery_failures`), [`collector/parsers.py`](../../../app/sentinel/collector/parsers.py) (`request_bytes`) | One test per gap, from `test_unwrapped_sdk_methods_pass_through_instead_of_breaking_the_agent` to `test_async_reporting_does_not_block_the_event_loop`, in [`test_collector_contracts.py`](../../../app/tests/test_collector_contracts.py) |
 
 ### Why the guarantees sit in the pipeline, not in each collector
 

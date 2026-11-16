@@ -11,6 +11,7 @@ so the article, diagram, code, and tests stay on the same repository version.
 | Part | LinkedIn post | Technical design / diagram | Current implementation | Regression proof | Status boundary |
 |---|---|---|---|---|---|
 | 1 | [Flight recorder](linkedin/01-why-agents-need-a-flight-recorder.md) | [System context](technical-details/01-why-agents-need-a-flight-recorder.md#c4-level-1--system-context) | [`Pipeline.ingest_event`](../../app/sentinel/pipeline.py), [`Engine.evaluate`](../../app/sentinel/detection/engine.py) | [`test_pipeline.py`](../../app/tests/test_pipeline.py) | Detection and evidence; no pre-action blocking |
+| 2 | [Real model calls](linkedin/02-from-simulated-traffic-to-real-model-calls.md) | [Ingest sequence](technical-details/02-from-simulated-traffic-to-real-model-calls.md#design-and-implementation) | [Azure wrapper](../../app/sentinel/collector/azure_openai.py), [Anthropic wrapper](../../app/sentinel/collector/anthropic_sdk.py), [reporter](../../app/sentinel/collector/sdk_base.py), [redaction](../../app/sentinel/collector/redaction.py), [`Pipeline.ingest_flow`](../../app/sentinel/pipeline.py) | [`test_collector_contracts.py`](../../app/tests/test_collector_contracts.py), [`test_sdk_base.py`](../../app/tests/test_sdk_base.py), [`test_redaction.py`](../../app/tests/test_redaction.py), [`test_export.py`](../../app/tests/test_export.py) | Wrapped methods only (streaming passes through, not recorded); fail-open delivery can create a counted, visible gap |
 
 ## Regulatory scope
 

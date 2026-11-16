@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: crate-ci/typos@4c8b7f51ca60df14e3c5ca82770dfbbe6c3dae85 # v1.52.0
+      - uses: crate-ci/typos@276087d9a4f06398b3e04825487805e2d7375888 # v1.52.2
 
   links:
     runs-on: ubuntu-latest
@@ -39,6 +39,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      # Agent Sentinel drafts link to code that is copied in when the part is
+      # published, as agent-sentinel/scripts/check_links.py also allows.
       - name: Internal links (built site and Markdown)
         if: github.event_name != 'schedule'
         uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
@@ -46,6 +48,7 @@ jobs:
           args: >-
             --offline --no-progress --root-dir ${{ github.workspace }}/dist
             --exclude-path node_modules --exclude-path src/content
+            --exclude-path agent-sentinel/docs/blog/drafts
             'dist/**/*.html' './**/*.md'
           fail: true
       - name: External links (weekly, report only)

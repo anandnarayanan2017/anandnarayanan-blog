@@ -175,7 +175,6 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
 
 .section { margin-bottom: 3.5rem; }
 .section > .eyebrow { margin-bottom: 0.75rem; }
-.section-question { font-size: 1.15rem; font-weight: 600; color: var(--text-strong); margin-bottom: 1.25rem; }
 
 .grid { display: grid; gap: 1.25rem; }
 @media (min-width: 640px) { .grid-2 { grid-template-columns: 1fr 1fr; } }

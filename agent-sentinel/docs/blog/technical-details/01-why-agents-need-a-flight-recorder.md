@@ -280,4 +280,4 @@ person in a pull request. [ADR-0001](../../adr/0001-rules-first-detection.md)
 records that rules-first ordering. Part 3 shows where machine learning does
 earn its place, and how small that place is.
 
-Next: Part 2 — From Simulated Traffic to Real Model Calls.
+Next: [Part 2 — From Simulated Traffic to Real Model Calls](02-from-simulated-traffic-to-real-model-calls.md).

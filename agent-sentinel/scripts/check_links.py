@@ -19,6 +19,9 @@ def anchors(path):
 
 bad = []
 for f in glob.glob("**/*.md", recursive=True):
+    # Drafts link to code that is copied in when the part is published.
+    if f.startswith("docs/blog/drafts/"):
+        continue
     text = re.sub(r"```.*?```", "", Path(f).read_text(encoding="utf-8"), flags=re.DOTALL)
     for m in re.finditer(r"\]\(([^)\s]+)\)", text):
         url = m.group(1)
