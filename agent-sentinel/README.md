@@ -22,6 +22,7 @@ tests. Parts are released weekly; this folder grows with them.
 | `app/tests/` | Regression tests the traceability matrix points at |
 | `policies/` | Example policy files |
 | `examples/phase1/`, `dashboard/` | The demo agent, the fintech traffic simulator and the CISO dashboard |
+| `examples/phase2/`, `start_phase2.sh`, `docs/PHASE2.md` | Part 2: agents that call Azure OpenAI and Anthropic through the SDK collectors, with a dry-run mode that needs no keys |
 | `Dockerfile`, `docker-compose.yml` | Container image and the local stack (Sentinel + PostgreSQL + optional simulator) |
 
 ## Run the tests
@@ -86,6 +87,7 @@ A row is added as each part is published.
 | Part | What to run | What you should see |
 |---|---|---|
 | 1 | `python scripts/e2e.py`, or the "explore by hand" steps above | Findings for unapproved hosts, tools and models in the dashboard |
+| 2 | `bash start_phase2.sh --azure --dry-run --attack` | Simulated Azure OpenAI calls recorded and flagged; the dashboard stays up at <http://localhost:8000> until Ctrl+C. Real calls need `pip install -e ".[cloud]"` and the keys in `examples/phase2/.env.example` |
 
 ## References you can't follow from here
 
