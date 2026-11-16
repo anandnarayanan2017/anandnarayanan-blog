@@ -1,7 +1,7 @@
 export const SITE = {
   name: "Anand Narayanan",
   // Home-page heading and the site's default description.
-  headline: "AI Security, Agent Governance & Engineering",
+  headline: "Safely Delegating Work to AI Systems",
   tagline:
     "Practical architecture for building AI agents and AI-assisted systems that enterprises can control, observe, verify and audit.",
   // The question that connects the series.
