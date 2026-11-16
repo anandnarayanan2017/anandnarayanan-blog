@@ -1,6 +1,9 @@
 <!--
-DRAFT, standalone news post. Not a series part: no article, no date in
-series.json. Delete this comment block before posting.
+DRAFT, an Agent Sentinel series note for LinkedIn, tied to Part 4 (identity).
+It has no number and no date in series.json because it has no article of its
+own: the lasting content is the "Who owns the agent" section of
+../technical-details/04-enterprise-foundation.md. Delete this comment block
+before posting.
 
 Check against Microsoft Learn ("What's new in Microsoft Entra Agent ID" and the
 Agent ID lifecycle policy page) before posting. This was drafted from a web
@@ -38,8 +41,10 @@ Entra is moving on the first. Most of my writing here is about the second and th
 
 Each one is weaker without the other two.
 
+This is a note alongside my Agent Sentinel series. Part 4, in December, covers identity: who may call the recorder, and who owns the agent.
+
 Who sponsors the agents in your organisation today? Is it a named person, or a team alias?
 
-First comment: Why agents need a record of what they did → https://anandnarayanan.net/blog/agent-sentinel-01-why-agents-need-a-flight-recorder/
+First comment: Agent Sentinel, Part 1: why agents need a record of what they did → https://anandnarayanan.net/blog/agent-sentinel-01-why-agents-need-a-flight-recorder/
 
-#AIAgents #MicrosoftEntra #IdentityGovernance #AIGovernance
+#AgentSentinel #AIAgents #MicrosoftEntra #IdentityGovernance

@@ -4,6 +4,9 @@
 DRAFT, not published. Publishes on the date for "4" in ../../series.json
 (2026-12-14): run `python scripts/publish_part.py 4` from agent-sentinel-series.
 That also copies the alerting and Log Analytics code this part links to.
+Before publishing, check the "Who owns the agent" section against Microsoft
+Learn: sponsors and inactivity clean-up for Entra Agent ID were in preview
+when it was written (November 2026).
 -->
 
 > **Reader path:** [LinkedIn post](../linkedin/04-enterprise-foundation.md) → this article → [design and implementation](#design-and-implementation) → [code-and-test traceability](../../TRACEABILITY.md#publication-traceability)
@@ -49,6 +52,27 @@ sign their requests too. And Part 2's rule still holds: if a collector's
 token is wrong, the agent carries on and the refused delivery is counted.
 Recording fails open, so the agent isn't stopped. Access fails closed, so the
 evidence isn't exposed.
+
+## Who owns the agent
+
+Sign-in answers who may call Agent Sentinel. It doesn't answer who owns the
+agent being recorded.
+
+Agent Sentinel takes the agent's name from the event a collector sends. A
+collector's token can be limited to the agents it may report for, and every
+event is stamped with the identity that actually sent it. An agent with no
+policy entry is itself a finding, raised before it does anything wrong.
+
+What Agent Sentinel does not do is manage the agent's identity over time:
+who is accountable for it, and whether it should still exist. That belongs in
+the identity provider. Microsoft Entra Agent ID is adding this, in preview as
+I write: a named sponsor for each agent identity, and clean-up of identities
+that go unused.
+
+The two fit together as three questions. Should this agent still exist? The
+identity provider. What may it do? Its policy. What did it do? The record. An
+agent whose identity has been disabled should have no policy entry here, and
+keeping those two lists in step is a manual job today.
 
 ## Where the data lives
 
@@ -98,6 +122,8 @@ everything is solved:
   it as a local tool, or put it behind a gateway that handles sign-in.
 - **Team isolation.** One deployment serves one team; there is no separation
   between teams or environments inside it.
+- **Identity lifecycle link.** Nothing checks an agent's policy entry against
+  the identity provider, so a disabled agent can keep its policy.
 - **Policy workflow.** Policies are YAML files. Fine for a pilot; many teams
   need review, approval and version history.
 - **Tamper evidence outside the database**, as above.
