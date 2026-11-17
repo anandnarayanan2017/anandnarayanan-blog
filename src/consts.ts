@@ -28,4 +28,7 @@ export const SITE = {
   // Google Search Console ownership check (HTML tag method). Public by design;
   // remove only after verifying another way (for example a DNS TXT record).
   googleSiteVerification: "hUjxtW9nJkAgIVTS2-CHlzOM0zeFzaQJzOXY__8MCko",
+  // Cloudflare Web Analytics site token. Public by design (it ships in every
+  // page). Cookie-free page-view counts; set to "" to turn analytics off.
+  cloudflareAnalyticsToken: "df4333ee01244e48ba11f92db2a621b0",
 };

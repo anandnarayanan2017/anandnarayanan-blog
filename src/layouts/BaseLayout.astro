@@ -88,5 +88,8 @@ const ldJson = jsonLd && JSON.stringify(jsonLd).replace(/</g, "\\u003c");
 
     <!-- External file, not an inline script, so a strict CSP can allow it with 'self'. -->
     <script is:inline src="/js/site.js" defer></script>
+    {SITE.cloudflareAnalyticsToken && (
+      <script is:inline type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: SITE.cloudflareAnalyticsToken })}></script>
+    )}
   </body>
 </html>
