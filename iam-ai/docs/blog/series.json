@@ -1,0 +1,28 @@
+{
+  "_comment": "Site settings for this series. dates: site date (YYYY-MM-DD) per part; every part in posts/ needs one or the build fails, and dates for parts still in drafts/ are ignored. excerpts: the summary shown on cards and in link previews. card: the home-page series card (the badge gets the published part count appended; question links the series; codeUrl is the Source code on GitHub link, left out while the code is private). topics: an extra tag for the listed parts only; Architecture lists them on /architecture/. Edit freely.",
+  "name": "IAM AI",
+  "layout": "essay",
+  "tags": ["IAM AI", "Identity", "Software Architecture"],
+  "topics": { "Architecture": [1, 2, 3, 4, 5] },
+  "card": {
+    "order": 3,
+    "badge": "Series",
+    "question": "Can we trust who signed in?",
+    "title": "IAM AI: continuous trust for every sign-in",
+    "description": "Scoring every Microsoft Entra ID sign-in for risk, with rules that decide, models that advise, one policy that has the final say, and an explanation for every block. What I designed, what I got wrong, and what checking it found. Start with Part 1."
+  },
+  "dates": {
+    "1": "2026-12-03",
+    "2": "2026-12-17",
+    "3": "2027-01-07",
+    "4": "2027-01-21",
+    "5": "2027-02-04"
+  },
+  "excerpts": {
+    "1": "A sign-in is checked once. Trust should be checked every time something changes. What IAM AI does, the four rules it is built on, and how 8,300 lines with no tests became something I could check.",
+    "2": "Eleven rules, three anomaly models and one hard floor. Why the model can never block on its own, and the inverted sign that quietly turned 45% of every score upside down.",
+    "3": "The scorer produces a number. A policy decides what happens. Why OPA has the final say, what happens when OPA is down, and why the language model only ever explains.",
+    "4": "The Docker images built, the type checker was clean and CI was green. Nobody had ever started the whole system. What running it found, and the design rules I took from it.",
+    "5": "Who owns this sign-in, this baseline, this verdict? Adding tenants to a system built without them, the leak that survived the fix, what is still open, and where Agent Sentinel joins in."
+  }
+}

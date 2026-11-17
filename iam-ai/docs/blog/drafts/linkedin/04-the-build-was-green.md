@@ -24,6 +24,6 @@ you can’t.
 → A check that cannot fail is not a check. Break it once on purpose.
 → Test what the design guarantees, not what one run happened to return.
 
-The full design note, with the code and tests behind each point, is in the first comment.
+Part 4 of the IAM AI series, with the code and tests behind each point, is in the first comment.
 
 #SoftwareArchitecture #DevOps #Testing #Azure #RegTech
