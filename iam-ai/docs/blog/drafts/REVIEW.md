@@ -46,15 +46,26 @@ readers would get a 404, and the series card has no “Source code on GitHub” 
 - [ ] **Series vs design note.** This replaces the standalone design note. If you prefer one note after all, Part 4
       stands alone with small edits to its first paragraph.
 
-## Facts to confirm (from the code and the project's records, not re-run here)
+## Aligned with the code (2026-11-17)
+
+The series was checked claim by claim against `iam-ai-tf`, and the claims that can be run were run: the policy in OPA
+1.22.4, the API and scorer against the compose Postgres, Redis and Neo4j, and the retraining job’s query.
+
+- 133 unit tests passed at `100c0d2` (1 September), as Parts 1 and 4 say. At `cc0af56` there are 139 unit tests and
+  15 end-to-end tests, all passing, plus the Airflow `DagBag` tests.
+- Running it found three defects, now fixed in `iam-ai-tf` branch `claude/gracious-edison-9lx70j` (`cc0af56`) and
+  told in Parts 2, 3 and 4: policy helpers that made OPA error on some inputs, a learning loop that could never
+  train, and training/scoring encodings that disagreed. Also confirmed: OPA’s reason is always the default (Part 3).
+- Corrected in the posts: the scoring endpoint *ignores* a tenant in the body (it did not stop accepting one), and
+  the README’s cost estimate predates five of the eight container apps.
+- Evidence links now point at `cc0af56`. **That commit is on a branch.** After it is merged to `iam-ai-tf` `main`,
+  repin the links to the merge result so they cannot disappear with the branch:
+  `sed -i 's#/blob/cc0af56acf368a2466bc60d8be5b301628e81ee0/#/blob/<merged-sha>/#g' iam-ai/docs/blog/drafts/posts/*.md`
+
+## Facts to confirm (from the project's records, not re-run)
 
 - [ ] The first full `docker compose up` was on 26 July 2026 (tech-debt log), five weeks after the first commit.
-- [ ] 133 unit tests passing at 1 September (changelog); about 115 test functions, with parametrised cases.
 - [ ] Cost estimates of about $200 (dev) and $845 (prod) a month at 2025 prices come from the README’s own table.
-- [ ] **Not verified:** how OPA evaluates `reason` in `iam_risk.rego`. The rules assign `reason` inside each rule
-      body, which in Rego may create a local variable rather than set the package-level `reason`. The posts make no
-      claim about it. Part 3 states, from the API code, that the reason is discarded either way. Worth checking with
-      `opa eval` before publishing Part 3; I could not download OPA in the drafting session.
 
 ## To publish part N on its date
 

@@ -49,8 +49,9 @@ The platform is a set of small services on Azure. An event goes through six step
 Around it sits the infrastructure, all in Terraform for three environments: Container Apps, Postgres, Redis, Neo4j,
 Key Vault in role-based access mode, private endpoints in staging and production, managed identities instead of
 registry passwords, Microsoft Sentinel with two alert rules, and Grafana. The project’s own estimate, at 2025
-prices, is about $200 a month for development and $845 for production. In development the graph database is the
-largest single cost.
+prices, is about $200 a month for development and $845 for production, with the graph database the largest single
+cost in development. That estimate was written when the platform had three container apps; it now has eight, so
+read it as a lower bound.
 
 ## Four rules the design rests on
 
@@ -91,10 +92,15 @@ The next ten weeks were spent finding out what the first commit actually did:
 | 27–28 July | Tenants, roles and an audit log; a multi-agent code review and its fixes | 5 |
 | 20–21 August | Cross-tenant leaks, gaps in the OPA fallback, and a test that keeps the policy and the code in step | 3, 5 |
 | 1 September | The last items in the tech-debt log closed | 5 |
+| 17 November | Checking this series against the running system: three more defects that every test had passed | 2, 3, 4 |
 
-By the end there were 133 passing unit tests, an end-to-end replay against the running stack, and a written record
+By September there were 133 passing unit tests, an end-to-end replay against the running stack, and a written record
 of every bug and how it was found. That record is the most useful thing the project produced, and this series is
 built on it.
+
+Writing the series added one more round. To check each claim, I ran the policy, the services and the retraining
+query again, against the code as it stood. Three defects turned up that had passed every unit test and two code
+reviews. Each is told in the part it belongs to, with its fix and the test that now guards it.
 
 ## The series
 
@@ -111,7 +117,7 @@ built on it.
 ---
 
 **The evidence:** the
-[architecture diagrams](https://github.com/anandnarayanan2017/iam-ai-tf/blob/100c0d2f8a9fc57be2b824940d40a7917e36589a/docs/architecture/c4-architecture.md),
-the [infrastructure README with the cost estimates](https://github.com/anandnarayanan2017/iam-ai-tf/blob/100c0d2f8a9fc57be2b824940d40a7917e36589a/README.md)
-and the [changelog](https://github.com/anandnarayanan2017/iam-ai-tf/blob/100c0d2f8a9fc57be2b824940d40a7917e36589a/CHANGELOG.md).
+[architecture diagrams](https://github.com/anandnarayanan2017/iam-ai-tf/blob/cc0af56acf368a2466bc60d8be5b301628e81ee0/docs/architecture/c4-architecture.md),
+the [infrastructure README with the cost estimates](https://github.com/anandnarayanan2017/iam-ai-tf/blob/cc0af56acf368a2466bc60d8be5b301628e81ee0/README.md)
+and the [changelog](https://github.com/anandnarayanan2017/iam-ai-tf/blob/cc0af56acf368a2466bc60d8be5b301628e81ee0/CHANGELOG.md).
 Links point at the commit this series describes.

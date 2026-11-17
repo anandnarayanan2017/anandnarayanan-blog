@@ -57,7 +57,7 @@ what the analyst sees first, before any model output.
 
 ## How the score is built
 
-The [aggregator](https://github.com/anandnarayanan2017/iam-ai-tf/blob/100c0d2f8a9fc57be2b824940d40a7917e36589a/app/risk_scorer/scorer/aggregator.py)
+The [aggregator](https://github.com/anandnarayanan2017/iam-ai-tf/blob/cc0af56acf368a2466bc60d8be5b301628e81ee0/app/risk_scorer/scorer/aggregator.py)
 combines the two halves in one line:
 
 > score = rule total × 0.55 + anomaly score × 0.45
@@ -107,8 +107,8 @@ decision record.
 ## The loop that teaches the models
 
 Analysts review STEP_UP and BLOCK alerts and record a verdict: true positive, false positive or benign. Those
-verdicts are the labels. An Airflow job checks every Sunday at 03:00 and retrains once at least 50 new verdicts
-exist. It holds back 20% of the labelled data for evaluation, and a new model is promoted to production only if
+verdicts are the labels: a true positive is 1, and both false positives and benign verdicts are 0. An Airflow job
+checks every Sunday at 03:00 and retrains once at least 50 new verdicts exist. It holds back 20% of the labelled data for evaluation, and a new model is promoted to production only if
 its recall on that held-out data is at least 0.5.
 
 Two honest consequences follow.
@@ -119,6 +119,35 @@ The hard floor and the 45-point cap keep that noise away from BLOCK, but STEP_UP
 
 **The promotion gate checks recall only.** Precision is measured and logged, but nothing acts on it. A model that
 catches more true positives but raises many more false alarms would still pass. A gate on precision, or on the STEP_UP rate it would cause, is on my list.
+
+## The loop that had never closed
+
+Everything in the previous section was in the code from the first commit. None of it could have worked.
+
+I found that out in November, checking this post against the running system. I scored a sign-in, recorded a verdict
+on its alert, and ran the retraining job’s own query on the database. It returned nothing, for three separate
+reasons.
+
+**Nothing stored the feature vectors.** The architecture diagrams said the scorer wrote them to Postgres. The scorer
+touches no database at all, and nothing else wrote that table either. So every verdict pointed at a sign-in whose
+signals had been thrown away.
+
+**The query joined the wrong ids.** It matched an alert’s id against a feature vector’s event id. Those are
+different things, so even with data the join could never match.
+
+**Training and scoring spoke different languages.** The scorer scales every signal to between 0 and 1 before the
+models see it: the hour divided by 23, the event count capped at 100, and so on. The training job used the raw
+values. A model retrained that way would have scored every live sign-in in a feature space it had never seen.
+
+The placeholder from the previous section would never have been replaced. Fifty verdicts, five hundred, it would not
+have mattered.
+
+All three are fixed. The API now stores the feature vector in the same transaction as the score. The query follows
+the real chain, from verdict to alert to score to feature vector. Training uses an encoder that a unit test compares,
+value for value, with the scorer’s. And a new
+[end-to-end test](https://github.com/anandnarayanan2017/iam-ai-tf/blob/cc0af56acf368a2466bc60d8be5b301628e81ee0/test/integration/test_training_data.py)
+does what I did by hand: score, record a verdict, and check that it comes back out as a training row. Against the old
+code it found nothing; against the fix, exactly one.
 
 ## The sign that was upside down
 
@@ -131,7 +160,7 @@ sign-ins got the *lowest* anomaly scores. For 45% of every score, the scale was 
 
 Nothing failed. The hard floor still blocked the obvious attacks, which is exactly why the bug could hide. It was
 found in July by reading the code against the library’s documentation, fixed by flipping one sign, and pinned with
-[a test that higher raw scores give higher normalised scores](https://github.com/anandnarayanan2017/iam-ai-tf/blob/100c0d2f8a9fc57be2b824940d40a7917e36589a/test/unit/risk_scorer/test_anomaly.py),
+[a test that higher raw scores give higher normalised scores](https://github.com/anandnarayanan2017/iam-ai-tf/blob/cc0af56acf368a2466bc60d8be5b301628e81ee0/test/unit/risk_scorer/test_anomaly.py),
 so the direction can never silently flip back.
 
 The fix then broke an end-to-end test that had been passing only because of the bug.
@@ -149,9 +178,9 @@ person’s attention and a new rule, not an automatic lockout from a model nobod
 ---
 
 **The evidence:** the
-[rules](https://github.com/anandnarayanan2017/iam-ai-tf/blob/100c0d2f8a9fc57be2b824940d40a7917e36589a/app/risk_scorer/scorer/rules.py),
-the [signals](https://github.com/anandnarayanan2017/iam-ai-tf/blob/100c0d2f8a9fc57be2b824940d40a7917e36589a/common/models/scoring.py),
-the [aggregator](https://github.com/anandnarayanan2017/iam-ai-tf/blob/100c0d2f8a9fc57be2b824940d40a7917e36589a/app/risk_scorer/scorer/aggregator.py),
-the [retraining rules](https://github.com/anandnarayanan2017/iam-ai-tf/blob/100c0d2f8a9fc57be2b824940d40a7917e36589a/airflow/dags/retrain_logic.py)
-and the [tech-debt log](https://github.com/anandnarayanan2017/iam-ai-tf/blob/100c0d2f8a9fc57be2b824940d40a7917e36589a/docs/TECH_DEBT.md)
+[rules](https://github.com/anandnarayanan2017/iam-ai-tf/blob/cc0af56acf368a2466bc60d8be5b301628e81ee0/app/risk_scorer/scorer/rules.py),
+the [signals](https://github.com/anandnarayanan2017/iam-ai-tf/blob/cc0af56acf368a2466bc60d8be5b301628e81ee0/common/models/scoring.py),
+the [aggregator](https://github.com/anandnarayanan2017/iam-ai-tf/blob/cc0af56acf368a2466bc60d8be5b301628e81ee0/app/risk_scorer/scorer/aggregator.py),
+the [retraining rules](https://github.com/anandnarayanan2017/iam-ai-tf/blob/cc0af56acf368a2466bc60d8be5b301628e81ee0/airflow/dags/retrain_logic.py)
+and the [tech-debt log](https://github.com/anandnarayanan2017/iam-ai-tf/blob/cc0af56acf368a2466bc60d8be5b301628e81ee0/docs/TECH_DEBT.md)
 entry for the inverted sign.

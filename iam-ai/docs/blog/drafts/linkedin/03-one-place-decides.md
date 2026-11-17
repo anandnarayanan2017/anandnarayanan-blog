@@ -12,6 +12,11 @@ and read a travel time of zero minutes as 999.
 
 Now a unit test reads the Rego file and fails if the two disagree.
 
+Then I sent the policy real inputs while writing this post. For a privileged user with SMS, OPA did not answer
+STEP_UP. It answered with an error: two rules matched, because a hand-written helper inside the policy had drifted
+from the rules it guards. The API treated the error as an outage and its fallback allowed the sign-in. Two step-ups
+had never worked. Fixed, with a test that sends 6,144 inputs to the live policy.
+
 And the language model? It runs after the decision, its prompt forbids it to recommend anything, and if it fails a
 fixed template takes over.
 

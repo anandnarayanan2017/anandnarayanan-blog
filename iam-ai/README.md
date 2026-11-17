@@ -15,5 +15,5 @@ the agent did?*
 | 5 | Tenants, Evidence and What Is Still Open | Adding tenants, the leak that survived its fix, the open list, and where Agent Sentinel joins in |
 
 The code lives in a separate repository, `iam-ai-tf`, which is private for now. Every claim in the posts links to a
-file at commit `100c0d2`. See [docs/blog/drafts/REVIEW.md](docs/blog/drafts/REVIEW.md) for what has to happen
+file at commit `cc0af56` (on the `iam-ai-tf` branch `claude/gracious-edison-9lx70j` until merged). See [docs/blog/drafts/REVIEW.md](docs/blog/drafts/REVIEW.md) for what has to happen
 before the first part goes out.

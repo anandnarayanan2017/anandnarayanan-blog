@@ -59,7 +59,7 @@ Dockerfile. The fix makes the repository root the context for every service and 
 inside each image.
 
 The dependency drift got a structural fix rather than a careful one. Each service’s requirements file is now
-[generated from its group in the root project file](https://github.com/anandnarayanan2017/iam-ai-tf/blob/100c0d2f8a9fc57be2b824940d40a7917e36589a/scripts/sync-requirements.sh),
+[generated from its group in the root project file](https://github.com/anandnarayanan2017/iam-ai-tf/blob/cc0af56acf368a2466bc60d8be5b301628e81ee0/scripts/sync-requirements.sh),
 and a CI job fails if the two disagree. Two lists that must match will drift. A check that fails when they differ
 does not.
 
@@ -83,13 +83,13 @@ The record of it, the thing an analyst reviews and an auditor asks for, was sile
 Two design changes came out of it:
 
 - **The evidence trail is written in one transaction or not at all.** The endpoint now
-  [writes the event, the score and the alert](https://github.com/anandnarayanan2017/iam-ai-tf/blob/100c0d2f8a9fc57be2b824940d40a7917e36589a/app/api/app/routers/scoring.py)
+  [writes the event, the score and the alert](https://github.com/anandnarayanan2017/iam-ai-tf/blob/cc0af56acf368a2466bc60d8be5b301628e81ee0/app/api/app/routers/scoring.py)
   together, so a failure can no longer leave half a trail.
 - **Catch, log and continue is a decision, not a habit.** It means the system keeps going without the thing that
   failed. The endpoint still does this when the trail cannot be written: the decision is returned and enforced,
   and the failure is logged. The difference is that it is now a stated choice, in a comment next to the code,
   that the decision matters more than completing its record. And the logs now go through
-  [a JSON formatter that keeps the `extra` fields](https://github.com/anandnarayanan2017/iam-ai-tf/blob/100c0d2f8a9fc57be2b824940d40a7917e36589a/common/logging_config.py),
+  [a JSON formatter that keeps the `extra` fields](https://github.com/anandnarayanan2017/iam-ai-tf/blob/cc0af56acf368a2466bc60d8be5b301628e81ee0/common/logging_config.py),
   so the failure carries its reason.
 
 Whether that choice is right is a question for Part 5.
@@ -109,7 +109,7 @@ ALLOW.
 
 What the design does guarantee is narrower. With no rule fired, the final score is the anomaly score times 0.45,
 so it can never exceed 45 and can never reach BLOCK, which starts above 70.
-[The test now asserts exactly that](https://github.com/anandnarayanan2017/iam-ai-tf/blob/100c0d2f8a9fc57be2b824940d40a7917e36589a/test/integration/test_replay.py):
+[The test now asserts exactly that](https://github.com/anandnarayanan2017/iam-ai-tf/blob/cc0af56acf368a2466bc60d8be5b301628e81ee0/test/integration/test_replay.py):
 not BLOCK, and a score of at most 45.
 
 It is the same lesson as
@@ -126,7 +126,7 @@ The project’s own audit recorded that the gate was “either failing or vacuou
 Later, the type checker reported the Airflow jobs clean. Airflow was not installed anywhere in the project, and the
 type checker was set to ignore missing imports, so it treated every Airflow name as “could be anything” and had
 nothing to object to. When Airflow was finally installed in its own environment on 1 September, a
-[smoke test that loads the jobs the way Airflow does](https://github.com/anandnarayanan2017/iam-ai-tf/blob/100c0d2f8a9fc57be2b824940d40a7917e36589a/airflow/test/test_dags_import.py)
+[smoke test that loads the jobs the way Airflow does](https://github.com/anandnarayanan2017/iam-ai-tf/blob/cc0af56acf368a2466bc60d8be5b301628e81ee0/airflow/test/test_dags_import.py)
 caught a real problem straight away. The jobs had just been split so their logic could be unit-tested, and the
 split worked under `pytest`. Under Airflow it did not, because Airflow imports each job file by its path without
 putting the file’s own folder on the import path.
@@ -147,9 +147,19 @@ A check that cannot fail is not a check. It is a decoration that happens to be g
 5. **Prove a gate can fail.** Break it once, on purpose, and watch it go red.
 6. **Assert invariants, not outcomes.** Test what the design guarantees, not what one run happened to return.
 
-The first rule is still only half done. The end-to-end replay is opt-in: CI runs the unit tests and the Airflow
-smoke test, but not the replay against a running stack, so starting the whole system is still something I do by
+The first rule is still only half done. The end-to-end tests are opt-in: CI runs the unit tests and the Airflow
+smoke test, but not the tests against a running stack, so starting the whole system is still something I do by
 hand. It is the next gate to automate.
+
+## It happened again
+
+Writing this series, I ran the system once more to check each claim. Two months after the last fix, with 133 unit
+tests green, it found three defects no check had seen: a policy that answered some sign-ins with an error instead of
+a decision ([Part 3](03-one-place-decides.md)), and a learning loop that could never have trained
+([Part 2](02-rules-decide-models-advise.md)).
+
+Each is now guarded by a test: two new end-to-end tests, and a unit test for the encoding. Run against the old code,
+both end-to-end tests fail. That is rule 5, applied after the fact: the new gates have been seen to go red.
 
 So, how do we know it works? Not because it built, and not because a checker approved it. Because it ran, and
 something looked at what it actually did.
@@ -157,6 +167,6 @@ something looked at what it actually did.
 ---
 
 **The evidence:** the project’s
-[tech-debt log](https://github.com/anandnarayanan2017/iam-ai-tf/blob/100c0d2f8a9fc57be2b824940d40a7917e36589a/docs/TECH_DEBT.md)
-and [changelog](https://github.com/anandnarayanan2017/iam-ai-tf/blob/100c0d2f8a9fc57be2b824940d40a7917e36589a/CHANGELOG.md)
+[tech-debt log](https://github.com/anandnarayanan2017/iam-ai-tf/blob/cc0af56acf368a2466bc60d8be5b301628e81ee0/docs/TECH_DEBT.md)
+and [changelog](https://github.com/anandnarayanan2017/iam-ai-tf/blob/cc0af56acf368a2466bc60d8be5b301628e81ee0/CHANGELOG.md)
 record each finding with its date and fix. The links above point at the commit this series describes.

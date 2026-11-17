@@ -15,15 +15,16 @@ what is still open, and where this project meets Agent Sentinel.
 ## Who is calling, really
 
 In late July the shared key, itself only a few days old, was replaced with a real caller identity. The
-[authentication service](https://github.com/anandnarayanan2017/iam-ai-tf/blob/100c0d2f8a9fc57be2b824940d40a7917e36589a/app/api/app/services/auth.py)
+[authentication service](https://github.com/anandnarayanan2017/iam-ai-tf/blob/cc0af56acf368a2466bc60d8be5b301628e81ee0/app/api/app/services/auth.py)
 now resolves each API key to three things: a tenant, a user and a role.
 
 - **Keys are stored as hashes.** The plaintext key is shown once and never kept.
 - **Four roles, checked per endpoint.** Viewer, analyst, admin and owner. A viewer cannot submit a verdict; an
   analyst cannot change tenant settings. Each endpoint declares the lowest role it accepts.
 - **The tenant comes from the key, never from the request.** A tenant field in a JSON body can be set to anything
-  by anyone holding any valid key. The caller’s resolved identity cannot. So the scoring endpoint stopped accepting
-  a tenant field at all.
+  by anyone holding any valid key. The caller’s resolved identity cannot. So the scoring endpoint ignores any tenant
+  in the body and stores the event under the caller’s own. I checked: a sign-in sent with the other tenant’s id was
+  stored under the caller’s.
 - **Identity comes from the key, too.** The verdict form used to accept an `analyst_id` typed by the client, so
   anyone could record a verdict in someone else’s name. It is now taken from the authenticated user, and every
   change to an alert, verdict or setting is written to an audit log with that user as the actor.
@@ -70,7 +71,7 @@ shape. Every night it would have rebuilt the baselines the scorer had just stopp
 This is the duplicated-fact problem again. The key format lived in two places, the fix reached one, and nothing
 failed when they disagreed. Both now build keys the same way, and the scorer’s documentation names the job as the
 second place to change. A
-[test](https://github.com/anandnarayanan2017/iam-ai-tf/blob/100c0d2f8a9fc57be2b824940d40a7917e36589a/test/unit/airflow/test_baseline_logic.py)
+[test](https://github.com/anandnarayanan2017/iam-ai-tf/blob/cc0af56acf368a2466bc60d8be5b301628e81ee0/test/unit/airflow/test_baseline_logic.py)
 now pins the job’s key format, but to a fixed string, not to the scorer’s own key function. If the scorer’s format
 changed again, that test would still pass. A test that compares the two directly would close it for good.
 
@@ -89,14 +90,14 @@ and the project’s own records:
 | A decision stands even if its record cannot be written | Availability is favoured over evidence | [4](04-the-build-was-green.md) |
 | The policy defaults to ALLOW when nothing matches | Safe while tuning, risky if forgotten | [3](03-one-place-decides.md) |
 | The fallback mirrors the policy’s blocks but not its step-ups | An OPA outage lowers the bar | [3](03-one-place-decides.md) |
-| The policy’s own reason is not stored | The auditor sees the model’s summary, not the rule | [3](03-one-place-decides.md) |
+| The policy’s reason is always the default, and the API drops it anyway | The auditor sees the model’s summary, not the rule | [3](03-one-place-decides.md) |
 | No trained model until 50 verdicts | Noisier STEP_UP rates on a fresh deployment | [2](02-rules-decide-models-advise.md) |
 | Model promotion checks recall only | A noisier model can still be promoted | [2](02-rules-decide-models-advise.md) |
 | The nightly job’s key test does not compare against the scorer | The tenant leak could come back | |
 | The explainer and parts of the poller have no unit tests | Gaps on compliance-relevant code | |
 | Tenants and users are created with SQL | No provisioning flow or admin API yet | |
 | One Entra tenant per ingestion deployment | Serving several customers from one worker needs real design work | |
-| The docs describe ONNX model export that was never built | The libraries are still installed, pending a decision | |
+| Retraining learns only from sign-ins that raised an alert | The anomaly models never see ordinary traffic | [2](02-rules-decide-models-advise.md) |
 
 For the record, the question I would ask first is the second row. For identity decisions in a regulated
 environment, I think a decision that cannot be recorded should at least be flagged, and probably not enforced
@@ -113,7 +114,7 @@ score for the person behind an agent into Agent Sentinel’s policy. An agent ac
 stepped up, or whose sign-in looks risky, would be held to a stricter policy until that trust is restored.
 
 The project keeps a
-[vision note](https://github.com/anandnarayanan2017/iam-ai-tf/blob/100c0d2f8a9fc57be2b824940d40a7917e36589a/docs/unified-trust-plane-vision.md)
+[vision note](https://github.com/anandnarayanan2017/iam-ai-tf/blob/cc0af56acf368a2466bc60d8be5b301628e81ee0/docs/unified-trust-plane-vision.md)
 for that. It is forward-looking, not a roadmap, and it is honest about the friction. One is event-driven, the other
 intercepts calls inline. Making OPA the one policy point for both means rewriting Agent Sentinel’s rules as Rego.
 And IAM AI blocks today, while Agent Sentinel only observes, so the two cannot yet enforce on equal terms.
@@ -121,18 +122,20 @@ And IAM AI blocks today, while Agent Sentinel only observes, so the two cannot y
 ## So, can we trust who signed in?
 
 Not on its say-so. But for a given sign-in, IAM AI can now show which rules fired and why, what the models added and
-how little that can be, which policy line made the decision, who reviewed the alert, and the tests that would fail
-if any of that logic changed.
+how little that can be, which decision the policy made, who reviewed the alert, and the tests that would fail if any
+of that logic changed. It cannot yet show which policy line decided; that is the second row above.
 
-That is the difference between June and September. The first commit could produce a decision. It took ten weeks of
-running it, reviewing it and testing it before it could show its working.
+That is the difference between June and now. The first commit could produce a decision. It took ten weeks of
+running it, reviewing it and testing it before it could show its working, and one more run in November to find
+that two of its step-ups and its whole learning loop had never worked. The run is the evidence. Everything else is
+a claim.
 
 ---
 
 **The evidence:** the
-[authentication service](https://github.com/anandnarayanan2017/iam-ai-tf/blob/100c0d2f8a9fc57be2b824940d40a7917e36589a/app/api/app/services/auth.py),
-the [schema](https://github.com/anandnarayanan2017/iam-ai-tf/blob/100c0d2f8a9fc57be2b824940d40a7917e36589a/db/schema.sql),
-the [integration tests](https://github.com/anandnarayanan2017/iam-ai-tf/blob/100c0d2f8a9fc57be2b824940d40a7917e36589a/test/integration/test_replay.py),
-the [changelog](https://github.com/anandnarayanan2017/iam-ai-tf/blob/100c0d2f8a9fc57be2b824940d40a7917e36589a/CHANGELOG.md),
-the [tech-debt log](https://github.com/anandnarayanan2017/iam-ai-tf/blob/100c0d2f8a9fc57be2b824940d40a7917e36589a/docs/TECH_DEBT.md)
-and the [vision note](https://github.com/anandnarayanan2017/iam-ai-tf/blob/100c0d2f8a9fc57be2b824940d40a7917e36589a/docs/unified-trust-plane-vision.md).
+[authentication service](https://github.com/anandnarayanan2017/iam-ai-tf/blob/cc0af56acf368a2466bc60d8be5b301628e81ee0/app/api/app/services/auth.py),
+the [schema](https://github.com/anandnarayanan2017/iam-ai-tf/blob/cc0af56acf368a2466bc60d8be5b301628e81ee0/db/schema.sql),
+the [integration tests](https://github.com/anandnarayanan2017/iam-ai-tf/blob/cc0af56acf368a2466bc60d8be5b301628e81ee0/test/integration/test_replay.py),
+the [changelog](https://github.com/anandnarayanan2017/iam-ai-tf/blob/cc0af56acf368a2466bc60d8be5b301628e81ee0/CHANGELOG.md),
+the [tech-debt log](https://github.com/anandnarayanan2017/iam-ai-tf/blob/cc0af56acf368a2466bc60d8be5b301628e81ee0/docs/TECH_DEBT.md)
+and the [vision note](https://github.com/anandnarayanan2017/iam-ai-tf/blob/cc0af56acf368a2466bc60d8be5b301628e81ee0/docs/unified-trust-plane-vision.md).
