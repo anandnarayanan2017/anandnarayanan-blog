@@ -54,6 +54,10 @@ every failed delivery is counted and logged with the finding and rule it
 belonged to, so a dropped alert is something you can see, not something you
 discover in an audit.
 
+(The alerting and SIEM export code itself is published with Part 4. The
+failure handling described here is in the pipeline now, and its tests use
+stand-in export modules.)
+
 ## Connecting real model calls
 
 To record real calls, Agent Sentinel wraps the Anthropic and Azure OpenAI

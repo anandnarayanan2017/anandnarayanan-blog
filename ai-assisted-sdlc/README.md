@@ -69,6 +69,11 @@ CONTRACT [Concurrency-safe booking (no double-booking under load)]
 
 The dashboard was green. The meeting was a contact sport.
 
+Why ten and not twenty: the test's database pool holds ten connections, so at most ten requests could be inside
+the check at once ([Part 2](docs/blog/posts/02-a-prompt-is-not-a-specification.md) explains the race).
+[`scripts/race.ts`](examples/double-booking/scripts/race.ts) opens a pool of twenty, which is why it books the
+room 19 or 20 times when you run it locally.
+
 Only the parts Part 1 cites are here: rooms, bookings and the concurrency tests. Users, availability search, the
 harness itself and the model benchmark are not.
 
