@@ -98,7 +98,7 @@ It replays a clean run (no findings), then an attack:
 a tool the agent may not use, the 250KB transfer to an unknown server, and an
 unapproved model.
 
-**3. The finding.** One of the four it prints:
+**3. The finding.** One of the four it prints (the `why` line is shortened here):
 
 ```text
 [HIGH    ] Egress to non-allow-listed host attacker-exfil.example
@@ -106,6 +106,8 @@ unapproved model.
    why : Agent 'recon-bot' sent traffic to 'attacker-exfil.example', which is not
          in its permitted egress allow-list.
    clause: allowed_hosts=['api.anthropic.com', 'ledger.internal', 'reports.internal']
+   controls: DORA Art.10 (anomaly detection), EU AI Act Art.12 (high-risk AI logging,
+             when in scope), CSSF 20/750 as amended (ICT risk; confirm entity scope)
    evidence: agent_id=recon-bot -> session_id=run-2026-06-10 -> action=network_call
              -> host=attacker-exfil.example -> bytes_out=250000
 ```
@@ -138,7 +140,7 @@ C4Context
   Rel(ciso, agentSentinel, "Reviews dashboard, triages findings", "Web UI / API")
   Rel(auditor, agentSentinel, "Reviews read-only evidence", "API / exported findings")
   Rel(ciso, auditor, "Provides audit evidence", "DORA / EU AI Act / CSSF")
-  Rel(agentSentinel, siem, "Exports high-fidelity findings", "Log Analytics, webhooks, JSON")
+  Rel(agentSentinel, siem, "Exports findings (code published with Part 4)", "Log Analytics, webhooks, JSON")
   Rel(agentSentinel, identity, "Authenticates users, resolves agent identities", "OIDC / Entra ID")
   Rel(agents, agentSentinel, "Emit model, tool, network telemetry", "SDK, proxy, network collector")
   Rel(agents, identity, "Authenticate as workloads", "OAuth2 / managed identity")

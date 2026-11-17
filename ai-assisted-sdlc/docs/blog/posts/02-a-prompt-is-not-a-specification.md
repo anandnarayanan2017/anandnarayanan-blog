@@ -123,7 +123,7 @@ What is one rule in your system that everyone knows and nobody has written down?
 
 ## References and further reading
 
-- **The code:** [examples/double-booking](https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc/examples/double-booking): the four tests, the check-then-insert first attempt, the exclusion constraint, and the run log behind “ten times”. It runs in CI on every change.
+- **The code:** [examples/double-booking](https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc/examples/double-booking): the four tests, the check-then-insert first attempt and the exclusion constraint. It runs in CI on every change. The run log behind “ten times” is in [the series README](https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc#where-ten-times-comes-from).
 - **Why the transaction didn’t help:** PostgreSQL documentation, [Transaction Isolation](https://www.postgresql.org/docs/current/transaction-iso.html), on what Read Committed does and doesn’t protect against.
 - **The constraint:** PostgreSQL documentation, [Exclusion constraints](https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-EXCLUSION).
 - **Write skew, with meeting rooms:** Martin Kleppmann, *Designing Data-Intensive Applications* (O’Reilly), chapter on transactions.
