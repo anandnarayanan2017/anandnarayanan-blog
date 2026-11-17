@@ -20,6 +20,9 @@
 //                                     sources; the post shows "Last reviewed".
 //   "sources": { "1": [{ "title": "...", "url": "https://..." }] }
 //                                     external sources, listed at the top of the post.
+//   "topics": { "Architecture": [1, 2] }
+//                                     an extra tag for the listed parts only. The
+//                                     "Architecture" topic puts them on /architecture/.
 //
 // Images live in images/ and are named <NN-slug>-1.png (the hero) and so on.
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
@@ -75,6 +78,13 @@ function sync(folder) {
         return [Number(k), list.map(({ title, url }) => ({ title, url }))];
       }),
   );
+
+  // Cross-cutting topics: an extra tag on some parts, on top of the series tags.
+  const topics = new Map(); // part number -> [topic, ...]
+  for (const [topic, list] of Object.entries(cfg.topics ?? {})) {
+    if (!Array.isArray(list) || !list.every((n) => Number.isInteger(n))) throw new Error(`${where}: "topics" "${topic}" must be a list of part numbers`);
+    for (const n of list) topics.set(n, [...(topics.get(n) ?? []), topic]);
+  }
 
   const outImages = `public/images/${folder}`;
   const src = cfg.layout === "technical" ? "technical-details" : "posts";
@@ -145,7 +155,7 @@ function sync(folder) {
       ...(updated.has(p.n) ? [`updated: ${updated.get(p.n)}`] : []),
       ...(sources.has(p.n) ? [`sources: ${JSON.stringify(sources.get(p.n))}`] : []),
       `excerpt: ${JSON.stringify(p.excerpt)}`,
-      `tags: [${cfg.tags.map((t) => JSON.stringify(t)).join(", ")}]`,
+      `tags: [${[...cfg.tags, ...(topics.get(p.n) ?? [])].map((t) => JSON.stringify(t)).join(", ")}]`,
       `readTime: ${Math.max(1, Math.ceil(words / 200))}`,
       `series: ${JSON.stringify(cfg.name)}`,
       `part: ${p.n}`,

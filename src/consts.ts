@@ -12,6 +12,16 @@ export const SITE = {
   // page keeps `intro` (experience and standards).
   homeIntro:
     "Teams are starting to hand real work to AI agents: payments, reports, code. Getting an agent to act is the easy part. The hard part is proving what it did, and knowing that what it built actually works. Each series here takes one of those questions apart, with the code and tests behind every claim.",
+  // The /architecture/ page: design-heavy posts from every series, plus the
+  // decision records behind them. A post gets there through "topics" in its
+  // series.json.
+  architecture: {
+    tag: "Architecture",
+    title: "Architecture",
+    lead: "The design decisions behind the series: what was chosen, what was rejected, and what it cost.",
+    intro:
+      "These are not whiteboard designs. Each post here describes a system that exists in the repository, under the constraints of a regulated environment, and links to the code, tests or decision record that backs it up.",
+  },
   personalNote:
     "I’m a Solutions Architect in Luxembourg. This blog and its projects are personal work, written in my spare time.",
   // Shown at the foot of the home page.

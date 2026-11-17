@@ -145,6 +145,15 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
 }
 .icon-btn { padding: 0.5rem; }
 .nav-link:hover, .icon-btn:hover { background: var(--surface-2); color: var(--text-strong); }
+/* Phones: keep the header on one line. RSS stays in the footer. */
+.site-name { white-space: nowrap; }
+@media (max-width: 30rem) {
+  .nav-extra { display: none; }
+  .site-name { font-size: 1rem; }
+  .site-nav { gap: 0; }
+  .nav-link { padding: 0.4rem 0.35rem; font-size: 0.85rem; }
+  .icon-btn { padding: 0.4rem; }
+}
 .icon-sun { display: none; }
 .dark .icon-sun { display: inline; }
 .dark .icon-moon { display: none; }
@@ -211,6 +220,15 @@ a.card:hover h3 { color: var(--accent); }
 }
 .tag-btn:hover { border-color: var(--accent); color: var(--text-strong); }
 .tag-btn[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+
+/* ---------- Architecture page ---------- */
+.group-title { font-size: 1.1rem; margin: 1.75rem 0 0.75rem; }
+.section > .eyebrow + .group-title { margin-top: 0; }
+.section-note { font-size: 0.95rem; color: var(--muted); margin-bottom: 1rem; }
+.records { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; }
+.records li { border: 1px solid var(--border); border-radius: 0.6rem; padding: 0.85rem 1rem; background: var(--surface); }
+.records a { font-weight: 500; }
+.records .meta { margin-top: 0.3rem; }
 
 /* ---------- Article ---------- */
 .post-layout { padding-top: 2rem; }

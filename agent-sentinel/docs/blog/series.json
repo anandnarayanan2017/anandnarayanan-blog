@@ -1,8 +1,9 @@
 {
-  "_comment": "Site settings for this series. dates: site date (YYYY-MM-DD) per part; every part in technical-details/ needs one or the build fails, and dates for unreleased parts are ignored. card: the home-page series card (the badge gets the published part count appended; question links the two series; codeUrl is the Source code on GitHub link). Edit freely.",
+  "_comment": "Site settings for this series. dates: site date (YYYY-MM-DD) per part; every part in technical-details/ needs one or the build fails, and dates for unreleased parts are ignored. card: the home-page series card (the badge gets the published part count appended; question links the two series; codeUrl is the Source code on GitHub link). topics: an extra tag for the listed parts only; Architecture lists them on /architecture/. Edit freely.",
   "name": "Agent Sentinel",
   "layout": "technical",
   "tags": ["Agent Sentinel", "AI Agents", "Compliance"],
+  "topics": { "Architecture": [1, 2] },
   "card": {
     "order": 1,
     "badge": "Series",

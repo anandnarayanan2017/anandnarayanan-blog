@@ -40,6 +40,11 @@ dates, excerpts and home-page card. Optionally, per part, it holds an `updated` 
 "sources": { "1": [{ "title": "Claude prompting best practices", "url": "https://platform.claude.com/docs/" }] }
 ```
 
+A part can also carry a cross-cutting topic on top of its series tags. `"topics": { "Architecture": [1, 2] }`
+tags parts 1 and 2 with `Architecture`, which lists them on the site's
+[Architecture](https://anandnarayanan.net/architecture/) page next to the decision records in each
+series' `docs/adr/` folder.
+
 ## How the site is built
 
 - [Astro](https://astro.build) and plain CSS, built to last: no CSS framework, system fonts, and posts in
