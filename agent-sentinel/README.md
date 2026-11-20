@@ -11,7 +11,7 @@ Detect. Explain. Export.   (Enforce is roadmap)
 
 Start at [`docs/blog/README.md`](docs/blog/README.md). Each released part has a
 plain-English LinkedIn post, a technical write-up, the code it cites, and its
-tests. Parts are released weekly; this folder grows with them.
+tests. Code can arrive here a little ahead of the part that explains it.
 
 ## Layout
 
@@ -23,6 +23,9 @@ tests. Parts are released weekly; this folder grows with them.
 | `policies/` | Example policy files |
 | `examples/phase1/`, `dashboard/` | The demo agent, the fintech traffic simulator and the CISO dashboard |
 | `examples/phase2/`, `start_phase2.sh`, `docs/PHASE2.md` | Part 2: agents that call Azure OpenAI and Anthropic through the SDK collectors, with a dry-run mode that needs no keys |
+| `app/sentinel_sequence/`, `examples/phase2/sequence_eval_payments_demo.py`, `docs/EVAL_PAYMENTS_BOT.md` | Part 3: the optional, advisory sequence model and its evaluation on synthetic data |
+| `app/sentinel/alerting/`, `app/sentinel/siem/`, `docs/COMPLIANCE.md` | Parts 4 and 5: webhook alerts and the Azure Log Analytics export |
+| `docs/ARCHITECTURE.md` | Part 5: the architecture overview |
 | `Dockerfile`, `docker-compose.yml` | Container image and the local stack (Sentinel + PostgreSQL + optional simulator) |
 
 ## Run the tests

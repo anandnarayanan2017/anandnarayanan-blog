@@ -2,7 +2,9 @@
 
 <!--
 DRAFT, not published. Publishes on the date for "5" in ../../series.json
-(2026-12-28): run `python scripts/publish_part.py 5` from agent-sentinel-series.
+(2026-12-28). On that day, from the repository root:
+`python agent-sentinel/scripts/publish_part.py 5`, then build, PR, merge.
+The ARCHITECTURE.md this part links to is already in the public folder.
 This part closes the series. Parts 6-10 are not scheduled; if a second series
 is announced, update "What comes next" and the LinkedIn post before publishing.
 -->
@@ -206,11 +208,11 @@ mindmap
       Control refs
       Payload hash
     Policy Library
-      DORA
-      EU AI Act
-      CSSF
-      NIST AI RMF
-      ISO 42001
+      DORA control refs
+      EU AI Act control refs
+      CSSF control refs
+      NIST AI RMF roadmap
+      ISO 42001 roadmap
     Integrations
       Azure OpenAI SDK
       Anthropic SDK

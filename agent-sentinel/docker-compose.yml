@@ -37,6 +37,8 @@ services:
       SENTINEL_CORS_ORIGINS: http://localhost:8000
       AZURE_TENANT_ID: ${AZURE_TENANT_ID:-}
       AZURE_CLIENT_ID: ${AZURE_CLIENT_ID:-}
+      ALERT_SLACK_WEBHOOK: ${ALERT_SLACK_WEBHOOK:-}
+      ALERT_TEAMS_WEBHOOK: ${ALERT_TEAMS_WEBHOOK:-}
     ports:
       # The dashboard calls the API on :8000, so keep the host port at 8000.
       - "127.0.0.1:8000:8000"

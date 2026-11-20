@@ -113,3 +113,39 @@ def test_successful_export_counts_nothing(finding, monkeypatch, caplog):
     assert delivered == [finding, finding]
     assert pipeline.export_failures() == {"alerter": 0, "siem": 0}
     assert not caplog.records
+
+
+def test_a_real_webhook_outage_is_counted(finding, monkeypatch):
+    """The real alerter, not a stand-in: a target that is down must reach the counter."""
+    from sentinel.alerting import webhook
+
+    monkeypatch.setattr(webhook, "_THRESHOLD", "high")
+    monkeypatch.setattr(webhook, "_TEAMS_WEBHOOK", "https://example.test/teams")
+    monkeypatch.setattr(webhook, "_PAGERDUTY_KEY", "")
+    monkeypatch.setattr(webhook, "_SLACK_WEBHOOK", "")
+
+    def down(url, payload, headers=None):
+        raise OSError("connection refused")
+
+    monkeypatch.setattr(webhook, "_post", down)
+
+    pipeline._fire_alerter(finding)  # must not raise
+
+    assert pipeline.export_failures()["alerter"] == 1
+
+
+def test_a_real_log_analytics_outage_is_counted(finding, monkeypatch):
+    """The real SIEM connector, not a stand-in: a failed upload must reach the counter."""
+    from sentinel.siem import log_analytics
+
+    class Down:
+        def upload(self, **_kwargs):
+            raise OSError("ingestion endpoint unreachable")
+
+    monkeypatch.setattr(log_analytics, "_ACTIVE", True)
+    monkeypatch.setattr(log_analytics, "_client", None)
+    monkeypatch.setattr(log_analytics, "_get_client", Down)
+
+    pipeline._push_siem(finding)  # must not raise
+
+    assert pipeline.export_failures()["siem"] == 1

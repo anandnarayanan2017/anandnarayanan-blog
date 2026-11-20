@@ -2,9 +2,10 @@
 
 <!--
 DRAFT, not published. Publishes on the date for "4" in ../../series.json
-(2026-12-14): run `python scripts/publish_part.py 4` from agent-sentinel-series.
-That also copies the alerting and Log Analytics code this part links to.
-Before publishing, check the "Who owns the agent" section against Microsoft
+(2026-12-14). On that day, from the repository root:
+`python agent-sentinel/scripts/publish_part.py 4`, then build, PR, merge.
+The alerting and Log Analytics code this part links to is already in the
+public folder. Before publishing, check the "Who owns the agent" section against Microsoft
 Learn: sponsors and inactivity clean-up for Entra Agent ID were in preview
 when it was written (November 2026).
 -->
@@ -144,9 +145,9 @@ What's the one control you'd never skip, even under deadline pressure?
 
 ## Design and implementation
 
-Phase 3 turns the pilot into something a regulated security team can evaluate seriously.
+This is what turns the pilot into something a regulated security team can evaluate seriously.
 
-### Phase 3 enterprise architecture
+### Enterprise architecture
 
 ```mermaid
 flowchart TB
@@ -222,7 +223,3 @@ Approval decisions derive `reviewer` from the verified principal's `user_id`;
 the caller cannot nominate a different reviewer in the request body. The
 current dashboard is therefore a local/dev UI unless it is placed behind an
 auth-aware gateway or replaced with the planned OIDC-capable client.
-
-### The two-gate SDLC behind the code
-
-Worth showing, not just the runtime architecture: every change goes through two human approval gates. At Gate 1, a human signs off a frozen specification. The design, build, independent code and security review, tests, and user-acceptance testing follow, and nothing reaches production until a human approves the Gate 2 evidence bundle. The full pipeline lives in the main product repository, which is private; this public folder carries only the code and docs the series cites, so treat this paragraph as a description of the process rather than something you can inspect here. That process discipline is itself part of the "auditable by design" pitch — the same reasoning behind the compliance-control mapping.
