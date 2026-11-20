@@ -26,7 +26,7 @@ class EvalReport:
     f1: float
     n_normal_eval: int
     n_attack_eval: int
-    pr_curve: list[tuple[float, float, float]] = field(default_factory=list)  # (thr, P, R)
+    pr_curve: list[tuple[float, float, float]] = field(default_factory=list)  # (threshold, P, R)
     per_attack_recall: dict[str, float] = field(default_factory=dict)
 
     def summary(self) -> str:
@@ -68,9 +68,9 @@ def evaluate(
     # PR curve over a sweep of candidate thresholds
     all_scores = np.unique(np.concatenate([sn, sa]))
     curve = []
-    for thr in all_scores:
-        p, r = precision_recall_at(sn, sa, float(thr))
-        curve.append((float(thr), p, r))
+    for threshold in all_scores:
+        p, r = precision_recall_at(sn, sa, float(threshold))
+        curve.append((float(threshold), p, r))
 
     per_type: dict[str, float] = {}
     for atk_type in sorted({t for t, _ in attack_scores}):

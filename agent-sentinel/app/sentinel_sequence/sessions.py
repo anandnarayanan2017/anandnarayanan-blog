@@ -21,7 +21,7 @@ def _to_epoch(ts) -> float:
         try:
             return datetime.fromisoformat(ts).timestamp()
         except ValueError as e:
-            raise ValueError(f"Unparseable timestamp for field 'ts': {ts!r}") from e
+            raise ValueError(f"Unparsable timestamp for field 'ts': {ts!r}") from e
     raise ValueError(f"Unsupported timestamp: {ts!r}")
 
 
