@@ -1,16 +1,7 @@
 # Part 3 — Rules First, Statistics Second
 
-<!--
-DRAFT, not published. Publishes on the date for "3" in ../../series.json
-(2026-11-30): run `python scripts/publish_part.py 3` from agent-sentinel-series.
-That also copies the sequence-model code, tests and evaluation docs this part
-links to, so links to them only resolve once it has run; the link check skips
-drafts/ for that reason. Line counts in "Where the AI actually is" were
-recounted on 2026-11-09 over the public folder as it will be once all five
-parts are out; recount if the code changes before then.
--->
 
-> **Reader path:** [LinkedIn post](../linkedin/03-rules-first-statistics-second.md) → this article → [design and implementation](#design-and-implementation) → [code-and-test traceability](../../TRACEABILITY.md#publication-traceability)
+> **Reader path:** LinkedIn post → this article → [design and implementation](#design-and-implementation) → [code-and-test traceability](../TRACEABILITY.md#publication-traceability)
 
 ## A wire transfer before the identity check
 
@@ -38,8 +29,8 @@ makes. Agent Sentinel never asks a model anything itself.
 
 | Layer | Lines | Share | What it is |
 |---|---:|---:|---|
-| Platform: API, storage, sign-in, collectors, export | 2,947 | 54% | Plumbing |
-| Sequence model, with its tooling and synthetic test data | 1,791 | 33% | The only machine learning |
+| Platform: API, storage, sign-in, collectors, export | 2,949 | 54% | Plumbing |
+| Sequence model, with its tooling and synthetic test data | 1,790 | 33% | The only machine learning |
 | Policy rules, event schema, explanations | 618 | 11% | `if` statements and string templates |
 | Descriptive statistics (`detection/baseline.py`) | 104 | 2% | Means, standard deviations, set membership |
 
@@ -63,13 +54,13 @@ call and how many tool calls a session may make. Every event is checked
 against that policy, and anything outside it becomes a finding that names the
 rule, the agent and the evidence.
 
-In [Part 1](../../technical-details/01-why-agents-need-a-flight-recorder.md)
+In [Part 1](../technical-details/01-why-agents-need-a-flight-recorder.md)
 I compared two answers to a compliance officer's "why was this flagged?":
 "the model scored it 0.87" against "it called a tool its policy doesn't allow;
 here is the clause". Only the second can be checked, challenged and changed by
 a person in a pull request.
 
-[ADR-0001](../../../adr/0001-rules-first-detection.md) makes that ordering
+[ADR-0001](../../adr/0001-rules-first-detection.md) makes that ordering
 structural rather than a matter of habit. The rules run first. They are the
 only layer whose findings cite a policy clause. And when blocking exists, they
 will be the only layer allowed to block.
@@ -120,6 +111,11 @@ is in small, single injections. Two or three extra steps hidden in a long,
 otherwise normal session are diluted again, one level up: a burst of extra
 outbound network calls on its own was caught in none of the sessions, and an
 unauthorised override in one in six.
+
+On this harder role the fix from the previous section didn't hold either.
+Scoring by the plain average did slightly better than scoring by the three
+most surprising steps (F1 0.90 against 0.87). The configuration I kept is
+not the best on every test; it is the one I can explain and calibrate.
 
 **Small, quiet attacks in long sessions are the hardest thing for this layer
 to catch.** That is exactly why it advises and never decides.
@@ -231,10 +227,12 @@ The first version scored sessions by mean surprise per step (mean negative log-l
 
 *`kyc_bot_demo`, synthetic data: the normal workflows and the attacks were both
 written by the author, so these are not real-world performance figures (see
-[`docs/PHASE2.md`](../../../PHASE2.md)).*
+[`docs/PHASE2.md`](../../PHASE2.md)).*
 
-Mean-NLL missed every privilege-escalation session at order 1 and about half of
-them (48%) at order 2 — the injected steps were real outliers, just outvoted by the rest of the session. Switching to the mean of the *k* most surprising steps (top-k surprise) instead of the session-wide mean fixed it: concentrated anomalies stop getting outvoted by the normal steps around them. Same model, different aggregation, F1 0.85 to 0.99.
+Mean-NLL missed every privilege-escalation session at order 1 and about half
+of them (48%) at order 2. Scoring by the mean of the *k* most surprising steps
+(top-k surprise) stops concentrated anomalies being outvoted by the normal
+steps around them.
 
 #### Fusion contract — advisory only
 
@@ -254,12 +252,23 @@ Every flagged session comes with the same evidence-chain discipline as a policy 
 
 #### What's real today
 
-Built and hardened: the tokenizer, order-1/2 Markov scoring, a versioned per-role model registry with atomic publish and integrity checksums, and drift detection (median-surprise-ratio, so a role's prompt/toolset changing legitimately triggers "model stale, retrain" instead of an alert storm). A hardening pass closed ten real bugs found in code review — including a SQL-injection surface in the DuckDB column-mapping config and a TOCTOU gap in model-checksum verification — taking it to 94 passing tests at 95%+ coverage in the main product
-repository (this public folder carries the subset the series cites). It is now wired into `detection/engine.py` alongside the policy and baseline layers as an optional, advisory-only L3 layer (`SENTINEL_SEQ_ENABLED`, off by default).
+Built and tested in this folder: the tokenizer, order-1/2 Markov scoring, a
+versioned per-role model registry with atomic publish and integrity
+checksums, and drift detection (a median-surprise ratio, so a role whose
+prompt or toolset changes legitimately triggers "model stale, retrain"
+instead of an alert storm). Code review found and closed real bugs on the
+way, including a SQL-injection surface in the DuckDB column-mapping config
+and a time-of-check/time-of-use gap in model-checksum verification. The
+tests are in [`test_sentinel_sequence.py`](../../../app/tests/test_sentinel_sequence.py),
+[`test_sequence_layer.py`](../../../app/tests/test_sequence_layer.py) and
+[`test_seq_adapter.py`](../../../app/tests/test_seq_adapter.py). The layer
+is wired into `detection/engine.py` alongside the policy and baseline layers
+as an optional, advisory-only third layer (`SENTINEL_SEQ_ENABLED`, off by
+default).
 
 #### Stress-testing on a second, harder role
 
-`kyc_bot_demo` has 12 actions across 4 templates and 4 fixed attack functions — small enough that near-perfect recall doesn't tell you much about where the model's limits are. `payments_bot_demo` ([`app/sentinel_sequence/data_gen_payments.py`](../../../../app/sentinel_sequence/data_gen_payments.py)) doubles the vocabulary to 25 actions across 8 templates, and replaces fixed attack *functions* with a library of 7 attack *primitives* composed 1-2 at a time at randomized injection points — 24 distinct observed attack-label combinations in a 100-session eval, not 4.
+`kyc_bot_demo` has 12 actions across 4 templates and 4 fixed attack functions — small enough that near-perfect recall doesn't tell you much about where the model's limits are. `payments_bot_demo` ([`app/sentinel_sequence/data_gen_payments.py`](../../../app/sentinel_sequence/data_gen_payments.py)) doubles the vocabulary to 25 actions across 8 templates, and replaces fixed attack *functions* with a library of 7 attack *primitives* composed 1-2 at a time at randomized injection points — 24 distinct observed attack-label combinations in a 100-session eval, not 4.
 
 | Model / score | Precision | Recall | F1 |
 |---|---|---|---|
@@ -294,4 +303,4 @@ rule_id=sequence.anomaly severity=MEDIUM
     llm:call (p=0.04)}; observed tool:verify_2fa (p=0.0064)
 ```
 
-Same honesty discipline as everywhere else in this repo: this is still self-authored synthetic data ([`docs/EVAL_PAYMENTS_BOT.md`](../../../EVAL_PAYMENTS_BOT.md) carries the full caveat), so it's a robustness stress-test and an integration proof, not a real-world performance claim. What it proves is narrower and more useful than a bigger F1 number would be — *where* the current approach is strong and *where* it isn't, on a case that was deliberately built to be harder than the first one.
+Same honesty discipline as everywhere else in this repo: this is still self-authored synthetic data ([`docs/EVAL_PAYMENTS_BOT.md`](../../EVAL_PAYMENTS_BOT.md) carries the full caveat), so it's a robustness stress-test and an integration proof, not a real-world performance claim. What it proves is narrower and more useful than a bigger F1 number would be — *where* the current approach is strong and *where* it isn't, on a case that was deliberately built to be harder than the first one.
