@@ -71,15 +71,19 @@ def _fake_jwt(kid: str = "kid-1") -> str:
 
 @pytest.fixture(scope="module", autouse=True)
 def _restore_module_state_after_file():
-    """Leave sentinel.api.auth in dev-bypass state (this repo's baseline) once
-    this file's tests are done, regardless of the last test's env reload, so
-    later-imported test modules never see a stale auth-on module."""
-    yield
+    """Put the auth environment back exactly as it was before this file ran,
+    and reload sentinel.api.auth from it, so later test modules see the same
+    module state whatever order the files run in."""
     import os
 
-    os.environ.pop("AZURE_TENANT_ID", None)
-    os.environ.pop("AZURE_CLIENT_ID", None)
-    os.environ["SENTINEL_DEV_MODE"] = "1"
+    names = ("AZURE_TENANT_ID", "AZURE_CLIENT_ID", "SENTINEL_DEV_MODE")
+    before = {name: os.environ.get(name) for name in names}
+    yield
+    for name, value in before.items():
+        if value is None:
+            os.environ.pop(name, None)
+        else:
+            os.environ[name] = value
     import sentinel.api.auth as auth_module
 
     importlib.reload(auth_module)

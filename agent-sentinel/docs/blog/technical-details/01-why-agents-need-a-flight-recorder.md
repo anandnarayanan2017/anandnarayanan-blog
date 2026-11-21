@@ -45,7 +45,8 @@ see, and it flags actions after they happen rather than blocking them.
 
 ## What's in this series
 
-Five short parts, each one design decision and why it was made:
+Five short parts, each one design decision and why it was made, then a
+second season of three that tests them harder:
 
 1. **Why AI Agents Need a Flight Recorder** *(this part).* Why agent activity
    needs durable, attributable evidence before you can govern it.
@@ -59,6 +60,16 @@ Five short parts, each one design decision and why it was made:
 5. **Feeding the SOC, and What Comes Next.** Turning findings into evidence your
    existing SIEM and SOC can consume, and the path from detection toward
    enforcement.
+
+Season 2:
+
+6. **Prompt Injection: What the Recorder Catches and What It Misses.** Ten
+   outcomes of one injected instruction, tested, including the ones that get
+   through.
+7. **The Data Platform Under the Recorder.** Where the evidence lives, what
+   survives a restart, and what a platform team would ask next.
+8. **From a Finding to a DORA Obligation.** What a finding does and does not
+   evidence, obligation by obligation.
 
 Which of these matters most in your organisation today? [Tell me on
 LinkedIn](https://linkedin.com/in/anandkn2012); it will shape where the series

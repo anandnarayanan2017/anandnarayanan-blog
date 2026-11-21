@@ -10,12 +10,12 @@ I'm also explicit about what isn't done yet: team isolation, managed policy work
 
 A roadmap you can point to is more credible than a feature list that implies everything is solved.
 
-This is Part 4 of a 5-part series on building it.
+This is Part 4 of the series on building it.
 Next: Part 5, Feeding the SOC, and What Comes Next.
 
 What's the one control you'd never skip, even under deadline pressure?
 
-![Diagram: The Enterprise Foundation](../../images/04-enterprise-foundation-1.png)
+![Diagram: The Enterprise Foundation](../images/04-enterprise-foundation-1.png)
 
 First comment: Read the full article → https://anandnarayanan.net/blog/agent-sentinel-04-enterprise-foundation/
 Code and tests: https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/agent-sentinel

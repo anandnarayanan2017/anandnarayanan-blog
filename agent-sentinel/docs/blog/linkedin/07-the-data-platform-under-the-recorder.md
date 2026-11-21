@@ -16,6 +16,8 @@ And the part I'd raise first in a review: what survives a restart. The events do
 
 What's the first question your platform team asks about a new data store?
 
+![Diagram: The Data Platform Under the Recorder](../images/07-the-data-platform-under-the-recorder-1.png)
+
 First comment: Read the full article → https://anandnarayanan.net/blog/agent-sentinel-07-the-data-platform-under-the-recorder/
 Code and tests: https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/agent-sentinel
 

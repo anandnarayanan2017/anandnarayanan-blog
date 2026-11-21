@@ -1,15 +1,7 @@
 # Part 4 — The Enterprise Foundation
 
-<!--
-DRAFT, not published. Publishes on the date for "4" in ../../series.json
-(2026-12-14): run `python scripts/publish_part.py 4` from agent-sentinel-series.
-That also copies the alerting and Log Analytics code this part links to.
-Before publishing, check the "Who owns the agent" section against Microsoft
-Learn: sponsors and inactivity clean-up for Entra Agent ID were in preview
-when it was written (November 2026).
--->
 
-> **Reader path:** [LinkedIn post](../linkedin/04-enterprise-foundation.md) → this article → [design and implementation](#design-and-implementation) → [code-and-test traceability](../../TRACEABILITY.md#publication-traceability)
+> **Reader path:** LinkedIn post → this article → [design and implementation](#design-and-implementation) → [code-and-test traceability](../TRACEABILITY.md#publication-traceability)
 
 ## The questions a security review asks first
 
@@ -47,7 +39,7 @@ everything by accident:
 - **Approver:** compliance staff deciding on high-severity findings.
 - **Admin:** reading and verifying the audit trail.
 
-The collectors from [Part 2](../../technical-details/02-from-simulated-traffic-to-real-model-calls.md)
+The collectors from [Part 2](../technical-details/02-from-simulated-traffic-to-real-model-calls.md)
 sign their requests too. And Part 2's rule still holds: if a collector's
 token is wrong, the agent carries on and the refused delivery is counted.
 Recording fails open, so the agent isn't stopped. Access fails closed, so the
@@ -144,9 +136,9 @@ What's the one control you'd never skip, even under deadline pressure?
 
 ## Design and implementation
 
-Phase 3 turns the pilot into something a regulated security team can evaluate seriously.
+This is what turns the pilot into something a regulated security team can evaluate seriously.
 
-### Phase 3 enterprise architecture
+### Enterprise architecture
 
 ```mermaid
 flowchart TB
@@ -197,14 +189,14 @@ flowchart TB
 
 | Capability | Current Repo Implementation | Notes |
 |---|---|---|
-| Auth | [`app/sentinel/api/auth.py`](../../../../app/sentinel/api/auth.py) | Entra ID JWT validation when configured; otherwise fails closed unless `SENTINEL_DEV_MODE=1` is explicitly set |
-| Collector auth | [`app/sentinel/collector/sdk_base.py`](../../../../app/sentinel/collector/sdk_base.py) | SDK reporter accepts a bearer token or token provider |
-| Audit trail | [`app/sentinel/api/audit.py`](../../../../app/sentinel/api/audit.py), [`audit_chain.py`](../../../../app/sentinel/storage/audit_chain.py) | Captures protected endpoints including dynamic approval decisions. On PostgreSQL each entry is hash-chained to the previous one and `GET /audit-log/verify` names the first broken link; DuckDB keeps no audit chain (the endpoint returns 501) |
-| PostgreSQL / TimescaleDB | [`app/sentinel/storage/pg_store.py`](../../../../app/sentinel/storage/pg_store.py) | Activated through `DATABASE_URL`; falls back to DuckDB when absent |
+| Auth | [`app/sentinel/api/auth.py`](../../../app/sentinel/api/auth.py) | Entra ID JWT validation when configured; otherwise fails closed unless `SENTINEL_DEV_MODE=1` is explicitly set |
+| Collector auth | [`app/sentinel/collector/sdk_base.py`](../../../app/sentinel/collector/sdk_base.py) | SDK reporter accepts a bearer token or token provider |
+| Audit trail | [`app/sentinel/api/audit.py`](../../../app/sentinel/api/audit.py), [`audit_chain.py`](../../../app/sentinel/storage/audit_chain.py) | Captures protected endpoints including dynamic approval decisions. On PostgreSQL each entry is hash-chained to the previous one and `GET /audit-log/verify` names the first broken link; DuckDB keeps no audit chain (the endpoint returns 501) |
+| PostgreSQL / TimescaleDB | [`app/sentinel/storage/pg_store.py`](../../../app/sentinel/storage/pg_store.py) | Activated through `DATABASE_URL`; falls back to DuckDB when absent |
 | Approval workflow | `/approvals`, `/approvals/{id}` | Auto-created for high/critical findings in Postgres backend |
 | SSE live stream | `/stream` | Pushes stats, findings, events, pending approvals every 1.5 seconds |
-| Webhook alerting | [`app/sentinel/alerting/webhook.py`](../../../../app/sentinel/alerting/webhook.py) | Sends high-signal findings to webhook targets |
-| Log Analytics export | [`app/sentinel/siem/log_analytics.py`](../../../../app/sentinel/siem/log_analytics.py) | Pushes findings to Azure Monitor / Log Analytics |
+| Webhook alerting | [`app/sentinel/alerting/webhook.py`](../../../app/sentinel/alerting/webhook.py) | Sends high-signal findings to webhook targets |
+| Log Analytics export | [`app/sentinel/siem/log_analytics.py`](../../../app/sentinel/siem/log_analytics.py) | Pushes findings to Azure Monitor / Log Analytics |
 
 ### Enterprise gaps still open
 
@@ -222,7 +214,3 @@ Approval decisions derive `reviewer` from the verified principal's `user_id`;
 the caller cannot nominate a different reviewer in the request body. The
 current dashboard is therefore a local/dev UI unless it is placed behind an
 auth-aware gateway or replaced with the planned OIDC-capable client.
-
-### The two-gate SDLC behind the code
-
-Worth showing, not just the runtime architecture: every change goes through two human approval gates. At Gate 1, a human signs off a frozen specification. The design, build, independent code and security review, tests, and user-acceptance testing follow, and nothing reaches production until a human approves the Gate 2 evidence bundle. The full pipeline lives in the main product repository, which is private; this public folder carries only the code and docs the series cites, so treat this paragraph as a description of the process rather than something you can inspect here. That process discipline is itself part of the "auditable by design" pitch — the same reasoning behind the compliance-control mapping.

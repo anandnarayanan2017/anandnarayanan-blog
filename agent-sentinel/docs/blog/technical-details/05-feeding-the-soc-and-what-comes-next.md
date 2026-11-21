@@ -1,13 +1,7 @@
 # Part 5 — Feeding the SOC, and What Comes Next
 
-<!--
-DRAFT, not published. Publishes on the date for "5" in ../../series.json
-(2026-12-28): run `python scripts/publish_part.py 5` from agent-sentinel-series.
-This part closes the series. Parts 6-10 are not scheduled; if a second series
-is announced, update "What comes next" and the LinkedIn post before publishing.
--->
 
-> **Reader path:** [LinkedIn post](../linkedin/05-feeding-the-soc-and-what-comes-next.md) → this article → [design and implementation](#design-and-implementation) → [code-and-test traceability](../../TRACEABILITY.md#publication-traceability)
+> **Reader path:** LinkedIn post → this article → [design and implementation](#design-and-implementation) → [code-and-test traceability](../TRACEABILITY.md#publication-traceability)
 
 ## Agent Sentinel should not be another SIEM
 
@@ -26,7 +20,7 @@ in plain language. Export it into the tools the team already trusts.
 
 ## What arrives in the SOC
 
-Take the night from [Part 1](../../technical-details/01-why-agents-need-a-flight-recorder.md):
+Take the night from [Part 1](../technical-details/01-why-agents-need-a-flight-recorder.md):
 the reconciliation agent sends 250KB to a host nobody approved. Each finding
 goes to Azure Log Analytics, which feeds Microsoft Sentinel, as one row.
 Abridged:
@@ -57,7 +51,7 @@ evidence.
 
 ## Exporting without breaking the recorder
 
-[Part 2](../../technical-details/02-from-simulated-traffic-to-real-model-calls.md)'s
+[Part 2](../technical-details/02-from-simulated-traffic-to-real-model-calls.md)'s
 rule applies here as well: if an export fails, recording doesn't. Each
 finding is stored first and exported second. If Log Analytics or a webhook
 is down, the finding is still in Agent Sentinel and the failed delivery is
@@ -89,7 +83,7 @@ expect to take it:
 1. **More places to send evidence.** Splunk, ready-made Microsoft Sentinel
    analytic rules and workbooks, and tickets for escalated approvals.
 2. **Stronger evidence.** Anchoring the audit chain outside the database
-   ([Part 4](../../technical-details/04-enterprise-foundation.md)'s open gap),
+   ([Part 4](../technical-details/04-enterprise-foundation.md)'s open gap),
    and evidence bundles a reviewer or regulator can take away.
 3. **Enforcement, as a separate component.** A gateway that sits *in* the
    agent's path, so it can stop an action before it happens. It needs its own
@@ -112,6 +106,14 @@ and you can't explain what you never recorded.
    holds it starts locked.
 5. **Feed the SOC, don't replace it.** Agent-specific evidence, delivered into
    the tools the team already uses.
+
+## Season 2
+
+Three follow-up parts test those decisions harder: what the recorder
+catches when an agent is prompt-injected, the data platform underneath it,
+and what a finding does and does not evidence under DORA.
+
+Next: [Part 6 — Prompt Injection: What the Recorder Catches and What It Misses](06-prompt-injection-what-the-recorder-catches.md).
 
 What AI-agent evidence do you most wish showed up in your SOC today?
 [Tell me on LinkedIn](https://linkedin.com/in/anandkn2012).
@@ -160,8 +162,8 @@ Solid arrows are implemented; dashed arrows are roadmap.
 
 | Integration | Status | Implementation Direction |
 |---|---|---|
-| Azure Log Analytics | Implemented foundation | [`app/sentinel/siem/log_analytics.py`](../../../../app/sentinel/siem/log_analytics.py) |
-| Webhook alerting | Implemented foundation | [`app/sentinel/alerting/webhook.py`](../../../../app/sentinel/alerting/webhook.py) |
+| Azure Log Analytics | Implemented foundation | [`app/sentinel/siem/log_analytics.py`](../../../app/sentinel/siem/log_analytics.py) |
+| Webhook alerting | Implemented foundation | [`app/sentinel/alerting/webhook.py`](../../../app/sentinel/alerting/webhook.py) |
 | Microsoft Sentinel workbook | Roadmap | KQL workbook over custom Agent Sentinel table |
 | Microsoft Sentinel analytic rules | Roadmap | Rules for critical agent egress, forbidden tool, shadow model |
 | Splunk HEC | Roadmap | HTTP Event Collector JSON events |
@@ -206,11 +208,11 @@ mindmap
       Control refs
       Payload hash
     Policy Library
-      DORA
-      EU AI Act
-      CSSF
-      NIST AI RMF
-      ISO 42001
+      DORA control refs
+      EU AI Act control refs
+      CSSF control refs
+      NIST AI RMF roadmap
+      ISO 42001 roadmap
     Integrations
       Azure OpenAI SDK
       Anthropic SDK
@@ -263,4 +265,4 @@ Article 12 is framed for high-risk AI systems in scope. Luxembourg entities
 must also account for the post-DORA amendments and scope changes to CSSF
 Circulars 20/750 and 22/806, including Circular 25/882 for DORA entities' ICT
 third-party services. See the [official-source links in the traceability
-matrix](../../TRACEABILITY.md#regulatory-scope).
+matrix](../TRACEABILITY.md#regulatory-scope).
