@@ -37,6 +37,11 @@ ok()   { echo -e "  ${GRN}✓${RST} $*"; }
 warn() { echo -e "  ${YLW}⚠${RST} $*"; }
 err()  { echo -e "  ${RED}✗${RST} $*"; exit 1; }
 
+# Only the Azure agent has a dry-run mode; the Anthropic agent needs a real key.
+if [ "$PROVIDER" = "anthropic" ] && [ -n "$DRY_RUN" ]; then
+  err "--dry-run works with --azure only. For Anthropic, export ANTHROPIC_API_KEY and drop --dry-run."
+fi
+
 echo ""
 echo -e "${BLD}${CYN}══════════════════════════════════════════════════════${RST}"
 echo -e "${BLD}${CYN}  🛡️  Agent Sentinel — Phase 2 (${PROVIDER^^}) Launcher${RST}"
