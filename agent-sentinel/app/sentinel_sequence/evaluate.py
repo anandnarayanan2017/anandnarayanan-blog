@@ -68,9 +68,9 @@ def evaluate(
     # PR curve over a sweep of candidate thresholds
     all_scores = np.unique(np.concatenate([sn, sa]))
     curve = []
-    for threshold in all_scores:
-        p, r = precision_recall_at(sn, sa, float(threshold))
-        curve.append((float(threshold), p, r))
+    for candidate in all_scores:
+        p, r = precision_recall_at(sn, sa, float(candidate))
+        curve.append((float(candidate), p, r))
 
     per_type: dict[str, float] = {}
     for atk_type in sorted({t for t, _ in attack_scores}):
