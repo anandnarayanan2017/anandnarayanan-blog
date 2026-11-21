@@ -14,7 +14,7 @@ This closes the first five parts of the series. Season 2 starts in January: prom
 
 What AI-agent evidence do you most wish showed up in your existing SOC tools?
 
-![Diagram: Feeding the SOC, and What Comes Next](../../images/05-feeding-the-soc-and-what-comes-next-1.png)
+![Diagram: Feeding the SOC, and What Comes Next](../images/05-feeding-the-soc-and-what-comes-next-1.png)
 
 First comment: Read the full article → https://anandnarayanan.net/blog/agent-sentinel-05-feeding-the-soc-and-what-comes-next/
 Code and tests: https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/agent-sentinel

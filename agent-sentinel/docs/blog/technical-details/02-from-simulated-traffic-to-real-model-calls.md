@@ -107,7 +107,7 @@ when it happens; it can't stop it. Blocking needs a different component that
 sits *in* the agent's path, with a different failure rule, and it stays on the
 roadmap until the evidence shows which actions are safe to block.
 
-Next: Part 3 — Rules First, Statistics Second.
+Next: [Part 3 — Rules First, Statistics Second](03-rules-first-statistics-second.md).
 
 Which would worry you more in production: a recorder that occasionally misses
 an event, or one that occasionally blocks an agent? [Tell me on

@@ -15,7 +15,7 @@ Next: Part 5, Feeding the SOC, and What Comes Next.
 
 What's the one control you'd never skip, even under deadline pressure?
 
-![Diagram: The Enterprise Foundation](../../images/04-enterprise-foundation-1.png)
+![Diagram: The Enterprise Foundation](../images/04-enterprise-foundation-1.png)
 
 First comment: Read the full article → https://anandnarayanan.net/blog/agent-sentinel-04-enterprise-foundation/
 Code and tests: https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/agent-sentinel
