@@ -43,7 +43,6 @@ _MAX_TRACKED_SESSIONS = 10_000
 # it is a detection one, hence DORA Art. 9 rather than Art. 10 alone.
 IDENTITY_CONTROL_REFS: list[str] = [
     "DORA Art. 9 (Protection and prevention)",
-    "DORA Art. 5 (ICT governance)",
     "EU AI Act Art. 14 (Human oversight)",
     "CSSF 20/750 (ICT risk management)",
 ]

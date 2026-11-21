@@ -16,6 +16,8 @@ I'm an architect, not a lawyer, and the article says so.
 
 Which obligation is hardest to evidence for your AI agents today?
 
+![Diagram: From a Finding to a DORA Obligation](../../images/08-from-a-finding-to-a-dora-obligation-1.png)
+
 First comment: Read the full article → https://anandnarayanan.net/blog/agent-sentinel-08-from-a-finding-to-a-dora-obligation/
 Code and tests: https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/agent-sentinel
 

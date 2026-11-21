@@ -115,6 +115,14 @@ and you can't explain what you never recorded.
 5. **Feed the SOC, don't replace it.** Agent-specific evidence, delivered into
    the tools the team already uses.
 
+## Season 2
+
+Three follow-up parts test those decisions harder: what the recorder
+catches when an agent is prompt-injected, the data platform underneath it,
+and what a finding does and does not evidence under DORA.
+
+Next: Part 6 — Prompt Injection: What the Recorder Catches and What It Misses.
+
 What AI-agent evidence do you most wish showed up in your SOC today?
 [Tell me on LinkedIn](https://linkedin.com/in/anandkn2012).
 

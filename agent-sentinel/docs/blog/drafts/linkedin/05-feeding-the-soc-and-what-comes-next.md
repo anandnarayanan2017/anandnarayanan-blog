@@ -10,7 +10,7 @@ Each finding arrives already explained: the rule it broke, the evidence, and the
 
 That's the bet: not out-building the SIEM, but feeding it what it's missing.
 
-This is the last part of a 5-part series on building it. Thank you for reading along.
+This closes the first five parts of the series. Season 2 starts in January: prompt injection, the data platform under the recorder, and what a finding means for DORA. Thank you for reading along.
 
 What AI-agent evidence do you most wish showed up in your existing SOC tools?
 
