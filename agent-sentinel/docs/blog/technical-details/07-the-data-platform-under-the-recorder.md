@@ -132,6 +132,23 @@ Not built, and worth saying plainly:
 - **Tamper evidence for events.** The hash chain protects the API audit log,
   not the events and findings themselves.
 
+## One more kind of agent to record
+
+Every agent in this series so far has done business work: reconciling payments,
+checking identities. The agents writing software are agents too. My companion
+series, [AI-assisted SDLC](https://anandnarayanan.net/blog/ai-assisted-sdlc-01-from-arm-assembly-to-ai/),
+runs a coding agent inside a harness that keeps its own record: a transcript of
+every model call, one commit per attempt, the output of every check.
+
+That record is kept by the system it describes, the same weakness Part 2
+accepted for the SDK wrappers. Point the coding agent's model calls at
+Agent Sentinel and nothing on this page changes: the same `AgentEvent`, the same
+store-first path, a policy saying which models the generator may call and which
+hosts it may reach. The harness keeps its evidence; the recorder keeps a second
+copy that the harness cannot edit. The other series asks whether we can trust
+what the agent built. This one asks whether we can trust what it did. For a
+coding agent, the two questions meet in one record.
+
 ## The trade-off
 
 A synchronous path with one database is easy to reason about: an event is
