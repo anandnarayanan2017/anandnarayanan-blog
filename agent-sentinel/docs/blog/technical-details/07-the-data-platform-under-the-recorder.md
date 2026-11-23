@@ -140,7 +140,8 @@ series, [AI-assisted SDLC](https://anandnarayanan.net/blog/ai-assisted-sdlc-01-f
 runs a coding agent inside a harness that keeps its own record: a transcript of
 every model call, one commit per attempt, the output of every check.
 
-That record is kept by the system it describes, the same weakness Part 2
+That record is kept by the system it describes, the same weakness
+[Part 2](../technical-details/02-from-simulated-traffic-to-real-model-calls.md)
 accepted for the SDK wrappers. Point the coding agent's model calls at
 Agent Sentinel and nothing on this page changes: the same `AgentEvent`, the same
 store-first path, a policy saying which models the generator may call and which

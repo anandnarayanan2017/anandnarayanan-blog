@@ -102,9 +102,10 @@ running. They answer a different question, though: they judge the content of
 one request, often with a classifier score. This series judges an agent's
 actions against the policy written for that agent, with a clause and the
 evidence. A gateway that blocks without a record of what it blocked, and why,
-is the unexplained score from Part 3 again. So the order holds: record and
-explain first, block what the record shows is safe to block, and keep
-recording what the gateway decides.
+is the unexplained score from
+[Part 3](../technical-details/03-rules-first-statistics-second.md) again.
+So the order holds: record and explain first, block what the record shows is
+safe to block, and keep recording what the gateway decides.
 
 ## The series in five decisions
 
