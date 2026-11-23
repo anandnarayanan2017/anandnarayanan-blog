@@ -22,7 +22,7 @@ Part 3 of 7 on engineering with AI agents.
 
 Which parts of the harness around your coding agent did you design on purpose?
 
-First comment: Read the full article → -03-the-harness-around-the-agent/
-Code and tests: 
+First comment: Read the full article → https://anandnarayanan.net/blog/ai-assisted-sdlc-03-the-harness-around-the-agent/
+Code and tests: https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc/examples/double-booking
 
 #AIAgents #SoftwareArchitecture #AIAssistedDevelopment #SoftwareEngineering

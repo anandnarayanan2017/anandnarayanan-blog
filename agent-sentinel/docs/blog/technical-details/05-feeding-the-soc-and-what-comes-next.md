@@ -95,6 +95,18 @@ expect to take it:
 That order is deliberate. You can't safely block what you can't yet explain,
 and you can't explain what you never recorded.
 
+Blocking in the agent's path is no longer unusual. AI gateways and guardrail
+services such as Azure API Management's AI gateway, Azure AI Content Safety
+Prompt Shields and Amazon Bedrock Guardrails are now common, and they are worth
+running. They answer a different question, though: they judge the content of
+one request, often with a classifier score. This series judges an agent's
+actions against the policy written for that agent, with a clause and the
+evidence. A gateway that blocks without a record of what it blocked, and why,
+is the unexplained score from
+[Part 3](../technical-details/03-rules-first-statistics-second.md) again.
+So the order holds: record and explain first, block what the record shows is
+safe to block, and keep recording what the gateway decides.
+
 ## The series in five decisions
 
 1. **Record first, block later.** Evidence comes before enforcement.
