@@ -1,6 +1,6 @@
 # The Harness Around the Agent
 
-![The harness around the agent: the model sits in the middle, surrounded by four parts you design. Context: a short map, not a manual. Tools: the agent returns files and the harness runs everything else. Feedback: the failing test, verbatim, expected 1, got 10. Recovery: fresh calls, progress in files, a commit per attempt, three strikes stops the run. Every part encodes a doubt about the model.](../../images/03-the-harness-around-the-agent-1.png)
+![The harness around the agent: the model sits in the middle, surrounded by four parts you design. Context: a short map, not a manual. Tools: the agent returns files and the harness runs everything else. Feedback: the failing test, verbatim, expected 1, got 10. Recovery: fresh calls, progress in files, a commit per attempt, three strikes stops the run. Every part encodes a doubt about the model.](../images/03-the-harness-around-the-agent-1.png)
 
 *Same model, different workshop. Most of what makes an agent reliable is not in the model.*
 

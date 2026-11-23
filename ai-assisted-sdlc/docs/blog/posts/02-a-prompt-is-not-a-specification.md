@@ -117,7 +117,7 @@ Invariants are not free, and they don’t cover everything.
 
 That last point leads to the next part. A specification tells the agent what “correct” means. Something still has to give the agent the context, the tools and the feedback loop to get there, and decide what happens when a check fails. That is the harness.
 
-**Next: Part 3, The Harness Around the Agent.**
+**Next: [Part 3, The Harness Around the Agent](https://anandnarayanan.net/blog/ai-assisted-sdlc-03-the-harness-around-the-agent/).**
 
 What is one rule in your system that everyone knows and nobody has written down? [Tell me on LinkedIn](https://linkedin.com/in/anandkn2012).
 
