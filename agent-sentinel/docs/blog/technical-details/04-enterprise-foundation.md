@@ -176,8 +176,9 @@ flowchart TB
     APIM -. roadmap .-> FASTAPI
     FASTAPI --> AUTH
     FASTAPI --> AUDIT
-    AUDIT --> DUCK
-    AUDIT --> PG
+    FASTAPI --> DUCK
+    FASTAPI --> PG
+    AUDIT -- "PostgreSQL only" --> PG
     PG --> APPROVALS
     DUCK --> DASH
     PG --> DASH

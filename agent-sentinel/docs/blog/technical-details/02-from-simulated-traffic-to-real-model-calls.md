@@ -131,9 +131,9 @@ sequenceDiagram
   Agent->>Wrap: messages.create(...)
   Wrap->>LLM: original request, unchanged
   LLM-->>Wrap: response
-  Wrap->>Pipe: redacted flow + real size (2s timeout; failures counted, never raised)
+  Wrap->>Pipe: redacted flow + real size (2s timeout, failures counted, never raised)
   Wrap-->>Agent: response, unchanged
-  Pipe->>Pipe: parse_flow: redact, then truncate; malformed degrades, never raises
+  Pipe->>Pipe: parse_flow: redact, then truncate. Malformed degrades, never raises
   Pipe->>Store: insert_event
   Pipe->>Pipe: Engine.evaluate (deterministic rules)
   Pipe->>Store: insert_finding

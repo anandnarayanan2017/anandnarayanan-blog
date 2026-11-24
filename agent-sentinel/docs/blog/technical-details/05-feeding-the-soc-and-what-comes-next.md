@@ -228,15 +228,15 @@ mindmap
     Integrations
       Azure OpenAI SDK
       Anthropic SDK
-      Azure APIM
-      MCP Gateway
+      Azure APIM roadmap
+      MCP Gateway roadmap
       Microsoft Sentinel
-      Splunk
+      Splunk roadmap
     Enterprise Controls
       Entra ID
       RBAC
-      Multi-tenancy
-      Audit exports
+      Multi-tenancy roadmap
+      Audit exports roadmap
       Private deployment
 ```
 
