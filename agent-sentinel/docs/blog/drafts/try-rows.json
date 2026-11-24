@@ -1,1 +1,4 @@
-{}
+{
+  "6": "| 6 | `python -m pytest -q app/tests/test_prompt_injection.py` | Ten passing tests, one per outcome in the article, including the four that raise nothing |",
+  "7": "| 7 | `python -m pytest -q app/tests/test_storage_contract.py app/tests/test_audit_chain.py` | The storage and audit-chain claims, each a passing test, including the two chain limits |"
+}

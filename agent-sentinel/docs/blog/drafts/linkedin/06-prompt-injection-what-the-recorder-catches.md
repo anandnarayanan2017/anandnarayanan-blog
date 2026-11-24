@@ -20,7 +20,7 @@ All ten are tests in the repository, including the ones that get through.
 
 Which of the ten would your monitoring have caught?
 
-![Diagram: Prompt Injection: What the Recorder Catches and What It Misses](../images/06-prompt-injection-what-the-recorder-catches-1.png)
+![Diagram: Prompt Injection: What the Recorder Catches and What It Misses](../../images/06-prompt-injection-what-the-recorder-catches-1.png)
 
 First comment: Read the full article → https://anandnarayanan.net/blog/agent-sentinel-06-prompt-injection-what-the-recorder-catches/
 Code and tests: https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/agent-sentinel

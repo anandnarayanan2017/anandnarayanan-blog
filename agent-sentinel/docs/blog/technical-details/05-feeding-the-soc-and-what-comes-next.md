@@ -1,7 +1,7 @@
 # Part 5 — Feeding the SOC, and What Comes Next
 
 
-> **Reader path:** LinkedIn post → this article → [design and implementation](#design-and-implementation) → [code-and-test traceability](../TRACEABILITY.md#publication-traceability)
+> **Reader path:** [LinkedIn post](../linkedin/05-feeding-the-soc-and-what-comes-next.md) → this article → [design and implementation](#design-and-implementation) → [code-and-test traceability](../TRACEABILITY.md#publication-traceability)
 
 ## Agent Sentinel should not be another SIEM
 
@@ -125,7 +125,7 @@ Three follow-up parts test those decisions harder: what the recorder
 catches when an agent is prompt-injected, the data platform underneath it,
 and what a finding does and does not evidence under DORA.
 
-Next: [Part 6 — Prompt Injection: What the Recorder Catches and What It Misses](06-prompt-injection-what-the-recorder-catches.md).
+Next: Part 6 — Prompt Injection: What the Recorder Catches and What It Misses.
 
 What AI-agent evidence do you most wish showed up in your SOC today?
 [Tell me on LinkedIn](https://linkedin.com/in/anandkn2012).

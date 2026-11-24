@@ -160,9 +160,14 @@ def main() -> None:
         )
 
     # 2-3. Move, then fix links for the new depth.
+    # Move both files before rewriting either, so the write-up's link to its
+    # own LinkedIn post (and back) still resolves and isn't unlinked.
+    moved = []
     for src, dest_dir in ((draft, "technical-details"), (post, "linkedin")):
         dest = BLOG / dest_dir / src.name
         subprocess.run(["git", "mv", str(src), str(dest)], check=True)
+        moved.append(dest)
+    for dest in moved:
         text = shallower(strip_draft_comment(dest.read_text(encoding="utf-8")))
         dest.write_text(unlink_unpublished(text, dest), encoding="utf-8")
 
