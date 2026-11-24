@@ -50,6 +50,12 @@ const reviewed = post.data.updated ?? post.data.date;
         </ul>
       </header>
 
+      {post.data.summary && <aside class="in-short" aria-label="In short">
+        <p class="eyebrow">In short</p>
+        <p>{post.data.summary}</p>
+        {series?.audience && post.data.part === 1 && <p class="audience"><strong>Who this series is for:</strong> {series.audience}</p>}
+      </aside>}
+
       <aside class="provenance" aria-label="About this post">
         <dl>
           <dt>Published</dt>

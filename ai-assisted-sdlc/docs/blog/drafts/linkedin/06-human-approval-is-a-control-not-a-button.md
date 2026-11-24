@@ -26,6 +26,6 @@ Part 6 of 7 on engineering with AI agents.
 
 What does a person in your team actually look at before approving an agent's change?
 
-First comment: Read the full article → -06-human-approval-is-a-control-not-a-button/
+First comment: Read the full article → https://anandnarayanan.net/blog/ai-assisted-sdlc-06-human-approval-is-a-control-not-a-button/
 
 #AIAgents #AIGovernance #DORA #SoftwareEngineering

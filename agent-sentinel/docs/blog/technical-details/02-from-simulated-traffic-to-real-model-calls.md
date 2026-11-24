@@ -107,7 +107,7 @@ when it happens; it can't stop it. Blocking needs a different component that
 sits *in* the agent's path, with a different failure rule, and it stays on the
 roadmap until the evidence shows which actions are safe to block.
 
-Next: Part 3 — Rules First, Statistics Second.
+Next: [Part 3 — Rules First, Statistics Second](03-rules-first-statistics-second.md).
 
 Which would worry you more in production: a recorder that occasionally misses
 an event, or one that occasionally blocks an agent? [Tell me on
@@ -131,9 +131,9 @@ sequenceDiagram
   Agent->>Wrap: messages.create(...)
   Wrap->>LLM: original request, unchanged
   LLM-->>Wrap: response
-  Wrap->>Pipe: redacted flow + real size (2s timeout; failures counted, never raised)
+  Wrap->>Pipe: redacted flow + real size (2s timeout, failures counted, never raised)
   Wrap-->>Agent: response, unchanged
-  Pipe->>Pipe: parse_flow: redact, then truncate; malformed degrades, never raises
+  Pipe->>Pipe: parse_flow: redact, then truncate. Malformed degrades, never raises
   Pipe->>Store: insert_event
   Pipe->>Pipe: Engine.evaluate (deterministic rules)
   Pipe->>Store: insert_finding

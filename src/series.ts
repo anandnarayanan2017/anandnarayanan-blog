@@ -9,6 +9,7 @@ type Card = {
   title: string;
   description: string;
   codeUrl?: string;
+  audience?: string; // "Who this series is for", shown on Part 1
 };
 type Config = { name: string; card?: Card };
 

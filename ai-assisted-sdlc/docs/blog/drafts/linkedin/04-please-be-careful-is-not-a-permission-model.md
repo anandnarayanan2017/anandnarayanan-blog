@@ -26,6 +26,6 @@ Part 4 of 7 on engineering with AI agents.
 
 Which rule in your agent's prompt would cause real damage if it were ignored? And what actually enforces it?
 
-First comment: Read the full article → -04-please-be-careful-is-not-a-permission-model/
+First comment: Read the full article → https://anandnarayanan.net/blog/ai-assisted-sdlc-04-please-be-careful-is-not-a-permission-model/
 
 #AIAgents #AISecurity #SoftwareArchitecture #SoftwareEngineering

@@ -68,6 +68,14 @@ The same flow makes that possible. Because the contracts and tests are fixed, I 
 
 Some won’t, in a year. That is fine. A harness that never removes anything becomes a museum of last year’s model weaknesses.
 
+## The coding agent is an agent too
+
+This series has a companion, [Agent Sentinel](https://anandnarayanan.net/blog/agent-sentinel-01-why-agents-need-a-flight-recorder/). This series asks whether we can trust what the agent *built*. Agent Sentinel asks whether we can trust what an agent *did*. Its answer is a flight recorder: every model call, tool call and network request an agent makes, checked against a policy written for that agent.
+
+A coding agent is an agent. The generator in my harness calls a model, gets files back and has checks run for it. Each of those actions could go through the same recorder, with a policy saying which models the generator may call, which hosts it may reach and how much it may send. Today the harness keeps its own transcripts, so the system being recorded is also the one keeping the record. A recorder outside the harness would be a second witness.
+
+The two series also split the work along one line. Here, the controls sit in the path: a failing test stops the feature, and nothing ships until a person approves. Agent Sentinel sits beside the path and blocks nothing, because a payments run at 3 a.m. can’t wait for a person the way a release can. The rule underneath is the same in both: a decision a person can check, with the evidence attached.
+
 ## What I have built, and what I haven’t
 
 Honesty about scope, because a factory diagram is cheap:

@@ -1,22 +1,7 @@
 # Part 7 — The Data Platform Under the Recorder
 
-<!--
-DRAFT, not published and not scheduled. Parts 1-5 are the planned series;
-this is a follow-up part. Before publishing:
 
-1. Add a date for "7" to ../../series.json and move this file and the
-   LinkedIn post out of drafts/ (fix the relative links for their new place).
-2. Add the hero image at ../../images/07-the-data-platform-under-the-recorder-1.png
-   and the image line to the LinkedIn post. The site build needs it.
-3. Add the Part 7 row from ../traceability-rows.json to ../../TRACEABILITY.md.
-4. DONE: the storage claims are pinned by app/tests/test_storage_contract.py
-   and app/tests/test_audit_chain.py, which passed on 16 November 2026.
-5. The PostgreSQL behaviour described here was read from pg_store.py. It has
-   no unit test in this folder; scripts/docker_e2e.sh exercises it end to end.
-   Run that before publishing.
--->
-
-> **Reader path:** [LinkedIn post](../linkedin/07-the-data-platform-under-the-recorder.md) → this article → [design and implementation](#design-and-implementation) → [code-and-test traceability](../../TRACEABILITY.md#publication-traceability)
+> **Reader path:** LinkedIn post → this article → [design and implementation](#design-and-implementation) → [code-and-test traceability](../TRACEABILITY.md#publication-traceability)
 
 ## A recorder is a small data platform with a strict brief
 
@@ -147,6 +132,24 @@ Not built, and worth saying plainly:
 - **Tamper evidence for events.** The hash chain protects the API audit log,
   not the events and findings themselves.
 
+## One more kind of agent to record
+
+Every agent in this series so far has done business work: reconciling payments,
+checking identities. The agents writing software are agents too. My companion
+series, [AI-assisted SDLC](https://anandnarayanan.net/blog/ai-assisted-sdlc-01-from-arm-assembly-to-ai/),
+runs a coding agent inside a harness that keeps its own record: a transcript of
+every model call, one commit per attempt, the output of every check.
+
+That record is kept by the system it describes, the same weakness
+[Part 2](../technical-details/02-from-simulated-traffic-to-real-model-calls.md)
+accepted for the SDK wrappers. Point the coding agent's model calls at
+Agent Sentinel and nothing on this page changes: the same `AgentEvent`, the same
+store-first path, a policy saying which models the generator may call and which
+hosts it may reach. The harness keeps its evidence; the recorder keeps a second
+copy that the harness cannot edit. The other series asks whether we can trust
+what the agent built. This one asks whether we can trust what it did. For a
+coding agent, the two questions meet in one record.
+
 ## The trade-off
 
 A synchronous path with one database is easy to reason about: an event is
@@ -176,7 +179,7 @@ flowchart LR
     X -. "export failure counted" .-> XF["export_failures"]
 ```
 
-The whole path is [`Pipeline.ingest_event`](../../../../app/sentinel/pipeline.py):
+The whole path is [`Pipeline.ingest_event`](../../../app/sentinel/pipeline.py):
 store lock, insert, engine lock, evaluate, store lock, insert findings, then
 the two export calls outside any lock.
 
@@ -184,21 +187,21 @@ the two export calls outside any lock.
 
 | Claim | Code | Proof |
 |---|---|---|
-| One event shape, five action types | [`schema/events.py`](../../../../app/sentinel/schema/events.py), [`collector/parsers.py`](../../../../app/sentinel/collector/parsers.py) | [`test_pipeline.py`](../../../../app/tests/test_pipeline.py) parser tests |
-| The event is stored before it is evaluated | `Pipeline.ingest_event` | `test_event_is_stored_before_it_is_evaluated` in [`test_storage_contract.py`](../../../../app/tests/test_storage_contract.py) |
-| A failed export is counted and does not stop ingestion | `_fire_alerter`, `_push_siem` in `pipeline.py` | [`test_export.py`](../../../../app/tests/test_export.py) |
-| A failed delivery is counted and does not stop the agent | [`collector/sdk_base.py`](../../../../app/sentinel/collector/sdk_base.py) | `test_delivery_failures_are_counted_not_only_logged` in [`test_collector_contracts.py`](../../../../app/tests/test_collector_contracts.py) |
+| One event shape, five action types | [`schema/events.py`](../../../app/sentinel/schema/events.py), [`collector/parsers.py`](../../../app/sentinel/collector/parsers.py) | [`test_pipeline.py`](../../../app/tests/test_pipeline.py) parser tests |
+| The event is stored before it is evaluated | `Pipeline.ingest_event` | `test_event_is_stored_before_it_is_evaluated` in [`test_storage_contract.py`](../../../app/tests/test_storage_contract.py) |
+| A failed export is counted and does not stop ingestion | `_fire_alerter`, `_push_siem` in `pipeline.py` | [`test_export.py`](../../../app/tests/test_export.py) |
+| A failed delivery is counted and does not stop the agent | [`collector/sdk_base.py`](../../../app/sentinel/collector/sdk_base.py) | `test_delivery_failures_are_counted_not_only_logged` in [`test_collector_contracts.py`](../../../app/tests/test_collector_contracts.py) |
 | 256-character preview, true size kept | `parsers._preview`, `parse_flow(request_bytes=...)` | `test_evidence_preview_is_bounded_and_the_real_size_is_kept` |
-| Redact, then cut | [`collector/redaction.py`](../../../../app/sentinel/collector/redaction.py) | `test_redaction_runs_before_truncation` in [`test_redaction.py`](../../../../app/tests/test_redaction.py) |
+| Redact, then cut | [`collector/redaction.py`](../../../app/sentinel/collector/redaction.py) | `test_redaction_runs_before_truncation` in [`test_redaction.py`](../../../app/tests/test_redaction.py) |
 | Long prompts keep their model and real size | `sdk_base.bound_request` | `test_long_prompt_keeps_model_and_real_size_so_rules_still_fire` |
-| A backend that cannot record a decision refuses it | [`storage/base.py`](../../../../app/sentinel/storage/base.py) | `test_duckdb_store_really_raises_rather_than_no_op` and the 501 tests in [`test_api_main.py`](../../../../app/tests/test_api_main.py) |
-| DuckDB reads do not interfere with each other | `Store._query` in [`storage/store.py`](../../../../app/sentinel/storage/store.py) | [`test_store_concurrency.py`](../../../../app/tests/test_store_concurrency.py) |
+| A backend that cannot record a decision refuses it | [`storage/base.py`](../../../app/sentinel/storage/base.py) | `test_duckdb_store_really_raises_rather_than_no_op` and the 501 tests in [`test_api_main.py`](../../../app/tests/test_api_main.py) |
+| DuckDB reads do not interfere with each other | `Store._query` in [`storage/store.py`](../../../app/sentinel/storage/store.py) | [`test_store_concurrency.py`](../../../app/tests/test_store_concurrency.py) |
 | Storage is locked only where the backend needs it | `StoreBase.thread_safe`, `Pipeline.__init__` | Read from the code; no dedicated test |
 | A re-sent event does not duplicate | `INSERT OR REPLACE` (DuckDB), `ON CONFLICT DO NOTHING` (PostgreSQL) | `test_resending_the_same_event_does_not_duplicate_it` (DuckDB) |
-| One approval per finding | `ux_approvals_finding_id` in [`storage/pg_store.py`](../../../../app/sentinel/storage/pg_store.py) | Read from the code; exercised by `scripts/docker_e2e.sh` |
-| Known hosts are rebuilt after a restart | `BaselineStore.get` in [`detection/baseline.py`](../../../../app/sentinel/detection/baseline.py) | `test_known_hosts_are_rebuilt_from_the_store_after_a_restart` |
+| One approval per finding | `ux_approvals_finding_id` in [`storage/pg_store.py`](../../../app/sentinel/storage/pg_store.py) | Read from the code; exercised by `scripts/docker_e2e.sh` |
+| Known hosts are rebuilt after a restart | `BaselineStore.get` in [`detection/baseline.py`](../../../app/sentinel/detection/baseline.py) | `test_known_hosts_are_rebuilt_from_the_store_after_a_restart` |
 | Payload history is not rebuilt | `AgentBaseline.bytes_out_samples` | `test_payload_history_is_not_rebuilt_after_a_restart` |
-| The audit chain detects edits, deletions and reordering | [`storage/audit_chain.py`](../../../../app/sentinel/storage/audit_chain.py) | [`test_audit_chain.py`](../../../../app/tests/test_audit_chain.py) |
+| The audit chain detects edits, deletions and reordering | [`storage/audit_chain.py`](../../../app/sentinel/storage/audit_chain.py) | [`test_audit_chain.py`](../../../app/tests/test_audit_chain.py) |
 
 ### The tables
 
@@ -229,4 +232,4 @@ Writing the chain tests for this part made two limits concrete:
 Both are in `test_audit_chain.py` as tests that pass today, and both are why
 anchoring the chain head outside the database is on the roadmap in Part 4.
 
-Next: [Part 8 — From a Finding to a DORA Obligation](08-from-a-finding-to-a-dora-obligation.md).
+Next: Part 8 — From a Finding to a DORA Obligation.

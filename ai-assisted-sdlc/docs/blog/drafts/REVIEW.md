@@ -10,7 +10,7 @@ dates for parts 3–7 have no effect until the part's post is in `posts/`.
 |---|---|---|---|
 | 1 | From ARM Assembly to AI | 2026-11-01 | Live |
 | 2 | A Prompt Is Not a Specification | 2026-11-09 | Live |
-| 3 | The Harness Around the Agent | 2026-11-23 | Ready |
+| 3 | The Harness Around the Agent | 2026-11-23 | Published on `develop`; live when `develop` is released to `main` |
 | 4 | “Please Be Careful” Is Not a Permission Model | 2026-12-07 | Ready |
 | 5 | When the AI Reviewer Says 9/10 and the Test Still Fails | 2026-12-21 | Ready |
 | 6 | Human Approval Is a Control, Not a Button | 2027-01-04 | Ready |

@@ -11,7 +11,7 @@ Detect. Explain. Export.   (Enforce is roadmap)
 
 Start at [`docs/blog/README.md`](docs/blog/README.md). Each released part has a
 plain-English LinkedIn post, a technical write-up, the code it cites, and its
-tests. Parts are released weekly; this folder grows with them.
+tests. Code can arrive here a little ahead of the part that explains it.
 
 ## Layout
 
@@ -23,6 +23,9 @@ tests. Parts are released weekly; this folder grows with them.
 | `policies/` | Example policy files |
 | `examples/phase1/`, `dashboard/` | The demo agent, the fintech traffic simulator and the CISO dashboard |
 | `examples/phase2/`, `start_phase2.sh`, `docs/PHASE2.md` | Part 2: agents that call Azure OpenAI and Anthropic through the SDK collectors, with a dry-run mode that needs no keys |
+| `app/sentinel_sequence/`, `examples/phase2/sequence_eval_payments_demo.py`, `docs/EVAL_PAYMENTS_BOT.md` | Part 3: the optional, advisory sequence model and its evaluation on synthetic data |
+| `app/sentinel/alerting/`, `app/sentinel/siem/`, `docs/COMPLIANCE.md` | Parts 4 and 5: webhook alerts and the Azure Log Analytics export |
+| `docs/ARCHITECTURE.md` | Part 5: the architecture overview |
 | `Dockerfile`, `docker-compose.yml` | Container image and the local stack (Sentinel + PostgreSQL + optional simulator) |
 
 ## Run the tests
@@ -88,6 +91,11 @@ A row is added as each part is published.
 |---|---|---|
 | 1 | `python scripts/e2e.py`, or the "explore by hand" steps above | Findings for unapproved hosts, tools and models in the dashboard |
 | 2 | `bash start_phase2.sh --azure --dry-run --attack` | Simulated Azure OpenAI calls recorded and flagged; the dashboard stays up at <http://localhost:8000> until Ctrl+C. Real calls need `pip install -e ".[cloud]"` and the keys in `examples/phase2/.env.example` |
+| 3 | `python examples/phase2/sequence_eval_payments_demo.py` | The payments-bot evaluation tables and a `sequence.anomaly` finding with its "expected … observed …" evidence |
+| 4 | `scripts/docker_e2e.sh` (or, without Docker for Sentinel itself: start PostgreSQL, then `DATABASE_URL=postgresql://postgres:sentinel@localhost:5432/postgres python scripts/e2e.py --postgres`) | Approvals created for high findings, and `audit chain verifies` in the output. `GET /approvals` and `GET /audit-log/verify` work against the same server |
+| 5 | Set `ALERT_SLACK_WEBHOOK` (or `ALERT_TEAMS_WEBHOOK`) to a test URL, then run the Part 1 steps | One webhook post per high finding. Log Analytics export needs an Azure workspace: `pip install -e ".[siem]"` and the `AZURE_LOG_ANALYTICS_*` variables in `app/sentinel/siem/log_analytics.py` |
+| 6 | `python -m pytest -q app/tests/test_prompt_injection.py` | Ten passing tests, one per outcome in the article, including the four that raise nothing |
+| 7 | `python -m pytest -q app/tests/test_storage_contract.py app/tests/test_audit_chain.py` | The storage and audit-chain claims, each a passing test, including the two chain limits |
 
 ## References you can't follow from here
 

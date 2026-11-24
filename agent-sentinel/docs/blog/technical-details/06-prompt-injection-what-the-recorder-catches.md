@@ -1,27 +1,12 @@
 # Part 6 — Prompt Injection: What the Recorder Catches and What It Misses
 
-<!--
-DRAFT, not published and not scheduled. Parts 1-5 are the planned series;
-this is a follow-up part. Before publishing:
 
-1. Add a date for "6" to ../../series.json and move this file and the
-   LinkedIn post out of drafts/ (fix the relative links for their new place).
-2. Add the hero image at ../../images/06-prompt-injection-what-the-recorder-catches-1.png
-   and the image line to the LinkedIn post. The site build needs it.
-3. Add the Part 6 row from ../traceability-rows.json to ../../TRACEABILITY.md.
-4. Update Part 5 ("This part closes the series", "The series in five
-   decisions") and the Part 1 list of parts.
-5. DONE: every result below comes from app/tests/test_prompt_injection.py,
-   which passed on 16 November 2026. Re-run it before publishing.
-6. Check the two OWASP identifiers against the current list.
--->
-
-> **Reader path:** [LinkedIn post](../linkedin/06-prompt-injection-what-the-recorder-catches.md) → this article → [design and implementation](#design-and-implementation) → [code-and-test traceability](../../TRACEABILITY.md#publication-traceability)
+> **Reader path:** LinkedIn post → this article → [design and implementation](#design-and-implementation) → [code-and-test traceability](../TRACEABILITY.md#publication-traceability)
 
 ## An invoice with instructions in it
 
 An illustrative scenario, not a production incident. The reconciliation agent
-from [Part 1](../../technical-details/01-why-agents-need-a-flight-recorder.md)
+from [Part 1](../technical-details/01-why-agents-need-a-flight-recorder.md)
 reads the day's invoices and asks its approved model to summarise the
 discrepancies. One invoice contains this line:
 
@@ -45,7 +30,7 @@ This is the first thing to be clear about. Agent Sentinel has no rule that
 inspects a prompt and decides it is malicious. Deciding whether a sentence is
 an attack is a judgement, and a judgement produces a score. The series chose
 rules a person can read over scores nobody can check
-([ADR-0001](../../../adr/0001-rules-first-detection.md)).
+([ADR-0001](../../adr/0001-rules-first-detection.md)).
 
 So Agent Sentinel checks what the agent **did** after reading the invoice,
 against the policy written for that agent. The injected text is still kept:
@@ -136,7 +121,7 @@ LinkedIn](https://linkedin.com/in/anandkn2012).
 ## Design and implementation
 
 All ten outcomes are in
-[`app/tests/test_prompt_injection.py`](../../../../app/tests/test_prompt_injection.py).
+[`app/tests/test_prompt_injection.py`](../../../app/tests/test_prompt_injection.py).
 From the `agent-sentinel` folder:
 
 ```bash
@@ -167,20 +152,20 @@ flowchart LR
 
 | # | Test | Decided in |
 |---|---|---|
-| 1 | `test_injected_text_is_recorded_but_not_flagged` | [`parsers._parse_llm_call`](../../../../app/sentinel/collector/parsers.py) keeps the redacted preview; no rule reads it |
-| 2 | `test_tool_the_model_only_proposed_is_recorded_but_not_flagged` | [`Engine._policy_checks`](../../../../app/sentinel/detection/engine.py): `tool.not_allowed` requires `TOOL_CALL` |
+| 1 | `test_injected_text_is_recorded_but_not_flagged` | [`parsers._parse_llm_call`](../../../app/sentinel/collector/parsers.py) keeps the redacted preview; no rule reads it |
+| 2 | `test_tool_the_model_only_proposed_is_recorded_but_not_flagged` | [`Engine._policy_checks`](../../../app/sentinel/detection/engine.py): `tool.not_allowed` requires `TOOL_CALL` |
 | 3 | `test_executed_tool_outside_policy_is_flagged` | `Engine._policy_checks`, `allowed_tools` |
 | 4 | `test_small_transfer_to_unknown_host_is_flagged` | `Engine._policy_checks`, `allowed_hosts` |
 | 5 | `test_lookalike_host_is_flagged` | `Engine._policy_checks`: `e.host not in p.allowed_hosts`, an exact match |
 | 6 | `test_oversize_prompt_to_the_approved_model_is_flagged` | `Engine._policy_checks`, `max_bytes_out_per_call` |
 | 7 | `test_runaway_tool_loop_is_flagged_after_the_budget` | `Engine._policy_checks`, `max_tool_calls_per_session` |
-| 8 | `test_allowed_tool_with_attacker_recipient_is_not_flagged` | No rule reads tool arguments; [`redaction.py`](../../../../app/sentinel/collector/redaction.py) removes the address |
-| 9 | `test_large_prompt_under_the_limit_gets_only_a_low_advisory` | [`Engine._baseline_checks`](../../../../app/sentinel/detection/engine.py), z-score of 3 or more |
-| 10 | `test_same_large_prompt_from_an_agent_with_no_history_is_not_flagged` | [`AgentBaseline.bytes_out_z`](../../../../app/sentinel/detection/baseline.py) needs five earlier payloads |
+| 8 | `test_allowed_tool_with_attacker_recipient_is_not_flagged` | No rule reads tool arguments; [`redaction.py`](../../../app/sentinel/collector/redaction.py) removes the address |
+| 9 | `test_large_prompt_under_the_limit_gets_only_a_low_advisory` | [`Engine._baseline_checks`](../../../app/sentinel/detection/engine.py), z-score of 3 or more |
+| 10 | `test_same_large_prompt_from_an_agent_with_no_history_is_not_flagged` | [`AgentBaseline.bytes_out_z`](../../../app/sentinel/detection/baseline.py) needs five earlier payloads |
 
 Row 2 has an older companion test,
 `test_tool_policy_does_not_treat_requested_tool_as_executed` in
-[`test_collector_contracts.py`](../../../../app/tests/test_collector_contracts.py),
+[`test_collector_contracts.py`](../../../app/tests/test_collector_contracts.py),
 which is where the "requested is not executed" decision was first pinned down.
 
 ### What the investigator sees for row 8

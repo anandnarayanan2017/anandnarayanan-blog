@@ -20,7 +20,7 @@ Part 5 of 7 on engineering with AI agents.
 
 Has an AI reviewer ever approved something your tests or your users later proved wrong?
 
-First comment: Read the full article → -05-when-the-ai-reviewer-says-9-10/
-Code and tests: /examples/double-booking
+First comment: Read the full article → https://anandnarayanan.net/blog/ai-assisted-sdlc-05-when-the-ai-reviewer-says-9-10/
+Code and tests: https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc/examples/double-booking
 
 #AIAgents #SoftwareTesting #AIAssistedDevelopment #SoftwareEngineering

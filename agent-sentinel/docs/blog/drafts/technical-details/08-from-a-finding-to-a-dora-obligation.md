@@ -1,8 +1,11 @@
 # Part 8 — From a Finding to a DORA Obligation
 
 <!--
-DRAFT, not published and not scheduled. Parts 1-5 are the planned series;
-this is a follow-up part. Before publishing:
+DRAFT, not published. Season 2 finale, dated 2027-02-08 in ../../series.json.
+Publish with `python agent-sentinel/scripts/publish_part.py 8` only after
+step 1 below. Status on 2026-11-20: steps 3, 5, 6 and 7 are done or handled
+by the script; steps 1, 2 and the "sources" in step 4 are still open.
+Before publishing:
 
 1. VERIFY EVERY REGULATORY REFERENCE AGAINST THE OFFICIAL TEXT. The article
    numbers, titles and paraphrases below were written from memory and checked
@@ -73,7 +76,7 @@ context. Each rule has a severity, the policy can change it per agent, and
 severity decides what is alerted and what waits for a reviewer.
 
 *How I know:* the rule tests in Part 1, and the ten prompt-injection outcomes
-in [Part 6](06-prompt-injection-what-the-recorder-catches.md), including the
+in [Part 6](../../technical-details/06-prompt-injection-what-the-recorder-catches.md), including the
 ones that raise nothing.
 
 *What stays with the firm:* everything that is not an instrumented agent.
@@ -183,7 +186,7 @@ itself fails.
   obligation is about.
 
 *How I know:* the audit-chain tests and the storage tests written for
-[Part 7](07-the-data-platform-under-the-recorder.md), and the delivery-failure
+[Part 7](../../technical-details/07-the-data-platform-under-the-recorder.md), and the delivery-failure
 test from Part 2.
 
 *What stays with the firm:* retention periods, since nothing in Agent
@@ -300,16 +303,20 @@ broken. Read those as "this agent's policy supports these controls", not
 
 ### Labels tidied while writing this
 
-Writing this part showed that three reference labels in the example policies
-were looser than the mapping above. They are corrected in
-[`policies/fintech.yaml`](../../../../policies/fintech.yaml) and
-[`policies/example.yaml`](../../../../policies/example.yaml):
+Writing this part showed that several reference labels in the example
+policies and the engine were looser than the mapping above. They are
+corrected in [`policies/fintech.yaml`](../../../../policies/fintech.yaml),
+[`policies/example.yaml`](../../../../policies/example.yaml) and
+[`detection/engine.py`](../../../../app/sentinel/detection/engine.py):
 
 | Label before | Now | Why |
 |---|---|---|
 | `DORA Art.9 (ICT risk mgmt)` | `DORA Art.9 (protection and prevention)` | That is Article 9's subject; the risk management framework is Article 6 |
 | `DORA Art.11 (response & recovery)` on the reconciliation agent | Removed | Agent Sentinel does not respond or recover |
 | `EU AI Act Art.15 (accuracy)` on the payment agents | Removed | Nothing in Agent Sentinel measures a model's accuracy |
+| `DORA Art.18` and `Art.19` on the report-generator agent | `DORA Art.10 (anomaly detection)` | Severity is not incident classification; the rules on that agent detect, they do not classify or report |
+| `EU AI Act Art.13 (transparency)` on two agents | Removed | Article 13 is the provider's duty to inform deployers; an outside recorder does not discharge it |
+| `DORA Art.5 (ICT governance)` on unregistered agents and the default policy | Removed | Governance is the management body's; a finding is at most an input to it |
 
 The labels are free text, so nothing broke either way. But the label is what
 an analyst sees in the SIEM, and a wrong label there is exactly the kind of
