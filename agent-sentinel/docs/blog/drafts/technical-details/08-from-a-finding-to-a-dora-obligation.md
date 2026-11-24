@@ -78,7 +78,7 @@ context. Each rule has a severity, the policy can change it per agent, and
 severity decides what is alerted and what waits for a reviewer.
 
 *How I know:* the rule tests in Part 1, and the ten prompt-injection outcomes
-in [Part 6](../../technical-details/06-prompt-injection-what-the-recorder-catches.md), including the
+in [Part 6](06-prompt-injection-what-the-recorder-catches.md), including the
 ones that raise nothing.
 
 *What stays with the firm:* everything that is not an instrumented agent.
@@ -188,7 +188,7 @@ itself fails.
   obligation is about.
 
 *How I know:* the audit-chain tests and the storage tests written for
-[Part 7](../../technical-details/07-the-data-platform-under-the-recorder.md), and the delivery-failure
+[Part 7](07-the-data-platform-under-the-recorder.md), and the delivery-failure
 test from Part 2.
 
 *What stays with the firm:* retention periods, since nothing in Agent

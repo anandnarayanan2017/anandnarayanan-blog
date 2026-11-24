@@ -1,7 +1,7 @@
 # Part 4 — The Enterprise Foundation
 
 
-> **Reader path:** LinkedIn post → this article → [design and implementation](#design-and-implementation) → [code-and-test traceability](../TRACEABILITY.md#publication-traceability)
+> **Reader path:** [LinkedIn post](../linkedin/04-enterprise-foundation.md) → this article → [design and implementation](#design-and-implementation) → [code-and-test traceability](../TRACEABILITY.md#publication-traceability)
 
 ## The questions a security review asks first
 
