@@ -1,5 +1,5 @@
 {
-  "_comment": "Site settings for this series. dates: site date (YYYY-MM-DD) per part; every part in posts/ needs one or the build fails. excerpts: the summary shown on cards and in link previews. card: the home-page series card (the badge gets the published part count appended; question links the two series; codeUrl is the Source code on GitHub link). Edit freely.",
+  "_comment": "Site settings for this series. dates: site date (YYYY-MM-DD) per part; every part in posts/ needs one or the build fails. excerpts: the summary shown on cards and in link previews. card: the home-page series card (the badge gets the published part count appended; question links the two series; codeUrl is the Source code on GitHub link). inShort: the two-line \"In short\" box at the top of each part, for readers who stop there; card.audience is shown in that box on Part 1. Edit freely.",
   "name": "AI-assisted SDLC",
   "layout": "essay",
   "tags": ["AI-assisted SDLC", "Software Architecture", "AI Agents"],
@@ -8,8 +8,13 @@
     "badge": "Series",
     "question": "Can we trust what the agent built?",
     "title": "AI-assisted SDLC: engineering with agents",
-    "description": "What it takes to delegate software work to AI agents and still know it works: specifications, harnesses, deterministic checks and human approval. Start with Part 1.",
-    "codeUrl": "https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc"
+    "description": "Engineering with AI agents, from real recorded failures: specifications as tests, permissions as controls, and checks that outrank AI judgement. Every failure can be replayed from the repository. Start with Part 1.",
+    "codeUrl": "https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc",
+    "audience": "Engineering leaders and architects handing software work to AI agents, and the security and risk teams who have to approve what those agents build."
+  },
+  "inShort": {
+    "1": "AI makes code cheap to produce; it doesn’t decide what “correct” means. An agent’s booking API passed every happy-path test and still booked one room ten times. The run log is in the repository, so you can replay it.",
+    "2": "A prompt says what to build; a specification also says what must never happen. Three questions per rule (what must hold, who enforces it, which test fails if it breaks) turned the double-booking into a database rule and four tests."
   },
   "dates": {
     "1": "2026-11-01",

@@ -20,6 +20,8 @@
 //                                     sources; the post shows "Last reviewed".
 //   "sources": { "1": [{ "title": "...", "url": "https://..." }] }
 //                                     external sources, listed at the top of the post.
+//   "inShort": { "1": "..." }         two or three plain-language sentences, shown
+//                                     in an "In short" box at the top of the post.
 //
 // Images live in images/ and are named <NN-slug>-1.png (the hero) and so on.
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
@@ -73,6 +75,15 @@ function sync(folder) {
         const ok = Array.isArray(list) && list.every((s) => typeof s?.title === "string" && /^https?:\/\//.test(s?.url ?? ""));
         if (!ok) throw new Error(`${where}: "sources" part ${k} must be a list of { "title", "url" } with http(s) URLs`);
         return [Number(k), list.map(({ title, url }) => ({ title, url }))];
+      }),
+  );
+
+  const inShort = new Map(
+    Object.entries(cfg.inShort ?? {})
+      .filter(([k]) => /^\d+$/.test(k))
+      .map(([k, v]) => {
+        if (typeof v !== "string" || !v.trim()) throw new Error(`${where}: "inShort" part ${k} must be a non-empty string`);
+        return [Number(k), v.trim()];
       }),
   );
 
@@ -145,6 +156,7 @@ function sync(folder) {
       ...(updated.has(p.n) ? [`updated: ${updated.get(p.n)}`] : []),
       ...(sources.has(p.n) ? [`sources: ${JSON.stringify(sources.get(p.n))}`] : []),
       `excerpt: ${JSON.stringify(p.excerpt)}`,
+      ...(inShort.has(p.n) ? [`summary: ${JSON.stringify(inShort.get(p.n))}`] : []),
       `tags: [${cfg.tags.map((t) => JSON.stringify(t)).join(", ")}]`,
       `readTime: ${Math.max(1, Math.ceil(words / 200))}`,
       `series: ${JSON.stringify(cfg.name)}`,

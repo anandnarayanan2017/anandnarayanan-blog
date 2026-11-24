@@ -11,7 +11,7 @@ export const SITE = {
   // Home-page paragraph under the tagline: the reader's problem. The About
   // page keeps `intro` (experience and standards).
   homeIntro:
-    "Teams are starting to hand real work to AI agents: payments, reports, code. Getting an agent to act is the easy part. The hard part is proving what it did, and knowing that what it built actually works. Each series here takes one of those questions apart, with the code and tests behind every claim.",
+    "Teams are starting to hand real work to AI agents: payments, reports, code. Getting an agent to act is the easy part. Two questions follow, and every firm will be asked them: can we trust what the agent did, and can we trust what it built? Each series here takes one of them apart as an open reference design, with the code and tests behind every claim and the limits written down.",
   personalNote:
     "I’m a Solutions Architect in Luxembourg. This blog and its projects are personal work, written in my spare time.",
   // Shown at the foot of the home page.
