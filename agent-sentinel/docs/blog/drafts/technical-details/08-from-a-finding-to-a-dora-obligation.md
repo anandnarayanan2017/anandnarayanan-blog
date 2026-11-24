@@ -1,7 +1,8 @@
 # Part 8 — From a Finding to a DORA Obligation
 
 <!--
-DRAFT, not published. Season 2 finale, dated 2027-02-08 in ../../series.json.
+DRAFT, not published. Season 2 finale. It has no date in ../../series.json:
+the publish script adds today's date when it is published.
 Publish with `python agent-sentinel/scripts/publish_part.py 8` only after
 step 1 below. Status on 2026-11-20: steps 3, 5, 6 and 7 are done or handled
 by the script; steps 1, 2 and the "sources" in step 4 are still open.
@@ -19,8 +20,9 @@ Before publishing:
    draft (see "Labels tidied while writing this" at the end), and
    docs/COMPLIANCE.md in agent-sentinel-series no longer maps severity to
    DORA Art. 18.
-4. Add a date for "8" to ../../series.json, add the "sources" for "8" (the
-   list at the end), move this file and the LinkedIn post out of drafts/.
+4. Add the "sources" for "8" (the list at the end) to ../../series.json. The
+   publish script dates the part and moves it and the LinkedIn post out of
+   drafts/ on the day.
 5. Add the hero image at ../../images/08-from-a-finding-to-a-dora-obligation-1.png
    and the image line to the LinkedIn post. The site build needs it.
 6. Add the Part 8 row from ../traceability-rows.json to ../../TRACEABILITY.md.

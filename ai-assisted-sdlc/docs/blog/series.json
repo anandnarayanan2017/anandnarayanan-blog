@@ -1,5 +1,5 @@
 {
-  "_comment": "Site settings for this series. dates: site date (YYYY-MM-DD) per part; every part in posts/ needs one or the build fails. excerpts: the summary shown on cards and in link previews. card: the home-page series card (the badge gets the published part count appended; question links the two series; codeUrl is the Source code on GitHub link). inShort: the two-line \"In short\" box at the top of each part, for readers who stop there; card.audience is shown in that box on Part 1. Edit freely.",
+  "_comment": "Site settings for this series. dates: site date (YYYY-MM-DD) per part; the date the part actually went live. Every part in posts/ needs one, and the build fails on a date after today: add a part's date on the day it is published, never ahead of it. excerpts: the summary shown on cards and in link previews. card: the home-page series card (the badge gets the published part count appended; question links the two series; codeUrl is the Source code on GitHub link). inShort: the two-line \"In short\" box at the top of each part, for readers who stop there; card.audience is shown in that box on Part 1. Edit freely.",
   "name": "AI-assisted SDLC",
   "layout": "essay",
   "tags": ["AI-assisted SDLC", "Software Architecture", "AI Agents"],
@@ -20,11 +20,7 @@
   "dates": {
     "1": "2026-11-01",
     "2": "2026-11-09",
-    "3": "2026-11-23",
-    "4": "2026-12-07",
-    "5": "2026-12-21",
-    "6": "2027-01-04",
-    "7": "2027-01-18"
+    "3": "2026-11-24"
   },
   "excerpts": {
     "1": "“Build a booking API” is a wish. Twenty years from ARM assembly to AI agents, and the one question that has not changed: how do we know it works?",
