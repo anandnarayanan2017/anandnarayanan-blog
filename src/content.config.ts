@@ -11,6 +11,8 @@ const blog = defineCollection({
     // External sources the post relies on, shown in the box at the top of the post.
     sources: z.array(z.object({ title: z.string(), url: z.string().url() })).optional(),
     excerpt: z.string(),
+    // Plain-language "In short" box at the top of the post (series.json "inShort").
+    summary: z.string().optional(),
     tags: z.array(z.string()),
     readTime: z.number().optional(),
     series: z.string().optional(),

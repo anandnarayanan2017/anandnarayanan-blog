@@ -1,5 +1,5 @@
 {
-  "_comment": "Site settings for this series. dates: site date (YYYY-MM-DD) per part; every part in technical-details/ needs one or the build fails, and dates for unreleased parts are ignored. card: the home-page series card (the badge gets the published part count appended; question links the two series; codeUrl is the Source code on GitHub link). Edit freely.",
+  "_comment": "Site settings for this series. dates: site date (YYYY-MM-DD) per part; every part in technical-details/ needs one or the build fails, and dates for unreleased parts are ignored. card: the home-page series card (the badge gets the published part count appended; question links the two series; codeUrl is the Source code on GitHub link). inShort: the two-line \"In short\" box at the top of each part, for readers who stop there; card.audience is shown in that box on Part 1. Edit freely.",
   "name": "Agent Sentinel",
   "layout": "technical",
   "tags": [
@@ -12,8 +12,18 @@
     "badge": "Series",
     "question": "Can we trust what the agent did?",
     "title": "Agent Sentinel: a flight recorder for AI agents",
-    "description": "How to record, explain and export what AI agents do in regulated environments, with the design, code and tests behind each part. Start with Part 1.",
-    "codeUrl": "https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/agent-sentinel"
+    "description": "Built for regulated firms: every finding links a rule a person wrote, the action that broke it and the evidence, mapped to DORA, EU AI Act and CSSF controls. Open code and tests behind each part. Start with Part 1.",
+    "codeUrl": "https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/agent-sentinel",
+    "audience": "CISOs, risk and compliance teams, auditors, and the architects putting AI agents into regulated work."
+  },
+  "inShort": {
+    "1": "Most firms running AI agents have logs, not evidence. Agent Sentinel records what each agent did, checks it against rules people wrote, and turns anything outside them into a finding an auditor can check: which agent, which rule, what evidence.",
+    "2": "A monitoring tool that can break a payments run gets switched off. The rule here: if the recorder fails, the agent must not, and lost evidence is counted, never silent. Testing my own code against that rule found five gaps; each now has a test.",
+    "3": "An auditor can check a rule, not a score of 0.87. Written rules decide every finding; a pattern model may only advise, can never overrule a rule, and ships switched off. Two-thirds of the code contains no AI at all.",
+    "4": "A tool that holds evidence must pass a bank’s security review first: who can call it, where the data lives, who looked at what, and whether a risky finding waits for a person. This part answers each question and lists what isn’t done yet.",
+    "5": "Security teams don’t need another screen. Each finding goes, already explained, into the SIEM they use. Blocking stays on the roadmap; when it comes, written rules, not statistics, will decide what is blocked.",
+    "6": "Agent Sentinel doesn’t read prompts to spot attacks; it checks what the agent did next. Against ten outcomes of one injected invoice, it caught every action outside the agent’s policy and none inside it. The policy is the control.",
+    "7": "A recorder is a data platform that holds evidence, so a lost row is a gap in the evidence. Events are saved before any rule runs, only a redacted preview is kept, and a storage backend that can’t keep an audit trail refuses instead of pretending."
   },
   "dates": {
     "1": "2026-10-02",
