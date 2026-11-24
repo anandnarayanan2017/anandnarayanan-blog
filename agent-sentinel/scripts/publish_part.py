@@ -8,7 +8,8 @@ The site shows a part as soon as it is deployed and does not hold back future
 dates, so run this on the day itself. For part N it:
 
   1. checks parts 1..N-1 are published, part N is drafted and not yet
-     published, series.json has a date for N and the hero image exists;
+     published, part N isn't dated after today and the hero image exists,
+     then dates part N today in series.json if it has no date yet;
   2. moves the write-up and LinkedIn post out of docs/blog/drafts/ (git mv)
      and removes the leading DRAFT comment;
   3. fixes relative links for the new folder depth, and turns links to parts
@@ -30,6 +31,7 @@ import json
 import re
 import subprocess
 import sys
+from datetime import UTC, datetime
 from pathlib import Path
 
 FOLDER = Path(__file__).resolve().parents[1]  # agent-sentinel/
@@ -121,9 +123,15 @@ def main() -> None:
         fail(f"part {n} needs drafts/technical-details/ and drafts/linkedin/ files")
     if draft.name != post.name:
         fail(f"file names differ: {draft.name} and {post.name}")
-    dates = json.loads((BLOG / "series.json").read_text())["dates"]
-    if str(n) not in dates:
-        fail(f'add a date for "{n}" to docs/blog/series.json')
+    # A part is dated the day it goes live, never ahead of it: the site shows
+    # every deployed part, so a future date would claim a release that hasn't
+    # happened. The site build refuses one too (scripts/sync-series.mjs).
+    today = datetime.now(UTC).date().isoformat()
+    series_path = BLOG / "series.json"
+    series = json.loads(series_path.read_text(encoding="utf-8"))
+    dates = series["dates"]
+    if dates.get(str(n), today) > today:
+        fail(f'"{n}" is dated {dates[str(n)]} in docs/blog/series.json, after today ({today})')
     hero = BLOG / "images" / f"{draft.stem}-1.png"
     if not hero.exists():
         fail(f"hero image missing: {hero.relative_to(FOLDER)}")
@@ -132,10 +140,24 @@ def main() -> None:
     if str(n) not in trace_rows:
         fail(f'no row for "{n}" in drafts/traceability-rows.json')
 
-    print(f"Publishing part {n} ({draft.stem}), dated {dates[str(n)]}")
+    date = dates.get(str(n), today)
+    print(f"Publishing part {n} ({draft.stem}), dated {date}")
     if dry:
         print("dry run: nothing changed")
         return
+
+    # 1b. Date the part today, if it has no date yet. Edited as text so the
+    # rest of series.json keeps its formatting.
+    if str(n) not in dates:
+        text = series_path.read_text(encoding="utf-8")
+        block = re.search(r'("dates": \{)(.*?)(\n  \})', text, re.DOTALL)
+        if not block:
+            fail('no "dates" block found in docs/blog/series.json')
+        entry = f'\n    "{n}": "{today}"'
+        body = block.group(2) + ("," if block.group(2).strip() else "") + entry
+        series_path.write_text(
+            text[: block.start(2)] + body + text[block.end(2) :], encoding="utf-8"
+        )
 
     # 2-3. Move, then fix links for the new depth.
     for src, dest_dir in ((draft, "technical-details"), (post, "linkedin")):
