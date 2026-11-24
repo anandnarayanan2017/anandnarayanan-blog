@@ -16,7 +16,7 @@
 //     and the excerpt comes from "excerpts" in series.json.
 //
 // Optional per part, also in series.json:
-//   "updated": { "1": "2027-03-01" }   last time the part was checked against its
+//   "updated": { "1": "2026-11-20" }   last time the part was checked against its
 //                                     sources; the post shows "Last reviewed".
 //   "sources": { "1": [{ "title": "...", "url": "https://..." }] }
 //                                     external sources, listed at the top of the post.
@@ -56,6 +56,12 @@ function sync(folder) {
       .filter(([k]) => /^\d+$/.test(k))
       .map(([k, v]) => {
         if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) throw new Error(`${where}: part ${k} has "${v}", expected YYYY-MM-DD`);
+        // A date is when the part went live, not when it is planned: the site
+        // shows every deployed part, so a future date would claim a release
+        // that hasn't happened. Compared in UTC, as the deploy runs in UTC.
+        const today = new Date().toISOString().slice(0, 10);
+        if (v > today)
+          throw new Error(`${where}: part ${k} is dated ${v}, after today (${today}). Date a part on the day it is published.`);
         return [Number(k), v];
       }),
   );
@@ -65,6 +71,8 @@ function sync(folder) {
       .filter(([k]) => /^\d+$/.test(k))
       .map(([k, v]) => {
         if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) throw new Error(`${where}: "updated" part ${k} has "${v}", expected YYYY-MM-DD`);
+        if (v > new Date().toISOString().slice(0, 10))
+          throw new Error(`${where}: "updated" part ${k} is ${v}, after today. A review date is the day the review happened.`);
         return [Number(k), v];
       }),
   );

@@ -36,7 +36,7 @@ dates, excerpts and home-page card. Optionally, per part, it holds an `updated` 
 "Last reviewed") and a list of `sources` (shown at the top of the post):
 
 ```json
-"updated": { "1": "2027-03-01" },
+"updated": { "1": "2026-11-20" },
 "sources": { "1": [{ "title": "Claude prompting best practices", "url": "https://platform.claude.com/docs/" }] }
 ```
 

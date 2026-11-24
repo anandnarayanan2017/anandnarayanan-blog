@@ -41,7 +41,7 @@ Entra is moving on the first. Most of my writing here is about the second and th
 
 Each one is weaker without the other two.
 
-This is a note alongside my Agent Sentinel series. Part 4, in December, covers identity: who may call the recorder, and who owns the agent.
+This is a note alongside my Agent Sentinel series. Part 4 covers identity: who may call the recorder, and who owns the agent.
 
 Who sponsors the agents in your organisation today? Is it a named person, or a team alias?
 

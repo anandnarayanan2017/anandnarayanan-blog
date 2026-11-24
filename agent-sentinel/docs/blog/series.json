@@ -1,5 +1,5 @@
 {
-  "_comment": "Site settings for this series. dates: site date (YYYY-MM-DD) per part; every part in technical-details/ needs one or the build fails, and dates for unreleased parts are ignored. card: the home-page series card (the badge gets the published part count appended; question links the two series; codeUrl is the Source code on GitHub link). inShort: the two-line \"In short\" box at the top of each part, for readers who stop there; card.audience is shown in that box on Part 1. Edit freely.",
+  "_comment": "Site settings for this series. dates: site date (YYYY-MM-DD) per part; the date the part actually went live. Every part in technical-details/ needs one, and the build fails on a date after today: add a part's date on the day it is published, never ahead of it. card: the home-page series card (the badge gets the published part count appended; question links the two series; codeUrl is the Source code on GitHub link). inShort: the two-line \"In short\" box at the top of each part, for readers who stop there; card.audience is shown in that box on Part 1. Edit freely.",
   "name": "Agent Sentinel",
   "layout": "technical",
   "tags": [
@@ -28,12 +28,11 @@
   "dates": {
     "1": "2026-10-02",
     "2": "2026-11-16",
-    "3": "2026-11-30",
-    "4": "2026-12-14",
-    "5": "2026-12-28",
-    "6": "2027-01-11",
-    "7": "2027-01-25",
-    "8": "2027-02-08"
+    "3": "2026-11-24",
+    "4": "2026-11-24",
+    "5": "2026-11-24",
+    "6": "2026-11-24",
+    "7": "2026-11-24"
   },
   "updated": {
     "1": "2026-11-20"
