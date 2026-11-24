@@ -14,7 +14,8 @@
   },
   "inShort": {
     "1": "AI makes code cheap to produce; it doesn’t decide what “correct” means. An agent’s booking API passed every happy-path test and still booked one room ten times. The run log is in the repository, so you can replay it.",
-    "2": "A prompt says what to build; a specification also says what must never happen. Three questions per rule (what must hold, who enforces it, which test fails if it breaks) turned the double-booking into a database rule and four tests."
+    "2": "A prompt says what to build; a specification also says what must never happen. Three questions per rule (what must hold, who enforces it, which test fails if it breaks) turned the double-booking into a database rule and four tests.",
+    "3": "The same model behaves very differently depending on what surrounds it. A harness gives the agent context, a few tools, precise feedback and a way to recover, and each part encodes a doubt about the model. Passing back the failing test, word for word, is what fixed the double booking."
   },
   "dates": {
     "1": "2026-11-01",
