@@ -27,7 +27,7 @@ So I extended the platform, starting with four questions every NHI must answer.
 3. **Who answers for it?** Every NHI needs an accountable owner, a review date, and access that expires.
 4. **Is it behaving like itself right now?** Governance asks “should it have this access?” on a cycle; runtime risk asks “is this sign-in normal?” on every event. This is the question my platform answers.
 
-None of this is vendor-specific — Entra, SailPoint and Okta each answer the first three questions in their own way. One difference bites: I expected Entra’s agent delegation to use RFC 8693 token exchange, as Okta’s Cross App Access does. It doesn’t — Entra uses the **jwt-bearer** grant. If your estate spans both, “the agent acts for the user” is two different protocols, so a risk engine shouldn’t depend on either; it should reconstruct the actor chain from the logs.
+None of this is vendor-specific — Entra, SailPoint and Okta each answer the first three questions their own way. One detail surprised me: Entra’s agent on-behalf-of flow is a single **jwt-bearer** request carrying `requested_token_use=on_behalf_of`, while Okta’s Cross App Access takes two hops — an RFC 8693 token exchange at the IdP for a signed grant (ID-JAG), then a jwt-bearer redemption at the target app. So “the agent acts for the user” is two different protocols; a risk engine should reconstruct the actor chain from the logs rather than depend on either.
 
 ## What “behaving like itself” means
 
