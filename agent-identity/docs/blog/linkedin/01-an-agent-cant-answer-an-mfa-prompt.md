@@ -1,33 +1,26 @@
-"Privileged role, no MFA: block."
+In July, AI agents broke into Hugging Face. Not one of them typed a password.
 
-Every security team has that rule. It is a good rule.
+They didn't need to. Fourteen Hugging Face access tokens, with write rights, were sitting in a public dataset. The agents found them and used them.
 
-Then I started scoring service principals, managed identities and AI agents with the same platform, and realised it would have blocked every automation in the tenant.
+A token is a key that software uses instead of a password. It never gets an MFA prompt. Whoever holds it is trusted.
 
-An agent can't answer an MFA prompt.
+That is the gap. Your strongest rule, "privileged access needs MFA", protects people. It does nothing for a key that a machine presents, and an AI agent can't answer an MFA prompt anyway.
 
-Non-human identities already outnumber people in most tenants. They hold standing privileges, often authenticate with secrets that live for years, and nobody is paged when one signs in at 03:00, because that is when it always signs in.
+So for every non-human identity, ask four plain questions:
+1. Who is it? One identity per workload or agent, never shared.
+2. How does it prove it? Short-lived tokens from the platform, not secrets that live for years in a file.
+3. Who answers for it? A named owner, a review date, access that expires.
+4. Is it behaving like itself right now? A key used from a new place, or for a new API, is a red flag.
 
-Four questions every non-human identity has to answer:
-1. Who is it? One identity per workload, never shared.
-2. How does it prove it? Federated credentials and managed identities, not secrets.
-3. Who answers for it? An owner, a sponsor, a review date, access that expires.
-4. Is it behaving like itself right now?
+And when an agent acts for a person, it should only be as trusted as that person is right now.
 
-The fourth one is where I spent the effort.
+Part 1 of my new series, Identity for AI Agents, mapped to Entra, SailPoint and Okta.
 
-Workloads are regular, so "new" means more: a new network, a new API, or a client secret used by an identity that has only ever used federation (a classic leaked-secret pattern).
+Which keys in your estate would still work if someone found them in a public file today?
 
-And an agent acting on behalf of a person inherits that person's current risk score. A compromised user can't launder access through an agent.
-
-For an agent, step-up isn't another MFA prompt. It means sponsor approval or narrower scopes. Block means revoke tokens and disable the service principal.
-
-One surprise: Entra's agent on-behalf-of flow uses the jwt-bearer grant, while Okta's Cross App Access uses RFC 8693 token exchange. Same idea, two protocols.
-
-Part 1 of a new series on identity for AI agents, mapped to Entra, SailPoint and Okta.
-
-Which non-human identities in your tenant could you not name an owner for today?
+![Meme: the architect relaxes in the "Agent Identity Control Room" while monkey agents with "No owner", "No MFA" and "Old secret" shirts ship boxes of "14 tokens" and "keys". Every identity check is green, the anomalies panel lists "14 tokens in a public dataset" and "Agent asked for MFA: no phone", and the kill switch reads "Revoke tokens".](01-an-agent-cant-answer-an-mfa-prompt-meme.jpg)
 
 First comment: Read the full article → https://anandnarayanan.net/blog/agent-identity-01-an-agent-cant-answer-an-mfa-prompt/
+Sources on the Hugging Face incident: OpenAI's technical report and Hugging Face's statement (July 2026).
 
-#IdentitySecurity #AIAgents #IAM #ZeroTrust #MicrosoftEntra
+#IdentitySecurity #AIAgents #IAM #ZeroTrust #NonHumanIdentity
