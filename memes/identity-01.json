@@ -1,0 +1,40 @@
+{
+  "post": "agent-identity/docs/blog/posts/01-an-agent-cant-answer-an-mfa-prompt.md",
+  "title": "AGENT IDENTITY CONTROL ROOM",
+  "subtitle": "WHO IS IT > HOW DOES IT PROVE IT > WHO OWNS IT",
+  "board": {
+    "heading": "TODAY:",
+    "items": [
+      { "text": "MFA for all admins", "done": true },
+      { "text": "Name every agent", "done": true },
+      { "text": "An owner for each", "done": true },
+      { "text": "No secrets in files", "done": true },
+      { "text": "Explain MFA to a robot", "done": false },
+      { "text": "Find the other 14 tokens", "done": false }
+    ]
+  },
+  "shirts": ["NO\nOWNER", "NO\nMFA", "OLD\nSECRET"],
+  "boxes": ["14 TOKENS", "KEYS", "SIGN-INS", "GRANTED"],
+  "dashboard": {
+    "heading": "IDENTITY DASHBOARD",
+    "rows": [
+      { "text": "Admins with MFA", "status": "ok" },
+      { "text": "Conditional Access", "status": "ok" },
+      { "text": "Sign-in policies", "status": "ok" },
+      { "text": "Agents with owners", "status": "unknown" },
+      { "text": "Tokens that expire", "status": "unknown" },
+      { "text": "Who acts for whom", "status": "unknown" }
+    ]
+  },
+  "output": { "lines": ["NO MFA", "NO PHONE", "NO PROBLEM"], "note": "(OR SO THEY THINK)" },
+  "anomalies": [
+    "14 tokens in a public dataset",
+    "Agent asked for MFA: no phone",
+    "Client secret, never seen before",
+    "Service principal, no owner",
+    "Agent acting for a risky user"
+  ],
+  "sticky": "Hope I never have to press this ☺",
+  "killSwitch": { "title": "REVOKE TOKENS", "subtitle": "DISABLE SERVICE PRINCIPALS" },
+  "plan": ["Owner for every agent", "No long-lived secrets", "Score it against itself"]
+}

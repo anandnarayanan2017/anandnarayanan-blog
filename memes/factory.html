@@ -1,0 +1,87 @@
+<!doctype html>
+<!--
+  Meme template on the "AI-native SDLC factory" picture (the AI-assisted SDLC
+  Part 1 hero image). Each text area of the picture has a patch below. render.mjs
+  fills the patches from a labels file; a patch whose labels are missing stays
+  hidden, so the original picture shows through.
+-->
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{width:1222px;height:1287px;position:relative;overflow:hidden;background:#000}
+  img.base{position:absolute;left:0;top:0;width:1222px;height:1287px}
+  .p{position:absolute;font-family:'Patrick Hand','Kalam',sans-serif;display:none}
+  .p.on{display:block}
+  .title{left:352px;top:8px;width:600px;height:80px;background:linear-gradient(180deg,#0c1f33,#102a44);border-radius:6px;text-align:center;color:#e8f6ff;text-shadow:0 0 10px #38bdf8,0 0 2px #fff}
+  .title h1{font-size:38px;letter-spacing:2px;line-height:44px;font-weight:400}
+  .title h2{font-size:20px;letter-spacing:1px;color:#7dd3fc;line-height:26px;font-weight:400}
+  .board{left:52px;top:56px;width:214px;height:300px;background:#f2dcc0;color:#1f2937;padding:6px 8px;font-family:'Kalam',cursive}
+  .board .h{font-size:24px;font-weight:700;margin:2px 0 6px 6px}
+  .board li{list-style:none;font-size:18px;line-height:22px;margin:0 0 9px 0;display:flex;gap:6px}
+  .board .bx{flex:0 0 18px;height:18px;border:2px solid #1f2937;margin-top:3px;position:relative}
+  .board .bx.done:after{content:"✓";position:absolute;left:1px;top:-9px;font-size:22px;font-weight:700}
+  .shirt{background:#1c2433;color:#f1f5f9;font-family:'Kalam',cursive;font-weight:700;text-align:center;line-height:17px;font-size:16px;border-radius:4px;height:38px}
+  .box{background:#d9b583;color:#1f2937;font-family:'Kalam',cursive;font-weight:700;text-align:center;font-size:16px;line-height:22px;border-radius:2px;height:24px}
+  .dash{left:410px;top:665px;width:206px;height:180px;background:#0f2a47;color:#e2f2ff;padding:8px 10px;border-radius:4px}
+  .dash .h{font-size:21px;margin-bottom:4px}
+  .dash .r{font-size:16.5px;line-height:23px;display:flex;justify-content:space-between}
+  .ok{color:#4ade80}.q{color:#fbbf24;font-weight:700}.no{color:#f87171;font-weight:700}
+  .out{left:752px;top:732px;width:112px;height:110px;background:#0b2c4d;color:#cfe8ff;font-size:19px;line-height:25px;padding:2px 4px}
+  .out small{font-size:14px;color:#93c5fd}
+  .anom{left:888px;top:744px;width:250px;height:142px;background:#3a1416;color:#fde2e2;padding:4px 8px}
+  .anom div{font-size:16px;line-height:27px;white-space:nowrap}
+  .anom div:before{content:"⚠ ";color:#f87171}
+  .sticky{left:884px;top:1036px;width:104px;height:84px;background:#ffe9a3;color:#1f2937;font-family:'Kalam',cursive;font-size:15px;line-height:17px;padding:6px 7px;transform:rotate(-8deg)}
+  .kill{left:684px;top:1108px;width:172px;height:56px;background:#121212;color:#fff;text-align:center;border-radius:3px;font-family:'Kalam',cursive}
+  .kill b{display:block;font-size:19px;line-height:26px}
+  .kill span{display:block;font-size:12.5px;line-height:16px;color:#facc15}
+  .plan{left:906px;top:1146px;width:196px;height:120px;background:#efe6d4;color:#1f2937;font-family:'Kalam',cursive;padding:2px 6px}
+  .plan .h{font-size:20px;font-weight:700}
+  .plan .r{font-size:16px;line-height:24px}
+</style></head><body>
+<img class="base" id="base" alt="">
+<div class="p title" id="title"><h1></h1><h2></h2></div>
+<div class="p board" id="board"><div class="h"></div><ul></ul></div>
+<div class="p shirt" id="shirt0" style="left:660px;top:505px;width:62px"></div>
+<div class="p shirt" id="shirt1" style="left:850px;top:510px;width:62px"></div>
+<div class="p shirt" id="shirt2" style="left:1030px;top:511px;width:78px"></div>
+<div class="p box" id="box0" style="left:648px;top:574px;width:92px"></div>
+<div class="p box" id="box1" style="left:770px;top:578px;width:64px"></div>
+<div class="p box" id="box2" style="left:888px;top:581px;width:86px"></div>
+<div class="p box" id="box3" style="left:1032px;top:582px;width:82px"></div>
+<div class="p dash" id="dash"><div class="h"></div></div>
+<div class="p out" id="out"></div>
+<div class="p anom" id="anom"></div>
+<div class="p sticky" id="sticky"></div>
+<div class="p kill" id="kill"><b></b><span></span></div>
+<div class="p plan" id="plan"><div class="h">PLAN:</div></div>
+<script>
+  // Called by render.mjs with the labels object. Text only: never HTML.
+  window.fill = (L, baseSrc) => {
+    const $ = (id) => document.getElementById(id);
+    const el = (tag, text, cls) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+    const on = (id) => $(id).classList.add("on");
+    $("base").src = baseSrc;
+    if (L.title) { $("title").querySelector("h1").textContent = L.title; $("title").querySelector("h2").textContent = L.subtitle ?? ""; on("title"); }
+    if (L.board) {
+      $("board").querySelector(".h").textContent = L.board.heading ?? "TODAY:";
+      for (const it of L.board.items) { const li = el("li"); li.append(el("span", null, "bx" + (it.done ? " done" : "")), el("span", it.text)); $("board").querySelector("ul").append(li); }
+      on("board");
+    }
+    (L.shirts ?? []).forEach((t, i) => { if (t) { t.split("\n").forEach((line, j) => { if (j) $("shirt" + i).append(el("br")); $("shirt" + i).append(document.createTextNode(line)); }); on("shirt" + i); } });
+    (L.boxes ?? []).forEach((t, i) => { if (t) { $("box" + i).textContent = t; on("box" + i); } });
+    if (L.dashboard) {
+      $("dash").querySelector(".h").textContent = L.dashboard.heading;
+      const mark = { ok: ["✓", "ok"], unknown: ["?", "q"], fail: ["✗", "no"] };
+      for (const r of L.dashboard.rows) { const d = el("div", null, "r"); const [m, c] = mark[r.status] ?? mark.ok; d.append(el("span", r.text), el("span", m, c)); $("dash").append(d); }
+      on("dash");
+    }
+    if (L.output) { L.output.lines.forEach((t) => { $("out").append(document.createTextNode(t)); $("out").append(el("br")); }); if (L.output.note) $("out").append(el("small", L.output.note)); on("out"); }
+    if (L.anomalies) { L.anomalies.forEach((t) => $("anom").append(el("div", t))); on("anom"); }
+    if (L.sticky) { $("sticky").textContent = L.sticky; on("sticky"); }
+    if (L.killSwitch) { $("kill").querySelector("b").textContent = L.killSwitch.title; $("kill").querySelector("span").textContent = L.killSwitch.subtitle ?? ""; on("kill"); }
+    if (L.plan) { L.plan.forEach((t) => $("plan").append(el("div", "☑ " + t, "r"))); on("plan"); }
+  };
+</script>
+</body></html>
