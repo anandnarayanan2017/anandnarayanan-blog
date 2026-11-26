@@ -94,8 +94,6 @@ A row is added as each part is published.
 | 3 | `python examples/phase2/sequence_eval_payments_demo.py` | The payments-bot evaluation tables and a `sequence.anomaly` finding with its "expected … observed …" evidence |
 | 4 | `scripts/docker_e2e.sh` (or, without Docker for Sentinel itself: start PostgreSQL, then `DATABASE_URL=postgresql://postgres:sentinel@localhost:5432/postgres python scripts/e2e.py --postgres`) | Approvals created for high findings, and `audit chain verifies` in the output. `GET /approvals` and `GET /audit-log/verify` work against the same server |
 | 5 | Set `ALERT_SLACK_WEBHOOK` (or `ALERT_TEAMS_WEBHOOK`) to a test URL, then run the Part 1 steps | One webhook post per high finding. Log Analytics export needs an Azure workspace: `pip install -e ".[siem]"` and the `AZURE_LOG_ANALYTICS_*` variables in `app/sentinel/siem/log_analytics.py` |
-| 6 | `python -m pytest -q app/tests/test_prompt_injection.py` | Ten passing tests, one per outcome in the article, including the four that raise nothing |
-| 7 | `python -m pytest -q app/tests/test_storage_contract.py app/tests/test_audit_chain.py` | The storage and audit-chain claims, each a passing test, including the two chain limits |
 
 ## References you can't follow from here
 

@@ -30,6 +30,7 @@ site is built and published from the same repository that holds that evidence.
 |---|---|---|
 (https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/agent-sentinel) | Agent Sentinel | An explainable runtime observability and policy-detection layer for AI agents in regulated environments: detect, explain, export. The code, tests, policies and a local Docker stack live in the folder. |
 |(https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc) | AI-assisted SDLC | What it takes to delegate software work to AI agents and still know it works: specifications, harnesses, deterministic checks and human approval. The essays live here; the harness code lives in its own repository. |
+|(https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/agent-identity) | Identity for AI Agents | Service principals, managed identities and AI agents treated as identities: an owner, a review date, no long-lived secrets, and runtime risk scored against their own baseline and the trust of the person they act for. Mapped to Entra, SailPoint and Okta. The scoring code lives in its own (private) repository. |
 
 Each series folder is the single source of truth for its posts. `docs/blog/series.json` holds its release
 dates, excerpts and home-page card. Optionally, per part, it holds an `updated` date (shown as

@@ -1,7 +1,7 @@
 # Part 3 — Rules First, Statistics Second
 
 
-> **Reader path:** LinkedIn post → this article → [design and implementation](#design-and-implementation) → [code-and-test traceability](../TRACEABILITY.md#publication-traceability)
+> **Reader path:** [LinkedIn post](../linkedin/03-rules-first-statistics-second.md) → this article → [design and implementation](#design-and-implementation) → [code-and-test traceability](../TRACEABILITY.md#publication-traceability)
 
 ## A wire transfer before the identity check
 

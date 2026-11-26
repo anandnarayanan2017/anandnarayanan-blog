@@ -1,0 +1,32 @@
+{
+  "_comment": "Site settings for this series. dates: site date (YYYY-MM-DD) per part; the date the part actually went live. Every part in posts/ needs one, and the build fails on a date after today: add a part's date on the day it is published, never ahead of it. excerpts: the summary shown on cards and in link previews. card: the home-page series card. inShort: the two-line \"In short\" box at the top of each part; card.audience is shown in that box on Part 1. Edit freely.",
+  "name": "Identity for AI Agents",
+  "layout": "essay",
+  "tags": ["Identity", "AI Agents", "Security Architecture"],
+  "card": {
+    "order": 3,
+    "badge": "Series",
+    "question": "Can we trust who the agent is acting as?",
+    "title": "Identity for AI agents: workloads, agents and the people they act for",
+    "description": "Service principals, managed identities and AI agents as identities: an owner, no long-lived secrets, and runtime risk that inherits the trust of the person they act for. Mapped to Entra, SailPoint and Okta. Start with Part 1.",
+    "codeUrl": "https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/agent-identity",
+    "audience": "Identity and security architects, IAM and IGA teams, and the risk owners who have to sign off on AI agents acting with real permissions."
+  },
+  "inShort": {
+    "1": "A privileged role without MFA should be blocked, but an agent can’t answer an MFA prompt, so that rule would block every automation you run. Non-human identities need their own baseline, an accountable owner, no long-lived secrets, and a risk score that inherits the risk of the person they act for."
+  },
+  "dates": {
+    "1": "2026-11-26"
+  },
+  "sources": {
+    "1": [
+      { "title": "Microsoft Entra: Agent on-behalf-of flow", "url": "https://learn.microsoft.com/en-us/entra/agent-id/agent-on-behalf-of-oauth-flow" },
+      { "title": "Microsoft Entra: Owners, sponsors and managers for agents", "url": "https://learn.microsoft.com/en-us/entra/agent-id/agent-owners-sponsors-managers" },
+      { "title": "Okta: Cross App Access", "url": "https://developer.okta.com/docs/concepts/xaa" },
+      { "title": "SailPoint: Machine Identity Security", "url": "https://documentation.sailpoint.com/saas/help/machine/index.html" }
+    ]
+  },
+  "excerpts": {
+    "1": "“Privileged role, no MFA: block” is a good rule for people. Applied to a workload, it blocks every automation you run. How to score service principals, managed identities and AI agents, including the trust of the person an agent acts for."
+  }
+}
