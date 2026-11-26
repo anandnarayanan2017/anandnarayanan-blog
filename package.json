@@ -16,7 +16,7 @@
     "astro": "^7.4.13"
   },
   "devDependencies": {
-    "playwright": "^1.63.0",
+    "playwright": "1.63.0",
     "rehype-mermaid": "^3.0.0"
   }
 }
