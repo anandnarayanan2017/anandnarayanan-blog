@@ -16,7 +16,7 @@
     "1": "A privileged role without MFA should be blocked, but an agent can’t answer an MFA prompt, so that rule would block every automation you run. Non-human identities need their own baseline, an accountable owner, no long-lived secrets, and a risk score that inherits the risk of the person they act for."
   },
   "dates": {
-    "1": "2026-11-25"
+    "1": "2026-11-26"
   },
   "sources": {
     "1": [
