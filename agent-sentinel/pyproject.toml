@@ -8,7 +8,7 @@ license = { text = "Apache-2.0" }
 authors = [{ name = "Agent Sentinel contributors" }]
 dependencies = [
     "pydantic>=2.14.4",
-    "duckdb>=0.10",
+    "duckdb>=2.0.0",
     "pyyaml>=6.0",
     "fastapi>=0.165.0",
     "uvicorn>=0.54.0",
@@ -19,9 +19,9 @@ dependencies = [
 # Phase 1
 proxy     = ["mitmproxy>=11.0.2"]
 # Phase 2 — real cloud SDK interceptors
-azure     = ["openai>=1.30"]
+azure     = ["openai>=3.57.0"]
 anthropic = ["anthropic>=2.8.0"]
-cloud     = ["openai>=1.30", "anthropic>=2.8.0"]
+cloud     = ["openai>=3.57.0", "anthropic>=2.8.0"]
 # Phase 3 — persistent storage + SIEM
 postgres  = ["psycopg2-binary>=2.9.13"]
 siem      = ["psycopg2-binary>=2.9.13", "azure-monitor-ingestion>=1.1.0", "azure-identity>=1.25.3"]
