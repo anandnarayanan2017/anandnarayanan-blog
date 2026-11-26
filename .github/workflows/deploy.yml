@@ -56,6 +56,10 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm audit --omit=dev --audit-level=high
+      # Mermaid diagrams in posts are rendered to static SVG at build time
+      # (rehype-mermaid) using headless Chromium; version is pinned by the
+      # playwright devDependency in package-lock.json.
+      - run: npx playwright install --with-deps chromium
       - run: npm run build   # prebuild generates the posts from every series folder (scripts/sync-series.mjs)
       # Third-party action: SHA-pinned (tag v6.3.0, resolved with
       # `git ls-remote https://github.com/aws-actions/configure-aws-credentials refs/tags/v6.3.0`).
