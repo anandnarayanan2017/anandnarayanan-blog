@@ -23,7 +23,7 @@ So I extended the platform, starting not with code but with four questions every
 ## Four questions for every non-human identity
 
 1. **Who is it?** One identity per workload or agent — never shared, never a human account in disguise. A service account three teams share can’t be scored; it has no single “normal”.
-2. **How does it prove it?** Preferably without a stored secret. When an agent acts for a person, the token must carry both — the person as subject, the agent as actor — which makes the delegation visible to the API, the audit log and a risk scorer.
+2. **How does it prove it?** Preferably without a stored secret — short-lived tokens from a managed identity or federated credential, not a password that lives for years. When an agent acts for a person, that token also names both of them, which makes the delegation visible to the audit log and a risk scorer (below).
 3. **Who answers for it?** Every NHI needs an accountable owner, a review date, and access that expires.
 4. **Is it behaving like itself right now?** Governance asks “should it have this access?” on a cycle; runtime risk asks “is this sign-in normal?” on every event. This is the question my platform answers.
 
@@ -52,7 +52,13 @@ Each NHI gets a 30-day baseline. Five signals come from its behaviour, three fro
 | Delegating person’s risk | The agent inherits the latest risk score of the user it acts for |
 | *Governance* | Owner/sponsor count, whether it holds a privileged role, and days since last recertification |
 
-The behavioural signal that matters most is why I built this. The platform already scores every human sign-in, so when an agent acts for Alice, Alice’s risk score comes with it. A compromised person can’t launder access through an agent — the agent is only as trusted as the person it serves.
+The last signal is why I built this: an agent inherits the live risk score of the person it acts for, so a compromised person can’t launder access through an agent — the agent is only as trusted as its subject:
+
+```mermaid
+flowchart LR
+  U["Person<br/>subject · live risk score"] --> AG["Agent<br/>actor"] --> R["Resource / API"]
+  U -. "agent is only as trusted<br/>as the person it serves" .-> AG
+```
 
 ## Six rules, and the ones that must never run
 
@@ -65,7 +71,19 @@ The behavioural signal that matters most is why I built this. The platform alrea
 | Token burst | At least 5× its own rate | Up to step up |
 | Stale recertification | Never reviewed, or 90+ days ago | Adds risk |
 
-The more important change is what **doesn’t** run. The human rules — MFA, devices, business hours, impossible travel — are now guarded to fire only for people, in both the scorer and the policy. The administrator-without-MFA rule still blocks; it no longer blocks a backup job.
+The more important change is what **doesn’t** run. The human rules are now guarded to fire only for people, in both the scorer and the policy, so the administrator-without-MFA rule still blocks while a backup job sails through:
+
+```mermaid
+flowchart TD
+  S[Sign-in event] --> Q{Subject type?}
+  Q -->|Human| H["Human rules<br/>MFA · device · business hours · impossible travel"]
+  Q -->|"Workload · managed identity · agent"| N["NHI rules<br/>six rules, on its own 30-day baseline"]
+  H --> P[Policy engine]
+  N --> P
+  P --> A[ALLOW]
+  P --> U[STEP_UP]
+  P --> B[BLOCK]
+```
 
 I also kept the anomaly model away from NHIs. Trained on human behaviour, it would call any workload that signs in at 03:00 with no MFA and no device an outlier. NHIs are scored by rules and policy only, until there is enough reviewed data to train a model on them.
 

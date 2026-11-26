@@ -155,7 +155,16 @@ function sync(folder) {
       lead = []; // an essay places its own images
       tail = [];
     }
-    const words = section.split(/\s+/).length;
+    // Reading time counts prose and table-cell text. Fenced code and Mermaid
+    // diagrams render to blocks that are scanned, not read word by word, and
+    // table pipe/separator syntax is not words — excluding them keeps the
+    // estimate honest for posts that lean on diagrams and tables.
+    const words = section
+      .replace(/```[\s\S]*?```/g, " ")          // fenced code and ```mermaid blocks
+      .replace(/^\s*\|?[\s:|-]+\|?\s*$/gm, " ")  // table separator rows (|---|---|)
+      .replace(/\|/g, " ")                        // table cell delimiters
+      .split(/\s+/)
+      .filter(Boolean).length;
     const body = rewrite(section.trimEnd(), `docs/blog/${src}/${p.f}`);
     const fm = [
       "---",
