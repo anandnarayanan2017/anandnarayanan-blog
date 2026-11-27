@@ -22,10 +22,10 @@ And give that person evidence, not fifty green ticks: the spec, the checks, ever
 
 In my harness the default answer is no. Nothing ships unless someone approves.
 
-Part 6 of 7 on engineering with AI agents.
+Part 7 of 8 on engineering with AI agents.
 
 What does a person in your team actually look at before approving an agent's change?
 
-First comment: Read the full article → https://anandnarayanan.net/blog/ai-assisted-sdlc-06-human-approval-is-a-control-not-a-button/
+First comment: Read the full article → https://anandnarayanan.net/blog/ai-assisted-sdlc-07-human-approval-is-a-control-not-a-button/
 
 #AIAgents #AIGovernance #DORA #SoftwareEngineering

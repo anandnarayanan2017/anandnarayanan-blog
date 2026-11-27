@@ -25,4 +25,8 @@ The uncomfortable one: a poisoned ticket can still smuggle a harmful change thro
 
 Which boundary in your agent setup has the most arrows and the fewest controls?
 
+Part 5 of 8 on engineering with AI agents.
+
+First comment: Read the full article → https://anandnarayanan.net/blog/ai-assisted-sdlc-05-threat-modelling-the-factory/
+
 #AIAgents #ThreatModeling #MCP #OWASP #AISecurity #SoftwareArchitecture
