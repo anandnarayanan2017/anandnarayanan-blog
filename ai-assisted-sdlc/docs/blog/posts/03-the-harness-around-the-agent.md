@@ -89,6 +89,33 @@ The most useful way I found to think about a harness: **every component is an as
 
 That table is also a to-do list. As models improve, some of these doubts stop being true, and the component should be removed, not kept out of habit. The only honest way to know is to measure: run the same work with and without the component and compare. (The measurement is part of Part 8.)
 
+## Where the harness sits
+
+A harness on its own does not answer "can we trust what the agent built?" It is the inner loop. Around it sits a control plane that the agent can't argue with: what it may touch, checks it doesn't run itself, and a person who signs off on risky changes. The rest of this series fills in that outer ring.
+
+```mermaid
+flowchart TD
+  SPEC["Specification<br/>invariants as tests · Part 2"] --> H
+  subgraph CP["Control plane: rules the agent can't negotiate"]
+    direction TB
+    POL["Permissions · Part 4<br/>Threat model · Part 5"] -.->|"applied before<br/>the agent acts"| H
+    subgraph H["Harness · this part"]
+      direction LR
+      C[Context] ~~~ T[Tools] ~~~ F[Feedback] ~~~ R[Recovery]
+    end
+    H -->|"proposed change"| CHK["Deterministic checks<br/>beat the AI reviewer<br/>Part 6"]
+    CHK --> HA["Human approval<br/>by risk, not habit<br/>Part 7"]
+  end
+  HA --> OUT["The change, plus evidence<br/>it is safe to ship<br/>Part 8"]
+```
+
+The arrow that isn't drawn matters too: every failure that gets past this picture should come back as a new test in the specification. That is what makes it a lifecycle rather than a pipeline.
+
+Two distinctions in that picture are easy to blur:
+
+- **Policy is defined around the harness and enforced inside it.** A permission only counts if the harness applies it before the agent acts. A rule that is checked in review, after the agent has already acted, is an audit finding, not a control.
+- **Checking the change is not the same as judging the agent.** The tests say whether this change is correct. Whether the agent is getting better or worse as models and prompts change is a separate measurement, and it belongs to the factory (Part 8), not to one pull request.
+
 ## Where this stops working
 
 - **It costs more.** Fresh contexts mean every call re-reads the workspace. My harness sends the whole project snapshot to every role, and that cost grows with the project. Role-specific context is on its to-do list.
