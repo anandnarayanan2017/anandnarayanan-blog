@@ -17,8 +17,11 @@ the build fails on a date after today, so a part can never show a release that h
 | 5 | When the AI Reviewer Says 9/10 and the Test Still Fails | | Ready |
 | 6 | Human Approval Is a Control, Not a Button | | Ready |
 | 7 | From Coding Agent to Engineering Factory | | Ready |
+| 8 | Threat-Modelling the Factory Before It Gets Tools | | Draft: needs the ID checks below |
 
-Parts 4–7 go out one at a time, in order, about every two weeks.
+Parts 4–8 go out one at a time, in order, about every two weeks. Part 8 is backed by
+[`docs/threat-model.md`](../../threat-model.md), which is already public and is the link to use elsewhere (CV, talks)
+until Part 8 has a site URL.
 
 ## To publish part N on its date
 
@@ -49,3 +52,9 @@ day itself, not before.
 - [ ] Every external link still opens. These were not checked from the drafting environment: OWASP, Willison,
       Node.js, GitHub docs, arXiv, Fowler, EUR-Lex, and the 2026-10-28 GitHub changelog entry in Part 6.
 - [ ] Nothing links to or names the private harness repository.
+- [ ] **Part 8 only:** check every MITRE ATLAS technique ID and name in `docs/threat-model.md` section 6 against
+      atlas.mitre.org (names change, e.g. "ML" to "AI"), and re-map AC-04, AC-05, AC-13 and AC-14 if newer
+      agent-specific techniques fit better.
+- [ ] **Part 8 only:** check the OWASP Agentic IDs (ASI01–ASI10) and LLM 2025 IDs against genai.owasp.org.
+- [ ] **Part 8 only:** when publishing, change the "Companion post" link at the top of `docs/threat-model.md` from
+      `blog/drafts/posts/` to `blog/posts/`, and set its **Last reviewed** date.

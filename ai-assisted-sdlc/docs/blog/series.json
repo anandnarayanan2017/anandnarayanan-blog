@@ -15,7 +15,8 @@
   "inShort": {
     "1": "AI makes code cheap to produce; it doesn’t decide what “correct” means. An agent’s booking API passed every happy-path test and still booked one room ten times. The run log is in the repository, so you can replay it.",
     "2": "A prompt says what to build; a specification also says what must never happen. Three questions per rule (what must hold, who enforces it, which test fails if it breaks) turned the double-booking into a database rule and four tests.",
-    "3": "The same model behaves very differently depending on what surrounds it. A harness gives the agent context, a few tools, precise feedback and a way to recover, and each part encodes a doubt about the model. Passing back the failing test, word for word, is what fixed the double booking."
+    "3": "The same model behaves very differently depending on what surrounds it. A harness gives the agent context, a few tools, precise feedback and a way to recover, and each part encodes a doubt about the model. Passing back the failing test, word for word, is what fixed the double booking.",
+    "8": "The generator is contained today because it has no tools. Before an MCP gateway gives it some, this part maps every trust boundary and abuse case to STRIDE, MITRE ATLAS and OWASP, and fixes five gateway rules: rules decide, fail closed, irreversible actions are never agent tools."
   },
   "dates": {
     "1": "2026-11-01",
@@ -29,6 +30,7 @@
     "4": "A rule in a prompt is a request. A rule in the system is a control. What an agent may read, change and execute, and what stops it when it tries anyway.",
     "5": "The AI reviewer scored the code 9/10. The test proved it double-booked a room ten times. Both were honest. Where model judgement helps, and why a deterministic check must win.",
     "6": "A person clicking “Approve” on fifty green pull requests is a ritual, not a control. Which changes need a person, and what that person needs to see.",
-    "7": "Specifications, a harness, enforced permissions, deterministic checks and a human gate, brought together into one delivery flow that produces code and the evidence that it is safe to ship."
+    "7": "Specifications, a harness, enforced permissions, deterministic checks and a human gate, brought together into one delivery flow that produces code and the evidence that it is safe to ship.",
+    "8": "Before the factory's agents get tools through an MCP gateway, a threat model: nine trust boundaries, fifteen abuse cases mapped to STRIDE, MITRE ATLAS and the OWASP LLM and Agentic Top 10s, and which control answers each."
   }
 }

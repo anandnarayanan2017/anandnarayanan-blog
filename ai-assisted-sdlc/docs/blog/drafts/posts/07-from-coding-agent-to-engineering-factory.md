@@ -8,7 +8,7 @@ Part 1 opened with a cartoon: an AI factory, every dashboard green, and an anoma
 
 Six parts later, the boardroom is booked once. Not because the model got smarter between posts. Because of what we put around it.
 
-This last part puts those pieces into one flow and is honest about which parts I have built, which I haven’t, and what I would do first in a real team.
+This part puts those pieces into one flow and is honest about which parts I have built, which I haven’t, and what I would do first in a real team.
 
 ## One flow
 
@@ -114,7 +114,9 @@ The answer can’t be “the agent was confident”. It can’t be “the review
 
 That isn’t the opposite of moving fast with AI. It is what makes moving fast safe enough to keep doing.
 
-Thank you for reading the series. Which of the seven parts would you start with in your own team, and what is missing from the list? [Tell me on LinkedIn](https://linkedin.com/in/anandkn2012).
+Which of the seven parts would you start with in your own team, and what is missing from the list? [Tell me on LinkedIn](https://linkedin.com/in/anandkn2012).
+
+**Next: Part 8, Threat-Modelling the Factory Before It Gets Tools.** The factory is contained today because its agents have no tools. Before an MCP gateway gives them some: every trust boundary, every abuse case, and the control that answers it.
 
 [Follow the series on GitHub](https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc)
 
