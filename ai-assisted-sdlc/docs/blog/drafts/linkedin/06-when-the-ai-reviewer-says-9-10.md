@@ -16,11 +16,11 @@ But I measure it first. I graded its real inputs by hand and run it against my g
 
 If you haven't measured your AI reviewer against people, you have a second opinion of unknown quality.
 
-Part 5 of 7 on engineering with AI agents.
+Part 6 of 8 on engineering with AI agents.
 
 Has an AI reviewer ever approved something your tests or your users later proved wrong?
 
-First comment: Read the full article → https://anandnarayanan.net/blog/ai-assisted-sdlc-05-when-the-ai-reviewer-says-9-10/
+First comment: Read the full article → https://anandnarayanan.net/blog/ai-assisted-sdlc-06-when-the-ai-reviewer-says-9-10/
 Code and tests: https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc/examples/double-booking
 
 #AIAgents #SoftwareTesting #AIAssistedDevelopment #SoftwareEngineering

@@ -1,6 +1,6 @@
 # When the AI Reviewer Says 9/10 and the Test Still Fails
 
-![The AI reviewer said 9/10 for careful-looking code with a transaction, a clash check and HTTP 409. The deterministic test ran 20 simultaneous requests for one room and got 10 bookings instead of 1. Verdict: FAIL, the check wins. A model’s judgement can add a failure but never remove one.](../../images/05-when-the-ai-reviewer-says-9-10-1.png)
+![The AI reviewer said 9/10 for careful-looking code with a transaction, a clash check and HTTP 409. The deterministic test ran 20 simultaneous requests for one room and got 10 bookings instead of 1. Verdict: FAIL, the check wins. A model’s judgement can add a failure but never remove one.](../../images/06-when-the-ai-reviewer-says-9-10-1.png)
 
 *The reviewer judged what it could read. The test measured what actually happened.*
 
@@ -84,7 +84,7 @@ You can reduce these with prompts (“be sceptical”, “don’t trust the auth
 
 That last point is the bridge to the next part. If neither the test nor the model can decide some things, a person has to. But a person clicking “Approve” on fifty green pull requests is not a control either.
 
-**Next: Part 6, Human Approval Is a Control, Not a Button.**
+**Next: Part 7, Human Approval Is a Control, Not a Button.**
 
 Has an AI reviewer ever approved something your tests or your users later proved wrong? [Tell me on LinkedIn](https://linkedin.com/in/anandkn2012).
 

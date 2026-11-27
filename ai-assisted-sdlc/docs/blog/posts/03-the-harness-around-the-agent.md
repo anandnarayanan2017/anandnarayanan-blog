@@ -87,7 +87,7 @@ The most useful way I found to think about a harness: **every component is an as
 | Separate evaluator | Self-grading is lenient |
 | Human gate | Accountability stays with people |
 
-That table is also a to-do list. As models improve, some of these doubts stop being true, and the component should be removed, not kept out of habit. The only honest way to know is to measure: run the same work with and without the component and compare. (The measurement is part of Part 7.)
+That table is also a to-do list. As models improve, some of these doubts stop being true, and the component should be removed, not kept out of habit. The only honest way to know is to measure: run the same work with and without the component and compare. (The measurement is part of Part 8.)
 
 ## Where this stops working
 
