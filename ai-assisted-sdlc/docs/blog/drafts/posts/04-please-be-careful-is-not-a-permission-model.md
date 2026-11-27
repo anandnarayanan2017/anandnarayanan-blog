@@ -88,9 +88,9 @@ I keep the left column. It helps the agent do the right thing first time, which 
 - **A path check is not a sandbox.** Refusing `../` stops mistakes and simple tricks. A determined attacker with real execution needs an operating-system boundary: a container, a virtual machine, a separate account.
 - **Least privilege makes agents less useful.** Every permission I remove is a task the agent can no longer do alone. That is the right trade for a booking API built by an experiment. It needs a deliberate decision, per action, in a real organisation.
 
-That last point is where the next two parts go. Some actions should be allowed automatically. Some need a reviewer. And some reviewers are themselves models. So how much should you trust a reviewer that scores the broken code 9 out of 10?
+The first point is where the next part goes. Finer rules mean giving the agent tools, one at a time, through a gateway that decides what each agent may call. Before building that, it is worth writing down everything that could go wrong at each boundary, and what stops it.
 
-**Next: Part 5, When the AI Reviewer Says 9/10 and the Test Still Fails.**
+**Next: Part 5, Threat-Modelling the Factory Before It Gets Tools.**
 
 Which rule in your agent’s instructions would cause real damage if the agent ignored it, and what actually enforces it? [Tell me on LinkedIn](https://linkedin.com/in/anandkn2012).
 

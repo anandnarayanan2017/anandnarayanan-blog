@@ -22,7 +22,7 @@ In my harness:
 
 The rule I'd put on the wall: the thing that judges the work must not be writable by the thing being judged.
 
-Part 4 of 7 on engineering with AI agents.
+Part 4 of 8 on engineering with AI agents.
 
 Which rule in your agent's prompt would cause real damage if it were ignored? And what actually enforces it?
 

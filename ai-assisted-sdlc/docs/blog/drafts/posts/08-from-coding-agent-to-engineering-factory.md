@@ -1,12 +1,12 @@
 # From Coding Agent to Engineering Factory
 
-![From coding agent to engineering factory: one flow from intent, invariants and a contract with tests, through an agent in a harness with enforced limits, deterministic checks and an AI reviewer that can only add failures, to a human gate. Evidence is a by-product: spec, tests, a commit per attempt, check output, every model call, every disagreement and the approval. Part 1: the boardroom was booked 10 times. Part 7: booked once.](../../images/07-from-coding-agent-to-engineering-factory-1.png)
+![From coding agent to engineering factory: one flow from intent, invariants and a contract with tests, through an agent in a harness with enforced limits, deterministic checks and an AI reviewer that can only add failures, to a human gate. Evidence is a by-product: spec, tests, a commit per attempt, check output, every model call, every disagreement and the approval. Part 1: the boardroom was booked 10 times. Part 7: booked once.](../../images/08-from-coding-agent-to-engineering-factory-1.png)
 
 *A factory is not more agents. It is the same agents, inside a process that can tell you what it built and why it is safe.*
 
 Part 1 opened with a cartoon: an AI factory, every dashboard green, and an anomalies panel reading “Boardroom booked 10 times”.
 
-Six parts later, the boardroom is booked once. Not because the model got smarter between posts. Because of what we put around it.
+Seven parts later, the boardroom is booked once. Not because the model got smarter between posts. Because of what we put around it.
 
 This last part puts those pieces into one flow and is honest about which parts I have built, which I haven’t, and what I would do first in a real team.
 
@@ -16,9 +16,9 @@ Here is the delivery flow the series has been building, one control per part:
 
 ```text
 Request ──► Specification ──► Contract ──► Agent writes code ──► Checks ──► Reviewer ──► Human gate ──► Release
-            (Part 2)          (Part 2)     inside a harness      (Part 5)   (Part 5)     (Part 6)
+            (Part 2)          (Part 2)     inside a harness      (Part 6)   (Part 6)     (Part 7)
                                            with enforced limits
-                                           (Parts 3 and 4)
+                                           (Parts 3 to 5)
                           ◄───────────── failures fed back, limited retries ─────────────┘
 ```
 
@@ -98,9 +98,9 @@ Not a platform. Not eight new agents. Five small things:
 
 1. **Pick one invariant that hurts when it breaks** and make it a test that runs on every change. Part 2.
 2. **Write down what your agents may read, change and execute,** and move one rule from the prompt into the system. Part 4.
-3. **Make one rule non-negotiable:** a failing deterministic check can’t be overruled by an AI review. Part 5.
-4. **Protect what judges the work** — tests, policies, pipeline — so that agents can’t change it without a named person. Parts 4 and 6.
-5. **Decide which changes need a person,** by reversibility and blast radius, not by size, and give that person the evidence. Part 6.
+3. **Make one rule non-negotiable:** a failing deterministic check can’t be overruled by an AI review. Part 6.
+4. **Protect what judges the work** — tests, policies, pipeline — so that agents can’t change it without a named person. Parts 4 and 7.
+5. **Decide which changes need a person,** by reversibility and blast radius, not by size, and give that person the evidence. Part 7.
 
 None of these needs a new tool. Each needs a decision.
 
@@ -114,13 +114,14 @@ The answer can’t be “the agent was confident”. It can’t be “the review
 
 That isn’t the opposite of moving fast with AI. It is what makes moving fast safe enough to keep doing.
 
-Thank you for reading the series. Which of the seven parts would you start with in your own team, and what is missing from the list? [Tell me on LinkedIn](https://linkedin.com/in/anandkn2012).
+Thank you for reading the series. Which of the eight parts would you start with in your own team, and what is missing from the list? [Tell me on LinkedIn](https://linkedin.com/in/anandkn2012).
+
 
 [Follow the series on GitHub](https://github.com/anandnarayanan2017/anandnarayanan-blog/tree/main/ai-assisted-sdlc)
 
 ## References and further reading
 
-- **The whole series:** Part 1 to Part 6 on [anandnarayanan.net](https://anandnarayanan.net).
+- **The whole series:** Part 1 to Part 7 on [anandnarayanan.net](https://anandnarayanan.net).
 - **Harness design:** Anthropic, [Harness design for long-running application development](https://www.anthropic.com/engineering/harness-design-long-running-apps) and [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents), on preferring simple, composable workflows to autonomous orchestration.
 - **Harness engineering:** OpenAI, [Harness engineering](https://openai.com/index/harness-engineering/).
 - **Measuring by execution:** Mark Chen et al., [Evaluating Large Language Models Trained on Code](https://arxiv.org/abs/2107.03374) (2021), which introduced HumanEval and pass@k.

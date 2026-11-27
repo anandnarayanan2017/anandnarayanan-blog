@@ -1,10 +1,10 @@
 # Human Approval Is a Control, Not a Button
 
-![Human approval is a control, not a button: an “Approve all (50)” button with fifty green ticks changes nothing. A control means the person could realistically say no, has the evidence attached, and the decision is recorded: who, when, which version. The default answer is no. A person is needed when a change can’t be undone, touches tests, policies, permissions or the pipeline, or a check was skipped or overridden.](../../images/06-human-approval-is-a-control-not-a-button-1.png)
+![Human approval is a control, not a button: an “Approve all (50)” button with fifty green ticks changes nothing. A control means the person could realistically say no, has the evidence attached, and the decision is recorded: who, when, which version. The default answer is no. A person is needed when a change can’t be undone, touches tests, policies, permissions or the pipeline, or a check was skipped or overridden.](../../images/07-human-approval-is-a-control-not-a-button-1.png)
 
 *An approval only means something if the person could have said no, and knew why they might.*
 
-In Part 1, I asked how we know the code works. Parts 2 to 5 answered with specifications, a harness, enforced permissions and deterministic checks.
+In Part 1, I asked how we know the code works. Parts 2 to 6 answered with specifications, a harness, enforced permissions, a threat model and deterministic checks.
 
 This part is about the question that comes straight after it:
 
@@ -88,7 +88,7 @@ Five questions worth an hour if your teams are turning on AI review and autofix:
 
 Specifications, harness, permissions, checks and approval: each part of this series has been one control. The last part puts them into one delivery flow.
 
-**Next: Part 7, From Coding Agent to Engineering Factory.**
+**Next: Part 8, From Coding Agent to Engineering Factory.**
 
 In your team, what does a person actually look at before they approve an agent’s change? [Tell me on LinkedIn](https://linkedin.com/in/anandkn2012).
 

@@ -38,6 +38,9 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      # Mermaid diagrams are rendered to static SVG at build time with headless
+      # Chromium, pinned by the playwright devDependency (as in site-build.yml).
+      - run: npx playwright install --with-deps chromium
       - run: npm run build
       # Agent Sentinel drafts link to code that is copied in when the part is
       # published, as agent-sentinel/scripts/check_links.py also allows.

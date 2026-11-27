@@ -10,6 +10,7 @@ part cites. Each part brings only the code it needs, so this folder grows with t
 | `docs/blog/linkedin/NN-<slug>.md` | The LinkedIn post that shares the part; `NN-<slug>-article.md`, where present, is the LinkedIn Article version. |
 | `docs/blog/series.json` | Site settings: release date and excerpt per part, tags, home-page card. |
 | [`examples/double-booking/`](examples/double-booking/) | Part 1: the booking specification as code and tests. |
+| [`docs/threat-model.md`](docs/threat-model.md) | Part 5: STRIDE + MITRE ATLAS + OWASP LLM/Agentic threat model of the factory and its planned MCP gateway: trust boundaries, abuse cases, controls with their status. |
 
 `npm run build` at the repository root generates the site's pages from this folder (`scripts/sync-series.mjs`).
 
